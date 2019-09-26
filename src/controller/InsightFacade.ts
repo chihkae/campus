@@ -1,6 +1,11 @@
 import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
+import QueryValidator from "./QueryValidator";
+
+export interface IQueryValidator {
+    validateQuery(query: any): boolean;
+}
 
 /**
  * This is the main programmatic entry point for the project.
@@ -22,6 +27,12 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public performQuery(query: any): Promise <any[]> {
+        let queryValidator = new QueryValidator();
+        if (queryValidator.validateQuery(query)) {
+            Log.info("good");
+        } else {
+            Log.info("bad");
+        }
         return Promise.reject("Not implemented.");
     }
 
