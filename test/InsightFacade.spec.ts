@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import * as fs from "fs-extra";
-import {InsightDatasetKind} from "../src/controller/IInsightFacade";
+import {InsightDatasetKind, InsightError} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
@@ -65,6 +65,30 @@ describe("InsightFacade Add/Remove Dataset", function () {
             expect.fail(err, expected, "Should not have rejected");
         });
 
+    });
+
+    it("test a dataset with an underscore in id", function () {
+        const id: string = "under_score";
+        const expected: string[] = [];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            // should return empty array, since id has an underscore
+            expect.fail();
+        }).catch((err: InsightError) => {
+            expect(err).to.be.instanceOf(InsightError);
+            expect(err.message).to.equal("id is invalid");
+        });
+    });
+
+    it("test a dataset with whitespace id", function () {
+        const id: string = " ";
+        const expected: string[] = [];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            // should return empty array, since id is invalid
+            expect.fail();
+        }).catch((err: any) => {
+            expect(err).to.be.instanceOf(InsightError);
+            expect(err.message).to.equal("id is invalid");
+        });
     });
 });
 

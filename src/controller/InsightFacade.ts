@@ -1,6 +1,73 @@
 import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
+import * as JSZip from "jszip";
+import {JSZipObject} from "jszip";
+import {type} from "os";
+import {Dataset, Course, Section} from "./Dataset";
+
+function validateId(id: string): boolean {
+    // return false if id is whitespace, includes an underscore, is null, or has already been added
+    return !(id.trim() === "" || id.includes("_") || id == null);
+}
+
+function initializeDataset(id: string, kind: InsightDatasetKind): Dataset {
+    let dataset: Dataset = new Dataset();
+    dataset.id = id;
+    dataset.kind = kind;
+    dataset.courses = [];
+    return dataset;
+}
+
+function writeDatasetToDisk(dataset: Dataset, id: string): Promise<string[]> {
+    let fs = require("fs");
+    let myJSON: string = JSON.stringify(dataset);
+    return fs.writeFile(`data/${id}`, myJSON, function (err: any) {
+        if (err) { return Promise.reject(err.toString()); }
+        // return list of ids of currently added datasets
+        return Promise.resolve(getCurrentlyAddedDatasetIds());
+    });
+}
+
+function getCurrentlyAddedDatasetIds(): string[] {
+    let fs = require("fs");
+    let currentDataFiles: string[] = fs.readdirSync("data");
+    return currentDataFiles;
+}
+
+function parseCourse(text: string, fileName: string): Course {
+    // get course as a JSON object
+    let courseAsJSON = JSON.parse(text);
+    // get the results key (holds all the courses)
+    let courses: [] = courseAsJSON["result"];
+    let sections: Section[] = [];
+    // for each section in the course, extract the necessary data
+    for (let section of courses) {
+        let s = extractSectionData(section);
+        sections.push(s);
+    }
+    // return a course with all of its sections
+    let course: Course = new Course();
+    course.name = fileName;
+    course.sections = sections;
+    return course;
+}
+
+function extractSectionData(section: any): Section {
+    // TODO: skip a section if it is not valid?
+    let sect = new Section();
+    sect.id = section.id;
+    sect.instructor = section.Professor;
+    sect.title = section.Title;
+    sect.pass = section.Pass;
+    sect.fail = section.Fail;
+    sect.audit = section.Audit;
+    sect.avg = section.Avg;
+    sect.year = section.Year;
+    sect.dept = section.Subject;
+    // TODO: need to find uuid
+    return sect;
+}
 
 /**
  * This is the main programmatic entry point for the project.
@@ -14,7 +81,51 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        return Promise.reject("Not implemented.");
+        // Validate id (must not contain underscore, be only whitespace, be null)
+        // If invalid, reject with InsightError
+        if (!validateId(id)) {
+            return Promise.reject(new InsightError("id is invalid"));
+        }
+        // If is has already been added, reject
+        if (getCurrentlyAddedDatasetIds().includes(id)) {
+            return Promise.reject((new InsightError("A dataset with a corresponding Id has already been added")));
+        }
+
+        // initialize the dataset object that will eventually be saved to disk
+        let datasetToAdd: Dataset = initializeDataset(id, kind);
+
+        // initialize the array of promises for the Promise.all call
+        let promises: Array<Promise<void>> = [];
+
+        // get a Buffer of the file content to use with loadAsync()
+        let buff = new Buffer(content, "base64");
+        JSZip.loadAsync(buff).then(function (zip: JSZip) {
+            // for each file, retrieve its contents as a string
+            promises = Object.keys(zip.files).map(function (filename) {
+                if (filename !== "courses/") { // in order to avoid the root "courses" file
+                    return zip.files[filename].async("text")
+                    // use the string data to parse course information
+                        .then(function (txt: string) {
+                            let course = parseCourse(txt, filename);
+                            datasetToAdd.courses.push(course);
+                        })
+                        .catch((err) => {
+                            Log.error(filename);
+                            Log.error(err);
+                        });
+                }
+            });
+            // Once all the courses and sections are parsed, serialize and save them to disk
+            return Promise.all(promises).then(() => {
+                return writeDatasetToDisk(datasetToAdd, id);
+            }).catch((err) => {
+                Log.error(err);
+            });
+        }).catch((err) => {
+            Log.error(err);
+        });
+
+        // return Promise.reject("Not implemented.");
     }
 
     public removeDataset(id: string): Promise<string> {
