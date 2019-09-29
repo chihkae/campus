@@ -28,30 +28,35 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public performQuery(query: any): Promise <any[]> {
-        let queryValidator = new QueryValidator();
-        if (queryValidator.validateQuery(query)) {
-            let sorted;
-            let fs = require("fs");
-            fs.readFile("./test/data/dummy.txt",  (err: any, data: any) => {
-                if (err) {
-                   return Promise.reject("couldn't read files");
-                } else {
-                    let content = JSON.parse(data);
-                    let queryEvaluator = new QueryEvaluator(query, content);
-                    let unsortedResult = queryEvaluator.evaluateResult(query);
-                    let keys = queryValidator.getColumnsKeyWithoutUnderscore();
-                    let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
-                    let orderkeys = queryValidator.getOrderKeyWithoutUnderscore();
-                    sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
-                    return Promise.resolve(sorted);
+            return new Promise(function (resolve, reject) {
+                let queryValidator = new QueryValidator();
+                try {
+                    if (queryValidator.validateQuery(query)) {
+                        let fs = require("fs");
+                        fs.readFile("./test/data/dummy.txt", (err: any, data: any) => {
+                            if (err) {
+                                reject("err");
+                            } else {
+                                try {
+                                    let content = JSON.parse(data);
+                                    let queryEvaluator = new QueryEvaluator(query, content);
+                                    let unsortedResult = queryEvaluator.evaluateResult(query);
+                                    let keys = queryValidator.getColumnsKeyWithoutUnderscore();
+                                    let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
+                                    let orderkeys = queryValidator.getOrderKeyWithoutUnderscore();
+                                    let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
+                                    resolve(sorted);
+                                } catch (err) {
+                                    Log.info(err);
+                                }
+                            }
+                        });
+                    }
+                } catch (err) {
+                    reject(new InsightError());
                 }
             });
-        } else {
-            return Promise.reject("Not implemented.");
-        }
     }
-
-
     public listDatasets(): Promise<InsightDataset[]> {
         return Promise.reject("Not implemented.");
     }
