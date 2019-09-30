@@ -41,16 +41,19 @@ function parseCourse(text: string, fileName: string): Course {
     // get the results key (holds all the courses)
     let courses: [] = courseAsJSON["result"];
     let sections: Section[] = [];
-    // for each section in the course, extract the necessary data
-    for (let section of courses) {
-        let s = extractSectionData(section);
-        sections.push(s);
+    // check if the course has any sections
+    if (courses.length > 0) {
+        // for each section in the course, extract the necessary data
+        for (let section of courses) {
+            let s = extractSectionData(section);
+            sections.push(s);
+        }
+        // return a course with all of its sections
+        let course: Course = new Course();
+        course.name = fileName;
+        course.sections = sections;
+        return course;
     }
-    // return a course with all of its sections
-    let course: Course = new Course();
-    course.name = fileName;
-    course.sections = sections;
-    return course;
 }
 
 function extractSectionData(section: any): Section {
@@ -113,7 +116,7 @@ export default class InsightFacade implements IInsightFacade {
                     // use the string data to parse course information
                         .then(function (txt: string) {
                             let course = parseCourse(txt, filename);
-                            datasetToAdd.courses.push(course);
+                            if (course !== undefined) { datasetToAdd.courses.push(course); }
                         })
                         .catch((err) => {
                             Log.error(filename);
