@@ -22,14 +22,11 @@ function initializeDataset(id: string, kind: InsightDatasetKind): Dataset {
 
 // This function writes the given Dataset to the "data" directory, and returns a promise
 // with all of the currently added dataset ids
-function writeDatasetToDisk(dataset: Dataset, id: string): Promise<string[]> {
+function writeDatasetToDisk(dataset: Dataset, id: string): string[] {
     let fs = require("fs");
     let myJSON: string = JSON.stringify(dataset);
-    return fs.writeFile(`data/${id}`, myJSON, function (err: any) {
-        if (err) { return Promise.reject(err.toString()); }
-        // return list of ids of currently added datasets
-        return Promise.resolve(getCurrentlyAddedDatasetIds());
-    });
+    fs.writeFileSync(`data/${id}`, myJSON);
+    return getCurrentlyAddedDatasetIds();
 }
 
 // returns a string array of the currently added datasets
@@ -109,7 +106,7 @@ export default class InsightFacade implements IInsightFacade {
 
         // get a Buffer of the file content to use with loadAsync()
         let buff = new Buffer(content, "base64");
-        JSZip.loadAsync(buff).then(function (zip: JSZip) {
+        return JSZip.loadAsync(buff).then(function (zip: JSZip) {
             // for each file, retrieve its contents as a string
             promises = Object.keys(zip.files).map(function (filename) {
                 if (filename !== "courses/") { // in order to avoid the root "courses" file
@@ -120,28 +117,42 @@ export default class InsightFacade implements IInsightFacade {
                             let courseName = filename.split("/").pop();
                             let course = parseCourse(txt, courseName);
                             if (course !== undefined) { datasetToAdd.courses.push(course); }
-                        })
-                        .catch((err) => {
-                            Log.error(filename);
-                            Log.error(err);
                         });
                 }
             });
             // Once all the courses and sections are parsed, serialize and save them to disk
             return Promise.all(promises).then(() => {
-                return writeDatasetToDisk(datasetToAdd, id);
-            }).catch((err) => {
-                Log.error(err);
+                return Promise.resolve(writeDatasetToDisk(datasetToAdd, id));
             });
         }).catch((err) => {
-            Log.error(err);
+            return Promise.reject(err);
         });
 
         // return Promise.reject("Not implemented.");
     }
 
     public removeDataset(id: string): Promise<string> {
-        return Promise.reject("Not implemented.");
+        // Validate id (must not contain underscore, be only whitespace, be null). If invalid, reject with InsightError
+        if (!validateId(id)) {
+            return Promise.reject(new InsightError("id is invalid"));
+        }
+        // If is has not been added, reject
+        if (!(getCurrentlyAddedDatasetIds().includes(id))) {
+            return Promise.reject(new NotFoundError("a dataset corresponding to the given id has not been added"));
+        }
+
+        // remove the file
+        const fs = require("fs");
+        const path = `data/${id}`;
+
+        fs.unlink(path, (err: NodeJS.ErrnoException) => {
+            if (err) {
+                return Promise.reject(new InsightError(err));
+            } else {
+                return Promise.resolve(id);
+            }
+            // if there is no error, then file was successfully deleted
+        });
     }
 
     public performQuery(query: any): Promise <any[]> {
