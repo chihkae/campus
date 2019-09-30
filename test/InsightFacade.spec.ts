@@ -20,6 +20,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
     // automatically be loaded in the 'before' hook.
     const datasetsToLoad: { [id: string]: string } = {
         courses: "./test/data/courses.zip",
+        oneCourse: "./test/data/oneCourse.zip"
     };
     let datasets: { [id: string]: string } = {};
     let insightFacade: InsightFacade;
@@ -60,6 +61,36 @@ describe("InsightFacade Add/Remove Dataset", function () {
         const id: string = "courses";
         const expected: string[] = [id];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect(result).to.deep.equal(expected);
+        }).catch((err: any) => {
+            expect.fail(err, expected, "Should not have rejected");
+        });
+
+    });
+
+    it("test adding one course", function () {
+        const id: string = "oneCourse";
+        const expected: string[] = [id];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect(result).to.deep.equal(expected);
+        }).catch((err: any) => {
+            expect.fail(err, expected, "Should not have rejected");
+        });
+
+    });
+
+    it("test adding multiple courses", function () {
+        const oneCourse: string = "oneCourse";
+        const courses: string = "courses"
+        const expected: string[] = [courses, oneCourse];
+        insightFacade.addDataset(oneCourse, datasets[oneCourse], InsightDatasetKind.Courses)
+            .then((result: string[]) => {
+            expect(result).to.deep.equal([oneCourse]);
+        }).catch((err: any) => {
+            expect.fail(err, expected, "Should not have rejected");
+        });
+        return insightFacade.addDataset(courses, datasets[courses], InsightDatasetKind.Courses)
+            .then((result: string[]) => {
             expect(result).to.deep.equal(expected);
         }).catch((err: any) => {
             expect.fail(err, expected, "Should not have rejected");
