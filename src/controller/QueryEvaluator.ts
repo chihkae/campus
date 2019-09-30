@@ -4,8 +4,6 @@ import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFaca
 import {IQueryValidator} from "./InsightFacade";
 import JSONCov = Mocha.reporters.JSONCov;
 
-
-
 export default class QueryEvaluator {
 
     private query: string;
@@ -95,18 +93,27 @@ export default class QueryEvaluator {
     }
 
     private evaluateIS(key: any, value: any): any {
-        let mapper = new Map();
-        mapper.set("dept", "subject");
-        mapper.set("id", "course");
-        mapper.set("instructor", "professor");
-        mapper.set("title", "title");
-        mapper.set("uuid", "id")
-
-        key = mapper.get(key);
         let content = this.getData();
-        return content.result.filter(function (el: any) {
-            return el[key] === value.toString();
+
+        let result: any[] = [];
+        content.courses.forEach(function (course: any) {
+            course.sections.forEach(function (section: any) {
+               if (section[key] === value.toString()) {
+                  result.push(section);
+               }
+            });
         });
+        return result;
+       /* let final = content.courses.filter(function (el: any) {
+            let sectionList;
+            if (el["sections"].length !== 0) {
+                sectionList = el["sections"].filter(function (e2: any) {
+                    return e2[key] === value.toString();
+                });
+                return sectionList;
+            }
+        });
+        return final;*/
     }
 
     private evaluateAnd(result1: any, result2: any): any {
@@ -138,7 +145,7 @@ export default class QueryEvaluator {
     }
 
     private evaluateNot(result: any): any {
-        let content = this.getData()
+        let content = this.getData();
         let arrayAfterRemove = content.result.filter(function (el: any) {
             return !result.includes(el);
         });
@@ -164,17 +171,55 @@ export default class QueryEvaluator {
         mapper.set("EQ", "=");
         let sign = mapper.get(comparator);
         let content = this.getData();
-        let final = content.result.filter(function (el: any) {
-             if (sign === ">") {
-                 return el[key] > Number(value);
-             } else if (sign === "<") {
-                 return el[key] < Number(value);
-             } else if (sign === "=") {
-                 return el[key] === Number(value);
-             }
+        let result: any[] = [];
+        content.courses.forEach(function (course: any) {
+            course.sections.forEach(function (section: any) {
+                if (sign === ">") {
+                    if (section[key] > Number(value)) {
+                        result.push(section);
+                    }
+                } else if (sign === "<") {
+                    if (section[key] < Number(value)){
+                        result.push(section);
+                    }
+                } else if (sign === "=") {
+                    if (section[key] === Number(value)){
+                        result.push(section);
+                    }
+                }
+            });
         });
-        return final;
-
+        return result;
+            /*let sections = section["sections"].filter(function (el: any) {
+                if (sign === ">") {
+                    return el[key] > Number(value);
+                } else if (sign === "<") {
+                    return el[key] < Number(value);
+                } else if (sign === "=") {
+                    return el[key] === Number(value);
+                }
+            });
+            return sections;
+        });
+        return result;*/
+       /* let final = content.courses.filter(function ( el: any) {
+            let sectionList;
+            let length = el["sections"].length;
+            if (length !== 0) {
+                sectionList = el["sections"].filter(function (e2: any) {
+                    if (sign === ">") {
+                        return e2[key] > Number(value);
+                    } else if (sign === "<") {
+                        return e2[key] < Number(value);
+                    } else if (sign === "=") {
+                        return e2[key] === Number(value);
+                    }
+                });
+                return sectionList;
+            }
+            return el === undefined;
+        });
+        return final;*/
     }
 
 }
