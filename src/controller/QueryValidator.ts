@@ -1,7 +1,7 @@
 import {InsightError} from "./IInsightFacade";
 import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
-import {IQueryValidator} from "./InsightFacade";
+import InsightFacade, {IQueryValidator} from "./InsightFacade";
 
 export default class QueryValidator implements IQueryValidator {
     private where: string;
@@ -88,7 +88,7 @@ export default class QueryValidator implements IQueryValidator {
     }
 
     public getColumnsKeyWithoutUnderscore(): string[] {
-        if(this.getColumnsKey()){
+        if(this.getColumnsKey()) {
             let columnsWithotUndescore = [];
             for (const val of this.getColumnsKey()) {
                 columnsWithotUndescore.push(val.split("_")[1]);
@@ -164,7 +164,6 @@ export default class QueryValidator implements IQueryValidator {
                     this.setWhere(query[key].toString());
                     this.validateQuery(query[key]);
                 } else if (key === "IS") {
-                    Log.info("In where");
                     if (!this.whereSet()) {
                         throw new InsightError();
                     } else {
@@ -288,6 +287,19 @@ export default class QueryValidator implements IQueryValidator {
     private validateMKey(mKey: string): boolean {
         let re = /[^_]+_(avg|pass|fail|audit|year)/g;
         if (re.test(mKey)) {
+            let id = mKey.split("_")[0];
+            if (! this.isIDinListofIDs(id)) {
+                throw InsightError;
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    private isIDinListofIDs(id: any): boolean{
+        let fs = require("fs");
+        let currentDataFiles: string[] = fs.readdirSync("./test/data/");
+        if (currentDataFiles.indexOf(id) > -1) {
             return true;
         } else {
             return false;
@@ -297,9 +309,13 @@ export default class QueryValidator implements IQueryValidator {
     private validateSkey(sKey: string): boolean {
         let re = /[^_]+_(dept|id|instructor|title|uuid)/g;
         if (re.test(sKey)) {
+            let id = sKey.split("_")[0];
+            if (! this.isIDinListofIDs(id)) {
+                throw InsightError;
+            }
             return true;
         } else {
-            return false;
+            throw InsightError;
         }
     }
 
