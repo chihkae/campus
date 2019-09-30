@@ -45,7 +45,7 @@ function parseCourse(text: string, fileName: string): Course {
     if (courses.length > 0) {
         // for each section in the course, extract the necessary data
         for (let section of courses) {
-            let s = extractSectionData(section);
+            let s = extractSectionData(section, fileName);
             sections.push(s);
         }
         // return a course with all of its sections
@@ -56,10 +56,15 @@ function parseCourse(text: string, fileName: string): Course {
     }
 }
 
-function extractSectionData(section: any): Section {
-    // TODO: skip a section if it is not valid?
+function getCourseId(courseName: string): string {
+    return courseName.match(/\d+/g).pop();
+}
+
+function extractSectionData(section: any, fileName: string): Section {
     let sect = new Section();
-    sect.id = section.id;
+    // extract the numbers from the file name (for the course id)
+    sect.id = getCourseId(fileName);
+    sect.uuid = section.id;
     sect.instructor = section.Professor;
     sect.title = section.Title;
     sect.pass = section.Pass;
@@ -68,7 +73,6 @@ function extractSectionData(section: any): Section {
     sect.avg = section.Avg;
     sect.year = section.Year;
     sect.dept = section.Subject;
-    // TODO: need to find uuid
     return sect;
 }
 
@@ -109,7 +113,9 @@ export default class InsightFacade implements IInsightFacade {
                     return zip.files[filename].async("text")
                     // use the string data to parse course information
                         .then(function (txt: string) {
-                            let course = parseCourse(txt, filename);
+                            // remove the "courses/" part of the file name
+                            let courseName = filename.split("/").pop();
+                            let course = parseCourse(txt, courseName);
                             if (course !== undefined) { datasetToAdd.courses.push(course); }
                         })
                         .catch((err) => {
