@@ -6,11 +6,12 @@ import {JSZipObject} from "jszip";
 import {type} from "os";
 import {Dataset, Course, Section} from "./Dataset";
 
+// returns false if id is whitespace, includes an underscore, or is null
 function validateId(id: string): boolean {
-    // return false if id is whitespace, includes an underscore, is null, or has already been added
     return !(id.trim() === "" || id.includes("_") || id == null);
 }
 
+// creates a Dataset object with the given object and kind, with an empty array of courses
 function initializeDataset(id: string, kind: InsightDatasetKind): Dataset {
     let dataset: Dataset = new Dataset();
     dataset.id = id;
@@ -19,6 +20,8 @@ function initializeDataset(id: string, kind: InsightDatasetKind): Dataset {
     return dataset;
 }
 
+// This function writes the given Dataset to the "data" directory, and returns a promise
+// with all of the currently added dataset ids
 function writeDatasetToDisk(dataset: Dataset, id: string): Promise<string[]> {
     let fs = require("fs");
     let myJSON: string = JSON.stringify(dataset);
@@ -29,12 +32,14 @@ function writeDatasetToDisk(dataset: Dataset, id: string): Promise<string[]> {
     });
 }
 
+// returns a string array of the currently added datasets
 function getCurrentlyAddedDatasetIds(): string[] {
     let fs = require("fs");
     let currentDataFiles: string[] = fs.readdirSync("data");
     return currentDataFiles;
 }
 
+// takes in a JSON string representation of a course and returns a corresponding course object
 function parseCourse(text: string, fileName: string): Course {
     // get course as a JSON object
     let courseAsJSON = JSON.parse(text);
@@ -56,10 +61,13 @@ function parseCourse(text: string, fileName: string): Course {
     }
 }
 
+// parses the course number from the given course name
 function getCourseId(courseName: string): string {
     return courseName.match(/\d+/g).pop();
 }
 
+// extracts necessary data from a JSON representation of a section, and returns
+// a section with that information
 function extractSectionData(section: any, fileName: string): Section {
     let sect = new Section();
     // extract the numbers from the file name (for the course id)
