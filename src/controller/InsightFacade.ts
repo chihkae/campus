@@ -50,7 +50,7 @@ function parseCourse(text: string, fileName: string): Course {
     if (courses.length > 0) {
         // for each section in the course, extract the necessary data
         for (let section of courses) {
-            let s = extractSectionData(section, fileName);
+            let s = extractSectionData(section);
             sections.push(s);
         }
         // return a course with all of its sections
@@ -61,17 +61,12 @@ function parseCourse(text: string, fileName: string): Course {
     }
 }
 
-// parses the course number from the given course name
-function getCourseId(courseName: string): string {
-    return courseName.match(/\d+/g).pop();
-}
-
 // extracts necessary data from a JSON representation of a section, and returns
 // a section with that information
-function extractSectionData(section: any, fileName: string): Section {
+function extractSectionData(section: any): Section {
     let sect = new Section();
     // extract the numbers from the file name (for the course id)
-    sect.id = getCourseId(fileName);
+    sect.id = section.Course;
     sect.uuid = section.id;
     sect.instructor = section.Professor;
     sect.title = section.Title;
