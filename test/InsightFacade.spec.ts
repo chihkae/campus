@@ -1,10 +1,9 @@
-import { expect } from "chai";
+import {expect} from "chai";
 import * as fs from "fs-extra";
-import {InsightDatasetKind, InsightError} from "../src/controller/IInsightFacade";
+import {InsightDataset, InsightDatasetKind, InsightError} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
-import {Dataset} from "../src/controller/Dataset";
 
 // This should match the schema given to TestUtil.validate(..) in TestUtil.readTestQueries(..)
 // except 'filename' which is injected when the file is read.
@@ -99,9 +98,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
     });
 
-    it("test a dataset with an underscore in id", function () {
+    it("test adding a dataset with an underscore in id", function () {
         const id: string = "under_score";
-        const expected: string[] = [];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
             // should return empty array, since id has an underscore
             expect.fail();
@@ -111,8 +109,19 @@ describe("InsightFacade Add/Remove Dataset", function () {
         });
     });
 
-    it("test a dataset with whitespace id", function () {
+    it("test adding a dataset with whitespace id", function () {
         const id: string = " ";
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            // should return empty array, since id is invalid
+            expect.fail();
+        }).catch((err: any) => {
+            expect(err).to.be.instanceOf(InsightError);
+            expect(err.message).to.equal("id is invalid");
+        });
+    });
+
+    it("test adding a dataset with null as an id", function () {
+        const id: string = null;
         const expected: string[] = [];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
             // should return empty array, since id is invalid
@@ -120,6 +129,59 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }).catch((err: any) => {
             expect(err).to.be.instanceOf(InsightError);
             expect(err.message).to.equal("id is invalid");
+        });
+    })
+
+    it("test listDatasets with no datasets added", function () {
+        const expected: InsightDataset[] = [];
+        return insightFacade.listDatasets().then((result: InsightDataset[]) => {
+            expect(result).to.deep.equal(expected);
+        }).catch((err: any) => {
+            expect.fail();
+        });
+    });
+
+    it("test listDatasets with one dataset added", function () {
+        const id: string = "oneCourse";
+        let expected: InsightDataset[] = [];
+        const oneCourseDataset = {} as InsightDataset;
+        oneCourseDataset.id = "oneCourse";
+        oneCourseDataset.kind = InsightDatasetKind.Courses;
+        oneCourseDataset.numRows = 1;
+        expected.push(oneCourseDataset);
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then(() => {
+            return insightFacade.listDatasets().then((result: InsightDataset[]) => {
+                expect(result).to.deep.equal(expected);
+            }).catch((err: any) => {
+                expect.fail();
+            });
+        });
+    });
+
+    it("test listDatasets with two datasets added", function () {
+        let expected: InsightDataset[] = [];
+
+        const courses: string = "courses";
+        const coursesDataset = {} as InsightDataset;
+        coursesDataset.id = "courses";
+        coursesDataset.kind = InsightDatasetKind.Courses;
+        coursesDataset.numRows = 64612;
+        expected.push(coursesDataset);
+
+        const oneCourse: string = "oneCourse";
+        const oneCourseDataset = {} as InsightDataset;
+        oneCourseDataset.id = "oneCourse";
+        oneCourseDataset.kind = InsightDatasetKind.Courses;
+        oneCourseDataset.numRows = 1;
+        expected.push(oneCourseDataset);
+
+        insightFacade.addDataset(oneCourse, datasets[oneCourse], InsightDatasetKind.Courses);
+        return insightFacade.addDataset(courses, datasets[courses], InsightDatasetKind.Courses).then(() => {
+            return insightFacade.listDatasets().then((result: InsightDataset[]) => {
+                expect(result).to.deep.equal(expected);
+            }).catch((err: any) => {
+                expect.fail();
+            });
         });
     });
 
