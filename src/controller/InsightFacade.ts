@@ -140,7 +140,30 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public removeDataset(id: string): Promise<string> {
-        return Promise.reject("Not implemented.");
+        // Validate id (must not contain underscore, be only whitespace, be null)
+        // If invalid, reject with InsightError
+        if (!validateId(id)) {
+            return Promise.reject(new InsightError("id is invalid"));
+        }
+        // If is has not already  been added, reject
+        if (!getCurrentlyAddedDatasetIds().includes(id)) {
+            return Promise.reject((new NotFoundError("A dataset with a corresponding Id has already been added")));
+        }
+
+        const fs = require("fs");
+        const path = `data/${id}`;
+
+        // TODO: use the async version
+        // return fs.unlink(path, (err: any) => {
+        //     if (err) {
+        //         return Promise.reject(err.toString());
+        //     } else {
+        //         return Promise.resolve(id);
+        //     }
+        // });
+
+        fs.unlinkSync(path);
+        return Promise.resolve(id);
     }
 
     public performQuery(query: any): Promise <any[]> {

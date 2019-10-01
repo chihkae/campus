@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import * as fs from "fs-extra";
-import {InsightDataset, InsightDatasetKind, InsightError} from "../src/controller/IInsightFacade";
+import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "../src/controller/IInsightFacade";
 import InsightFacade from "../src/controller/InsightFacade";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
@@ -130,7 +130,37 @@ describe("InsightFacade Add/Remove Dataset", function () {
             expect(err).to.be.instanceOf(InsightError);
             expect(err.message).to.equal("id is invalid");
         });
-    })
+    });
+
+    it("test removing a dataset when there are no datasets added", function () {
+        return insightFacade.removeDataset("doesn't matter").then((result: string) => {
+            expect.fail();
+        }).catch((err: InsightError) => {
+            expect(err).to.be.instanceOf(NotFoundError);
+            expect(err.message).to.equal("A dataset with a corresponding Id has already been added");
+        });
+    });
+
+    it("test removing a dataset using invalid id", function () {
+        return insightFacade.removeDataset("foo_bar").then((result: string) => {
+            expect.fail();
+        }).catch((err: InsightError) => {
+            expect(err).to.be.instanceOf(InsightError);
+            expect(err.message).to.equal("id is invalid");
+        });
+    });
+
+    it("test removing one dataset", function () {
+        const id: string = "oneCourse";
+        const expected: string = id;
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then(() => {
+            return insightFacade.removeDataset(id).then((result: string) => {
+                expect(result).to.deep.equal(expected);
+            });
+        }).catch((err: any) => {
+            expect.fail(err, expected, "Should not have rejected");
+        });
+    });
 
     it("test listDatasets with no datasets added", function () {
         const expected: InsightDataset[] = [];
