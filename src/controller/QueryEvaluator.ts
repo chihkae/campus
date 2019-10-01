@@ -33,7 +33,7 @@ export default class QueryEvaluator {
     public evaluateResult(query: any): any[] {
         for (const key of Object.keys(query)) {
             if (key === "WHERE") {
-                if (Object.keys(query[key]).length === 0){
+                if (Object.keys(query[key]).length === 0) {
                     return this.getData();
                 } else {
                     return this.evaluateResult(query[key]);
@@ -218,11 +218,11 @@ export default class QueryEvaluator {
                         result.push(section);
                     }
                 } else if (sign === "<") {
-                    if (section[key] < Number(value)){
+                    if (section[key] < Number(value)) {
                         result.push(section);
                     }
                 } else if (sign === "=") {
-                    if (section[key] === Number(value)){
+                    if (section[key] === Number(value)) {
                         result.push(section);
                     }
                 }

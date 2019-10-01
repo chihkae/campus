@@ -1,8 +1,5 @@
 import {InsightError} from "./IInsightFacade";
-import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 import InsightFacade, {IQueryValidator} from "./InsightFacade";
-
 export default class QueryValidator implements IQueryValidator {
     private where: string;
     private options: string;
@@ -11,7 +8,6 @@ export default class QueryValidator implements IQueryValidator {
     private columnsKey: string[];
     private orderKey: string;
     private idString: string;
-
     public setWhere(s: string): void {
         if (this.where === undefined && s !== null) {
             this.where = s;
@@ -19,21 +15,18 @@ export default class QueryValidator implements IQueryValidator {
             throw InsightError;
         }
     }
-
     public whereSet(): boolean {
         if (typeof this.where === undefined) {
             return false;
         }
         return true;
     }
-
     public whereSetError(): void {
         if (typeof this.where === undefined) {
             throw new InsightError();
         }
         return;
     }
-
     public setOptions(s: string): void {
         if (this.options === undefined && s !== null) {
             this.options = s;
@@ -41,14 +34,12 @@ export default class QueryValidator implements IQueryValidator {
             throw InsightError;
         }
     }
-
     public optionsSet(): boolean {
         if (typeof this.options === undefined) {
             return false;
         }
         return true;
     }
-
     public setColumns(s: string): void {
         if (this.columns === undefined && s !== null) {
             this.columns = s;
@@ -56,14 +47,12 @@ export default class QueryValidator implements IQueryValidator {
             throw InsightError;
         }
     }
-
     public columnsSet(): boolean {
         if (typeof this.columns === undefined) {
             return false;
         }
         return true;
     }
-
     public setColumnsKey(s: string[]): void {
         if (s !== null && this.columnsKey === undefined) {
             this.columnsKey = [];
@@ -76,11 +65,9 @@ export default class QueryValidator implements IQueryValidator {
             throw InsightError;
         }
     }
-
     public getColumnsKey(): string[] {
         return this.columnsKey;
     }
-
     public getColumnsKeyWithoutUnderscore(): string[] {
         if (this.getColumnsKey()) {
             let columnsWithotUndescore = [];
@@ -90,7 +77,6 @@ export default class QueryValidator implements IQueryValidator {
             return columnsWithotUndescore;
         }
     }
-
     public getOrderKeyWithoutUnderscore(): string {
         if (this.getOrderKey()) {
             let orderKey = this.getOrderKey();
@@ -98,7 +84,6 @@ export default class QueryValidator implements IQueryValidator {
             return orderKeyWithoutUnderscore;
         }
     }
-
     public setOrderKey(s: string): void {
         if (this.orderKey === undefined && s !== null) {
             let id = s.split("_")[0];
@@ -108,18 +93,15 @@ export default class QueryValidator implements IQueryValidator {
             throw InsightError;
         }
     }
-
     public getOrderKey(): string {
         return this.orderKey;
     }
-
     public orderKeySet(): boolean {
         if (this.orderKey === undefined) {
             return false;
         }
         return true;
     }
-
     public setIdString(s: string): void {
         if (s !== null && this.idString === undefined) {
             this.idString = s;
@@ -127,11 +109,9 @@ export default class QueryValidator implements IQueryValidator {
             throw InsightError;
         }
     }
-
     public getIdString(): string {
         return this.idString;
     }
-
     public validateAllQueryPartsExist(): void {
         if (this.whereSet() && this.columnsSet() && this.orderKeySet()) {
             return;
@@ -139,7 +119,6 @@ export default class QueryValidator implements IQueryValidator {
             throw InsightError;
         }
     }
-
     public validateQuery(query: any): boolean {
         if (query != null && typeof query === "object") {
             try {
@@ -186,7 +165,6 @@ export default class QueryValidator implements IQueryValidator {
         }
         return false;
     }
-
     private validateOrderKey(orderKey: any) {
         let columnsKey: string[] = this.getColumnsKey();
         let matchesColumnskey = false;
@@ -204,7 +182,6 @@ export default class QueryValidator implements IQueryValidator {
             throw InsightError;
         }
     }
-
     private validateColumnsArray(query: any) {
         if (Array.isArray(query)) {
             if (query != null && typeof query === "object") {
@@ -223,7 +200,6 @@ export default class QueryValidator implements IQueryValidator {
             throw InsightError;
         }
     }
-
     private validateQueryWithArray(query: any) {
         if (Array.isArray(query)) {
             if (query != null && typeof query === "object") {
@@ -235,7 +211,6 @@ export default class QueryValidator implements IQueryValidator {
             throw InsightError;
         }
     }
-
     private validateIS(query: any): void {
         if (Object.keys(query).length > 1 || Object.values(query).length > 1) {
             throw InsightError;
@@ -254,7 +229,6 @@ export default class QueryValidator implements IQueryValidator {
         }
         throw InsightError;
     }
-
     private validateMKey(mKey: string): boolean {
         let re = /[^_]+_(avg|pass|fail|audit|year)/g;
         if (re.test(mKey)) {
@@ -268,7 +242,6 @@ export default class QueryValidator implements IQueryValidator {
             return false;
         }
     }
-
     private isIDinListofIDs(id: any): boolean {
         let fs = require("fs");
         let currentDataFiles: string[] = fs.readdirSync("./test/data/");
@@ -292,7 +265,6 @@ export default class QueryValidator implements IQueryValidator {
             return false;
         }
     }
-
     private validateNumber(num: any): boolean {
         let re = /^[0-9]+$/g;
         if (re.test(num)) {
@@ -301,7 +273,6 @@ export default class QueryValidator implements IQueryValidator {
             return false;
         }
     }
-
     private validateCompare(query: any) {
         if (Object.keys(query).length > 1 || Object.values(query).length > 1) {
             throw InsightError;
