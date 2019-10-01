@@ -92,11 +92,6 @@ function extractSectionData(section: any): Section {
  */
 export default class InsightFacade implements IInsightFacade {
 
-    // returns false if id is whitespace, includes an underscore, or is null
-    public validateId(id: string): boolean {
-        return !(id === null || id.trim() === "" || id.includes("_"));
-    }
-
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
     }
@@ -104,7 +99,7 @@ export default class InsightFacade implements IInsightFacade {
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         // Validate id (must not contain underscore, be only whitespace, be null)
         // If invalid, reject with InsightError
-        if (!this.validateId(id)) {
+        if (!validateId(id)) {
             return Promise.reject(new InsightError("id is invalid"));
         }
         // If is has already been added, reject
