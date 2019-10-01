@@ -4,7 +4,7 @@ export class Dataset implements InsightDataset {
     public id: string;
     public kind: InsightDatasetKind;
     public courses: Course[];
-    public numRows: number; // may not need this
+    public numRows: number;
 }
 
 export class Course {
