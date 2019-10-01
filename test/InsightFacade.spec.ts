@@ -81,7 +81,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 
     it("test adding multiple courses", function () {
         const oneCourse: string = "oneCourse";
-        const courses: string = "courses"
+        const courses: string = "courses";
         const expected: string[] = [courses, oneCourse];
         insightFacade.addDataset(oneCourse, datasets[oneCourse], InsightDatasetKind.Courses)
             .then((result: string[]) => {
