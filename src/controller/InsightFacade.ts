@@ -1,5 +1,5 @@
 import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
 import * as JSZip from "jszip";
 import {JSZipObject} from "jszip";
@@ -152,6 +152,7 @@ export default class InsightFacade implements IInsightFacade {
                 let queryValidator = new QueryValidator();
                 try {
                     if (queryValidator.validateQuery(query)) {
+                        queryValidator.validateAllQueryPartsExist();
                         let fs = require("fs");
                         fs.readFile("./test/data/courses", (err: any, data: any) => {
                             if (err) {
@@ -167,9 +168,19 @@ export default class InsightFacade implements IInsightFacade {
                                     let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
                                     let id = queryValidator.getIdString();
                                     let sortedWithKeys = queryEvaluator.addID(sorted, id, keys );
-                                    resolve(sortedWithKeys);
-                                } catch (err) {
-                                    Log.info(err);
+                                    if (sortedWithKeys.length > 5000) {
+                                        reject(new ResultTooLargeError());
+                                    } else {
+                                        resolve(sortedWithKeys);
+                                    }
+                                } catch (e) {
+                                    if ( e instanceof ResultTooLargeError) {
+                                        reject(new ResultTooLargeError());
+                                    } else if (e instanceof InsightError) {
+                                        reject(new InsightError());
+                                    } else {
+                                        reject(e);
+                                    }
                                 }
                             }
                         });

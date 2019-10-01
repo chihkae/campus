@@ -1,4 +1,4 @@
-import {InsightError} from "./IInsightFacade";
+import {InsightError, ResultTooLargeError} from "./IInsightFacade";
 import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 import {IQueryValidator} from "./InsightFacade";
@@ -33,7 +33,11 @@ export default class QueryEvaluator {
     public evaluateResult(query: any): any[] {
         for (const key of Object.keys(query)) {
             if (key === "WHERE") {
-                return this.evaluateResult(query[key]);
+                if (Object.keys(query[key]).length === 0){
+                    return this.getData();
+                } else {
+                    return this.evaluateResult(query[key]);
+                }
             } else if (key === "IS") {
                 let isKey = Object.keys(query[key]).toString();
                 isKey = isKey.toString().substring(isKey.indexOf("_") + 1);
@@ -82,6 +86,9 @@ export default class QueryEvaluator {
                 let count = 1;
                 for (const value of Object.values(query)) {
                     let currentResult = this.evaluateResult(value);
+                    if (currentResult === undefined) {
+                        throw InsightError;
+                    }
                     if (count === 1) {
                         innerResult = currentResult;
                         count++;
@@ -101,9 +108,24 @@ export default class QueryEvaluator {
         let result: any[] = [];
         content.courses.forEach(function (course: any) {
             course.sections.forEach(function (section: any) {
-               if (section[key] === value.toString()) {
+                let re1 = /^[*]?[^*]*[*]?/g;
+                let re2 = /[^*]*[*]?/g;
+                let re3 = /^[*]?[^*]*/g;
+                let stringBefore = new RegExp("[^*]*" + value.toString() );
+                let re4 = /[^*]*/g;
+                let stringMiddle = new RegExp("[^*]" + value.toString() + "[^*]*");
+                let stringAfter = new RegExp(value.toString() + "[^*]*");
+                if (re1.test(value.toString()) && stringMiddle.test(section[key].toString())) {
+                    result.push(section);
+                } else if (re2.test(value.toString()) && stringAfter.test(section[key].toString())) {
                   result.push(section);
-               }
+               } else if (re3.test(value.toString()) && stringBefore.test(section[key].toString())) {
+                    result.push(section);
+                } else if (re4.test(value.toString())) {
+                    if (section[key] === value) {
+                        result.push(section);
+                    }
+                }
             });
         });
         return result;
@@ -129,14 +151,26 @@ export default class QueryEvaluator {
     }
     public sort(result: any, keyToSort: string): any[] {
         let sortedResult = [];
-        if (keyToSort === "instructor" || keyToSort === "title" || keyToSort === "dept") {
-            sortedResult = result.sort(function (a: any, b: any) {
-                return a[keyToSort].toString().localeCompare(b[keyToSort].toString());
-            });
-        } else {
-            sortedResult = result.sort(function (a: any, b: any) {
-                return Number(a[keyToSort]) - Number(b[keyToSort]);
-            });
+        try {
+            if (keyToSort === "instructor" || keyToSort === "title" || keyToSort === "dept") {
+                sortedResult = result.sort(function (a: any, b: any) {
+                    return a[keyToSort].toString().localeCompare(b[keyToSort].toString());
+                });
+            } else {
+                sortedResult = result.sort(function (a: any, b: any) {
+                    return Number(a[keyToSort]) - Number(b[keyToSort]);
+                });
+            }
+        } catch (e) {
+            if (result["courses"] !== undefined) {
+                let counter = 0;
+                for (const values of Object(Object.values(result.courses))) {
+                    counter += values["sections"].length;
+                }
+                if (counter > 5000) {
+                    throw new ResultTooLargeError();
+                }
+            }
         }
         return sortedResult;
     }

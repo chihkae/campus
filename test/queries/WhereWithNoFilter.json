@@ -1,0 +1,18 @@
+{
+    "title": "Select with No filter in where-ResultTooLarge",
+    "query": {
+        "WHERE": {
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": "ResultTooLargeError"
+}
+
+

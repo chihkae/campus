@@ -1,0 +1,52 @@
+
+{
+    "title": "Select course title, avg where course avg is not > 40 or =34",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "OR":[
+                        {
+                            "AND": [
+                                {
+                                    "GT": {
+                                        "courses_avg": 90
+                                    }
+                                },
+                                {
+                                    "IS": {
+                                        "courses_dept": "adhe"
+                                    }
+                                }
+                            ]
+                        }],
+                    "AND":[
+                        {
+                            "AND": [
+                                {
+                                    "GT": {
+                                        "courses_avg": 93
+                                    }
+                                },
+                                {
+                                    "IS": {
+                                        "courses_dept": "adhe"
+                                    }
+                                }
+                            ]
+                        }]
+
+                }]},
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
+

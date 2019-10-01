@@ -21,7 +21,7 @@ export default class QueryValidator implements IQueryValidator {
     }
 
     public whereSet(): boolean {
-        if (typeof this.where === "undefined") {
+        if (typeof this.where === undefined) {
             return false;
         }
         return true;
@@ -127,7 +127,7 @@ export default class QueryValidator implements IQueryValidator {
         return this.orderKey;
     }
 
-    public orderKeySet(s: string): boolean {
+    public orderKeySet(): boolean {
         if (this.orderKey === undefined) {
             return false;
         }
@@ -153,67 +153,71 @@ export default class QueryValidator implements IQueryValidator {
         return false;
     }
 
-    public validateAllQueryPartsExist(): boolean {
-        if (this.whereSet() && this.columnsSet() && this.optionsSet()) {
-            return true;
+    public validateAllQueryPartsExist(): void {
+        if (this.whereSet() && this.columnsSet() && this.orderKeySet()) {
+            return;
+        } else {
+            throw InsightError;
         }
-        throw InsightError;
     }
 
     public validateQuery(query: any): boolean {
         if (query != null && typeof query === "object") {
-            for (const key of Object.keys(query)) {
-                Log.info(key);
-                if (key === "WHERE") {
-                    this.setWhere(query[key].toString());
-                    this.validateQuery(query[key]);
-                } else if (key === "IS") {
-                    if (!this.whereSet()) {
-                        throw new InsightError();
-                    } else {
-                        this.validateIS(query[key]);
-                    }
-                } else if (key === "NOT") {
-                    if (!this.whereSet()) {
-                        throw InsightError;
-                    } else {
+            try {
+                for (const key of Object.keys(query)) {
+                    if (key === "WHERE") {
+                        this.setWhere(query[key].toString());
                         this.validateQuery(query[key]);
-                    }
-                } else if (key === "GT" || key === "LT" || key === "EQ") {
-                    if (!this.whereSet()) {
-                        throw InsightError;
-                    } else {
-                        this.validateCompare(query[key]);
-                    }
-                } else if (key === "OR" || key === "AND") {
-                    if (!this.whereSet()) {
-                        throw InsightError;
-                    } else {
-                        this.validateQueryWithArray(query[key]);
+                    } else if (key === "IS") {
+                        if (!this.whereSet()) {
+                            throw new InsightError();
+                        } else {
+                            this.validateIS(query[key]);
+                        }
+                    } else if (key === "NOT") {
+                        if (!this.whereSet()) {
+                            throw InsightError;
+                        } else {
+                            this.validateQuery(query[key]);
+                        }
+                    } else if (key === "GT" || key === "LT" || key === "EQ") {
+                        if (!this.whereSet()) {
+                            throw InsightError;
+                        } else {
+                            this.validateCompare(query[key]);
+                        }
+                    } else if (key === "OR" || key === "AND") {
+                        if (!this.whereSet()) {
+                            throw InsightError;
+                        } else {
+                            this.validateQueryWithArray(query[key]);
 
-                    }
-                } else if (key === "OPTIONS") {
-                    if (!this.whereSet()) {
-                        throw InsightError;
-                    } else {
-                        this.setOptions(query[key].toString());
-                        this.validateQuery(query[key]);
-                    }
-                } else if (key === "COLUMNS") {
-                    if (this.whereSet() && this.optionsSet()) {
-                        this.setColumns(query[key].toString());
-                        this.validateColumnsArray(query[key]);
-                    } else {
-                        throw InsightError;
-                    }
-                } else if (key === "ORDER") {
-                    if (!this.whereSet() || !this.columnsSet() || !this.optionsSet()) {
-                        throw InsightError;
-                    } else {
-                        this.setOrderKey(query[key]);
-                        this.validateOrderKey(query[key]);
+                        }
+                    } else if (key === "OPTIONS") {
+                        if (!this.whereSet()) {
+                            throw InsightError;
+                        } else {
+                            this.setOptions(query[key].toString());
+                            this.validateQuery(query[key]);
+                        }
+                    } else if (key === "COLUMNS") {
+                        if (this.whereSet() && this.optionsSet()) {
+                            this.setColumns(query[key].toString());
+                            this.validateColumnsArray(query[key]);
+                        } else {
+                            throw InsightError;
+                        }
+                    } else if (key === "ORDER") {
+                        if (!this.whereSet() || !this.columnsSet() || !this.optionsSet()) {
+                            throw InsightError;
+                        } else {
+                            this.setOrderKey(query[key]);
+                            this.validateOrderKey(query[key]);
+                        }
                     }
                 }
+            } catch (error) {
+                throw InsightError;
             }
             return true;
         }
@@ -321,16 +325,16 @@ export default class QueryValidator implements IQueryValidator {
             }
             return true;
         } else {
-            throw InsightError;
+            return false;
         }
     }
 
-    private validateNumber(num: any): void {
+    private validateNumber(num: any): boolean {
         let re = /^[0-9]+$/g;
         if (re.test(num)) {
             return;
         } else {
-            throw InsightError;
+            return false;
         }
     }
     private validateCompare(query: any) {

@@ -1,0 +1,19 @@
+{
+    "title": "Select instructor, title, pass where average = 50",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_3": "wolfman, steven"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "2_3",
+                "5_6"
+            ],
+            "ORDER": "1_3"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

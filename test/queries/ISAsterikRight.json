@@ -1,0 +1,54 @@
+{
+    "title": "Select course title, avg where Steven Wolfman is the instructor",
+    "query": {
+        "WHERE": {
+            "IS": {"courses_uuid":"5034*"}
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_avg",
+                "courses_uuid"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_title":"vikings & myth",
+            "courses_avg":77.01,
+            "courses_uuid":"50348"
+        },
+        {
+            "courses_title":"vikings & myth",
+            "courses_avg":77.01,
+            "courses_uuid":"50349"
+        },
+        {
+            "courses_title":"major scan lit",
+            "courses_avg":84.3,
+            "courses_uuid":"50346"
+        },
+        {
+            "courses_title":"major scan lit",
+            "courses_avg":84.3,
+            "courses_uuid":"50347"
+        },
+        {
+            "courses_title":"physcal cosmolgy",
+            "courses_avg":84.92,
+            "courses_uuid":"50342"
+        },
+        {
+            "courses_title":"physcal cosmolgy",
+            "courses_avg":84.92,
+            "courses_uuid":"50343"
+        },
+        {
+            "courses_title":"arch design v",
+            "courses_avg":86.86,
+            "courses_uuid":"5034"
+        }
+    ]
+}

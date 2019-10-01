@@ -1,0 +1,21 @@
+{
+    "title": "Select course title, avg with averages that are not > 40 and < 100",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "EQ": {
+                    "courses_avg": 40
+                }
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": "ResultTooLargeError"
+}
