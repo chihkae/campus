@@ -197,7 +197,10 @@ export default class InsightFacade implements IInsightFacade {
         let currentlyAddedDatasets: string[] = fs.readdirSync("data");
         let toReturn: InsightDataset[] = [];
         currentlyAddedDatasets.forEach(function (dataset) {
+            // TODO: use the async version
             let datasetAsString: string = fs.readFileSync(`data/${dataset}`).toString();
+            // theoretically this JSON.parse() call should always work,
+            // since we have validation when we add the dataset, they should all be properly formatted
             let datasetJson = JSON.parse(datasetAsString);
             const datasetToAdd: InsightDataset = {} as InsightDataset;
             datasetToAdd.id = datasetJson.id;
