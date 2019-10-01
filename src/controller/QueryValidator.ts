@@ -27,19 +27,11 @@ export default class QueryValidator implements IQueryValidator {
         return true;
     }
 
-    public setOrder(s: string): void {
-        if (this.order === undefined && s !== null) {
-            this.order = s;
-        } else {
-            throw InsightError;
+    public whereSetError(): void {
+        if (typeof this.where === undefined) {
+            throw new InsightError();
         }
-    }
-
-    public orderSet(): boolean {
-        if (typeof this.order === undefined) {
-            return false;
-        }
-        return true;
+        return;
     }
 
     public setOptions(s: string): void {
@@ -90,7 +82,7 @@ export default class QueryValidator implements IQueryValidator {
     }
 
     public getColumnsKeyWithoutUnderscore(): string[] {
-        if(this.getColumnsKey()) {
+        if (this.getColumnsKey()) {
             let columnsWithotUndescore = [];
             for (const val of this.getColumnsKey()) {
                 columnsWithotUndescore.push(val.split("_")[1]);
@@ -98,19 +90,13 @@ export default class QueryValidator implements IQueryValidator {
             return columnsWithotUndescore;
         }
     }
+
     public getOrderKeyWithoutUnderscore(): string {
         if (this.getOrderKey()) {
             let orderKey = this.getOrderKey();
             let orderKeyWithoutUnderscore = orderKey.split("_")[1];
             return orderKeyWithoutUnderscore;
         }
-    }
-
-    public ColumnsKeySet(): boolean {
-        if (this.columnsKey === undefined) {
-            return false;
-        }
-        return true;
     }
 
     public setOrderKey(s: string): void {
@@ -146,13 +132,6 @@ export default class QueryValidator implements IQueryValidator {
         return this.idString;
     }
 
-    public IdStringSet(): boolean {
-        if (this.idString === undefined) {
-            return true;
-        }
-        return false;
-    }
-
     public validateAllQueryPartsExist(): void {
         if (this.whereSet() && this.columnsSet() && this.orderKeySet()) {
             return;
@@ -169,37 +148,21 @@ export default class QueryValidator implements IQueryValidator {
                         this.setWhere(query[key].toString());
                         this.validateQuery(query[key]);
                     } else if (key === "IS") {
-                        if (!this.whereSet()) {
-                            throw new InsightError();
-                        } else {
-                            this.validateIS(query[key]);
-                        }
+                        this.whereSetError();
+                        this.validateIS(query[key]);
                     } else if (key === "NOT") {
-                        if (!this.whereSet()) {
-                            throw InsightError;
-                        } else {
-                            this.validateQuery(query[key]);
-                        }
+                        this.whereSetError();
+                        this.validateQuery(query[key]);
                     } else if (key === "GT" || key === "LT" || key === "EQ") {
-                        if (!this.whereSet()) {
-                            throw InsightError;
-                        } else {
-                            this.validateCompare(query[key]);
-                        }
+                        this.whereSetError();
+                        this.validateCompare(query[key]);
                     } else if (key === "OR" || key === "AND") {
-                        if (!this.whereSet()) {
-                            throw InsightError;
-                        } else {
-                            this.validateQueryWithArray(query[key]);
-
-                        }
+                        this.whereSetError();
+                        this.validateQueryWithArray(query[key]);
                     } else if (key === "OPTIONS") {
-                        if (!this.whereSet()) {
-                            throw InsightError;
-                        } else {
-                            this.setOptions(query[key].toString());
-                            this.validateQuery(query[key]);
-                        }
+                        this.whereSetError();
+                        this.setOptions(query[key].toString());
+                        this.validateQuery(query[key]);
                     } else if (key === "COLUMNS") {
                         if (this.whereSet() && this.optionsSet()) {
                             this.setColumns(query[key].toString());
@@ -297,7 +260,7 @@ export default class QueryValidator implements IQueryValidator {
         if (re.test(mKey)) {
             let id = mKey.split("_")[0];
             this.setIdString(id);
-            if (! this.isIDinListofIDs(id)) {
+            if (!this.isIDinListofIDs(id)) {
                 throw InsightError;
             }
             return true;
@@ -305,7 +268,8 @@ export default class QueryValidator implements IQueryValidator {
             return false;
         }
     }
-    private isIDinListofIDs(id: any): boolean{
+
+    private isIDinListofIDs(id: any): boolean {
         let fs = require("fs");
         let currentDataFiles: string[] = fs.readdirSync("./test/data/");
         if (currentDataFiles.indexOf(id) > -1) {
@@ -320,7 +284,7 @@ export default class QueryValidator implements IQueryValidator {
         if (re.test(sKey)) {
             let id = sKey.split("_")[0];
             this.setIdString(id);
-            if (! this.isIDinListofIDs(id)) {
+            if (!this.isIDinListofIDs(id)) {
                 throw InsightError;
             }
             return true;
@@ -337,6 +301,7 @@ export default class QueryValidator implements IQueryValidator {
             return false;
         }
     }
+
     private validateCompare(query: any) {
         if (Object.keys(query).length > 1 || Object.values(query).length > 1) {
             throw InsightError;
