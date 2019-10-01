@@ -122,6 +122,18 @@ export default class QueryEvaluator {
         });
     }
 
+    public addID(result: any[], id: string, keys: string[]): any[] {
+        let list = [];
+        for (const val of result) {
+            let obj: any = {};
+            for (const key of Object.keys(val)) {
+                let newKey = id.concat("_", key.toString());
+                obj[newKey] = val[key];
+            }
+            list.push(obj);
+        }
+        return list;
+    }
     public sort(result: any, keyToSort: string): any[] {
         let sortedResult = [];
         if (keyToSort === "instructor" || keyToSort === "title" || keyToSort === "dept") {
@@ -190,36 +202,6 @@ export default class QueryEvaluator {
             });
         });
         return result;
-            /*let sections = section["sections"].filter(function (el: any) {
-                if (sign === ">") {
-                    return el[key] > Number(value);
-                } else if (sign === "<") {
-                    return el[key] < Number(value);
-                } else if (sign === "=") {
-                    return el[key] === Number(value);
-                }
-            });
-            return sections;
-        });
-        return result;*/
-       /* let final = content.courses.filter(function ( el: any) {
-            let sectionList;
-            let length = el["sections"].length;
-            if (length !== 0) {
-                sectionList = el["sections"].filter(function (e2: any) {
-                    if (sign === ">") {
-                        return e2[key] > Number(value);
-                    } else if (sign === "<") {
-                        return e2[key] < Number(value);
-                    } else if (sign === "=") {
-                        return e2[key] === Number(value);
-                    }
-                });
-                return sectionList;
-            }
-            return el === undefined;
-        });
-        return final;*/
     }
 
 }

@@ -76,6 +76,8 @@ export default class QueryValidator implements IQueryValidator {
         if (s !== null && this.columnsKey === undefined) {
             this.columnsKey = [];
             for (const val of s) {
+                let id = val.split("_")[0];
+                this.setIdString(id);
                 this.columnsKey.push(val);
             }
         } else {
@@ -113,6 +115,8 @@ export default class QueryValidator implements IQueryValidator {
 
     public setOrderKey(s: string): void {
         if (this.orderKey === undefined && s !== null) {
+            let id = s.split("_")[0];
+            this.setIdString(id);
             this.orderKey = s;
         } else {
             throw InsightError;
@@ -133,7 +137,7 @@ export default class QueryValidator implements IQueryValidator {
     public setIdString(s: string): void {
         if (s !== null && this.idString === undefined) {
             this.idString = s;
-        } else {
+        } else if (this.idString.valueOf() !== s.toString().valueOf()) {
             throw InsightError;
         }
     }
@@ -288,6 +292,7 @@ export default class QueryValidator implements IQueryValidator {
         let re = /[^_]+_(avg|pass|fail|audit|year)/g;
         if (re.test(mKey)) {
             let id = mKey.split("_")[0];
+            this.setIdString(id);
             if (! this.isIDinListofIDs(id)) {
                 throw InsightError;
             }
@@ -310,6 +315,7 @@ export default class QueryValidator implements IQueryValidator {
         let re = /[^_]+_(dept|id|instructor|title|uuid)/g;
         if (re.test(sKey)) {
             let id = sKey.split("_")[0];
+            this.setIdString(id);
             if (! this.isIDinListofIDs(id)) {
                 throw InsightError;
             }

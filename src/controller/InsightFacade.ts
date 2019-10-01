@@ -165,7 +165,9 @@ export default class InsightFacade implements IInsightFacade {
                                     let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
                                     let orderkeys = queryValidator.getOrderKeyWithoutUnderscore();
                                     let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
-                                    resolve(sorted);
+                                    let id = queryValidator.getIdString();
+                                    let sortedWithKeys = queryEvaluator.addID(sorted, id, keys );
+                                    resolve(sortedWithKeys);
                                 } catch (err) {
                                     Log.info(err);
                                 }
