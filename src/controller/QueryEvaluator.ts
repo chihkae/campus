@@ -11,7 +11,6 @@ export default class QueryEvaluator {
     private result: string[];
 
     constructor(query: any, data: object) {
-
         this.query = query;
         this.data = data;
         this.result = [];
@@ -42,6 +41,10 @@ export default class QueryEvaluator {
                 let currentResult = this.evaluateIS(isKey, isValue);
                 return currentResult;
             } else if (key === "NOT") {
+                if (query[key].length > 1) {
+                    Log.info("two not keys");
+                    throw InsightError;
+                }
                 let currentResult = this.evaluateResult(query[key]);
                 return this.evaluateNot(currentResult);
             } else if (key === "GT" || key === "LT" || key === "EQ") {
@@ -104,16 +107,6 @@ export default class QueryEvaluator {
             });
         });
         return result;
-       /* let final = content.courses.filter(function (el: any) {
-            let sectionList;
-            if (el["sections"].length !== 0) {
-                sectionList = el["sections"].filter(function (e2: any) {
-                    return e2[key] === value.toString();
-                });
-                return sectionList;
-            }
-        });
-        return final;*/
     }
 
     private evaluateAnd(result1: any, result2: any): any {
