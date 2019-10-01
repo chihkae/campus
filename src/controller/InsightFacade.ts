@@ -8,14 +8,23 @@ import {Dataset, Course, Section} from "./Dataset";
 
 // returns false if id is whitespace, includes an underscore, or is null
 function validateId(id: string): boolean {
-    return !(id.trim() === "" || id.includes("_") || id == null);
+    return !(id === null || id.trim() === "" || id.includes("_"));
 }
 
-// creates a Dataset object with the given object and kind, with an empty array of courses
+function getNumberOfSections(dataset: Dataset): number {
+    let total: number = 0;
+    dataset.courses.forEach(function (course) {
+        total += course.sections.length;
+    });
+    return total;
+}
+
+// creates a Dataset object with the given object and kind, with an empty array of courses and numRows = 0
 function initializeDataset(id: string, kind: InsightDatasetKind): Dataset {
     let dataset: Dataset = new Dataset();
     dataset.id = id;
     dataset.kind = kind;
+    dataset.numRows = 0;
     dataset.courses = [];
     return dataset;
 }
@@ -83,6 +92,11 @@ function extractSectionData(section: any): Section {
  */
 export default class InsightFacade implements IInsightFacade {
 
+    // returns false if id is whitespace, includes an underscore, or is null
+    public validateId(id: string): boolean {
+        return !(id === null || id.trim() === "" || id.includes("_"));
+    }
+
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
     }
@@ -90,7 +104,7 @@ export default class InsightFacade implements IInsightFacade {
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         // Validate id (must not contain underscore, be only whitespace, be null)
         // If invalid, reject with InsightError
-        if (!validateId(id)) {
+        if (!this.validateId(id)) {
             return Promise.reject(new InsightError("id is invalid"));
         }
         // If is has already been added, reject
@@ -122,13 +136,12 @@ export default class InsightFacade implements IInsightFacade {
             });
             // Once all the courses and sections are parsed, serialize and save them to disk
             return Promise.all(promises).then(() => {
+                datasetToAdd.numRows = getNumberOfSections(datasetToAdd);
                 return Promise.resolve(writeDatasetToDisk(datasetToAdd, id));
             });
         }).catch((err) => {
             return Promise.reject(err);
         });
-
-        // return Promise.reject("Not implemented.");
     }
 
     public removeDataset(id: string): Promise<string> {

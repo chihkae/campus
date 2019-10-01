@@ -4,6 +4,7 @@ import {InsightDatasetKind, InsightError} from "../src/controller/IInsightFacade
 import InsightFacade from "../src/controller/InsightFacade";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
+import {Dataset} from "../src/controller/Dataset";
 
 // This should match the schema given to TestUtil.validate(..) in TestUtil.readTestQueries(..)
 // except 'filename' which is injected when the file is read.
@@ -123,6 +124,29 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
 });
+
+describe("Test for helper functions", () => {
+
+    let insightFacade: InsightFacade;
+    beforeEach(function () {
+        insightFacade = new InsightFacade();
+    });
+
+    it("Test validateId with whitespace", function () {
+        let valid: boolean = insightFacade.validateId("");
+        expect(valid).to.equal(false);
+    });
+
+    it("Test validateId with underscore", function () {
+        let valid: boolean = insightFacade.validateId("foo_bar");
+        expect(valid).to.equal(false);
+    });
+
+    it("Test validateId with null", function () {
+        let valid: boolean = insightFacade.validateId(null);
+        expect(valid).to.equal(false);
+    });
+})
 
 /*
  * This test suite dynamically generates tests from the JSON files in test/queries.
