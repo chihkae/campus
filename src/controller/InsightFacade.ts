@@ -12,6 +12,7 @@ function validateId(id: string): boolean {
 }
 
 function getNumberOfSections(dataset: Dataset): number {
+    if (dataset.courses.length === 0) { return 0; }
     let total: number = 0;
     dataset.courses.forEach(function (course) {
         total += course.sections.length;
@@ -47,17 +48,26 @@ function getCurrentlyAddedDatasetIds(): string[] {
 
 // takes in a JSON string representation of a course and returns a corresponding course object
 function parseCourse(text: string, fileName: string): Course {
+    let courseAsJSON;
     // get course as a JSON object
-    let courseAsJSON = JSON.parse(text);
+    try {
+        courseAsJSON = JSON.parse(text);
+    } catch (e) {
+        Log.error("the file was unable to be parsed into JSON");
+        return undefined;
+    }
     // get the results key (holds all the courses)
     let courses: [] = courseAsJSON["result"];
+    if (courses === undefined || courses === null) { return undefined; }
     let sections: Section[] = [];
     // check if the course has any sections
     if (courses.length > 0) {
         // for each section in the course, extract the necessary data
         for (let section of courses) {
-            let s = extractSectionData(section);
-            sections.push(s);
+            if (!isEmpty(section)) {
+                let s = extractSectionData(section);
+                sections.push(s);
+            }
         }
         // return a course with all of its sections
         let course: Course = new Course();
@@ -65,6 +75,14 @@ function parseCourse(text: string, fileName: string): Course {
         course.sections = sections;
         return course;
     }
+}
+
+// returns true if the given object is empty
+function isEmpty(obj: {}) {
+    for (let key in obj) {
+        if (obj.hasOwnProperty(key)) { return false; }
+    }
+    return true;
 }
 
 // extracts necessary data from a JSON representation of a section, and returns
@@ -132,10 +150,14 @@ export default class InsightFacade implements IInsightFacade {
             // Once all the courses and sections are parsed, serialize and save them to disk
             return Promise.all(promises).then(() => {
                 datasetToAdd.numRows = getNumberOfSections(datasetToAdd);
-                return Promise.resolve(writeDatasetToDisk(datasetToAdd, id));
+                if (datasetToAdd.numRows > 0) {
+                    return Promise.resolve(writeDatasetToDisk(datasetToAdd, id));
+                } else {
+                    return Promise.reject(new InsightError("There were no courses, or there were no sections"));
+                }
             });
         }).catch((err) => {
-            return Promise.reject(err);
+            return Promise.reject(new InsightError(err));
         });
     }
 

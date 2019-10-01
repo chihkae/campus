@@ -20,7 +20,13 @@ describe("InsightFacade Add/Remove Dataset", function () {
     // automatically be loaded in the 'before' hook.
     const datasetsToLoad: { [id: string]: string } = {
         courses: "./test/data/courses.zip",
-        oneCourse: "./test/data/oneCourse.zip"
+        emptyCourse: "./test/data/emptyCourse.zip",
+        invalid: "./test/data/invalid.zip",
+        blankTxtFile: "./test/data/blankTxtFile.zip",
+        oneCourse: "./test/data/oneCourse.zip",
+        resultsNull: "./test/data/resultsNull.zip",
+        under_score: "./test/data/under_score.zip",
+        jpg: "./test/data/RBC Cheque Image.jpg"
     };
     let datasets: { [id: string]: string } = {};
     let insightFacade: InsightFacade;
@@ -65,7 +71,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }).catch((err: any) => {
             expect.fail(err, expected, "Should not have rejected");
         });
-
     });
 
     it("test adding one course", function () {
@@ -76,7 +81,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }).catch((err: any) => {
             expect.fail(err, expected, "Should not have rejected");
         });
-
     });
 
     it("test adding multiple courses", function () {
@@ -95,7 +99,56 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }).catch((err: any) => {
             expect.fail(err, expected, "Should not have rejected");
         });
+    });
 
+    it("test adding an empty course", function () {
+        const id: string = "emptyCourse";
+        insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail();
+        }).catch((err: any) => {
+            expect(err).to.be.instanceOf(InsightError);
+            expect(err.message).to.equal("There were no courses, or there were no sections");
+        });
+    });
+
+    it("test adding an invalid course", function () {
+        const id: string = "invalid";
+        insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail();
+        }).catch((err: any) => {
+            expect(err).to.be.instanceOf(InsightError);
+            expect(err.message).to.equal("There were no courses, or there were no sections");
+        });
+    });
+
+    it("test adding an empty file", function () {
+        const id: string = "blankTxtFile";
+        insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail();
+        }).catch((err: any) => {
+            expect(err).to.be.instanceOf(InsightError);
+            expect(err.message).to.equal("There were no courses, or there were no sections");
+        });
+    });
+
+    it("test adding a non-zip file", function () {
+        const id: string = "jpg";
+        insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail();
+        }).catch((err: any) => {
+            expect(err).to.be.instanceOf(InsightError);
+            expect(err.message).to.contain("is this a zip file ?");
+        });
+    });
+
+    it("test adding a dataset with null for results", function () {
+        const id: string = "resultsNull";
+        insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail();
+        }).catch((err: any) => {
+            expect(err).to.be.instanceOf(InsightError);
+            expect(err.message).to.equal("There were no courses, or there were no sections");
+        });
     });
 
     it("test adding a dataset with an underscore in id", function () {
