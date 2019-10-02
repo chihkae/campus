@@ -179,7 +179,7 @@ export default class InsightFacade implements IInsightFacade {
         }
 
         const fs = require("fs");
-        const path = `data/${id}`;
+        const path = `./data/${id}`;
 
         // TODO: use the async version
         // return fs.unlink(path, (err: any) => {
@@ -204,7 +204,7 @@ export default class InsightFacade implements IInsightFacade {
                     let fs = require("fs");
                     fs.readFile(`./data/${fileIDtoRead}`, (err: any, data: any) => {
                         if (err) {
-                            reject(err);
+                            reject("didn't succesfully read dataset in performquery ");
                         } else {
                             try {
                                 let content = JSON.parse(data);
@@ -217,15 +217,15 @@ export default class InsightFacade implements IInsightFacade {
                                 let id = queryValidator.getIdString();
                                 let sortedWithKeys = queryEvaluator.addID(sorted, id, keys);
                                 if (sortedWithKeys.length > 5000) {
-                                    reject(new ResultTooLargeError());
+                                    reject(new ResultTooLargeError("result is more than 5000 sections"));
                                 } else {
                                     resolve(sortedWithKeys);
                                 }
                             } catch (e) {
                                 if (e instanceof ResultTooLargeError) {
-                                    reject(new ResultTooLargeError());
+                                    reject(e);
                                 } else if (e instanceof InsightError) {
-                                    reject(new InsightError());
+                                    reject(e);
                                 } else {
                                     reject(e);
                                 }
@@ -245,7 +245,7 @@ export default class InsightFacade implements IInsightFacade {
         let toReturn: InsightDataset[] = [];
         currentlyAddedDatasets.forEach(function (dataset) {
             // TODO: use the async version
-            let datasetAsString: string = fs.readFileSync(`data/${dataset}`).toString();
+            let datasetAsString: string = fs.readFileSync(`./data/${dataset}`).toString();
             // theoretically this JSON.parse() call should always work,
             // since we have validation when we add the dataset, they should all be properly formatted
             let datasetJson = JSON.parse(datasetAsString);

@@ -45,10 +45,6 @@ export default class QueryEvaluator {
                 let currentResult = this.evaluateIS(isKey, isValue);
                 return currentResult;
             } else if (key === "NOT") {
-                if (query[key].length > 1) {
-                    Log.info("two not keys");
-                    throw InsightError;
-                }
                 let currentResult = this.evaluateResult(query[key]);
                 return this.evaluateNot(currentResult);
             } else if (key === "GT" || key === "LT" || key === "EQ") {
@@ -76,7 +72,7 @@ export default class QueryEvaluator {
                 return innerResult;
             }
         } else {
-            throw InsightError;
+            throw new InsightError("OR object is not an array");
         }
     }
     private evaluateANDArray(query: any): any {
@@ -87,7 +83,7 @@ export default class QueryEvaluator {
                 for (const value of Object.values(query)) {
                     let currentResult = this.evaluateResult(value);
                     if (currentResult === undefined) {
-                        throw InsightError;
+                        throw new Error("couldn't not compute one of the filters in And");
                     }
                     if (count === 1) {
                         innerResult = currentResult;
@@ -98,7 +94,7 @@ export default class QueryEvaluator {
                 return innerResult;
             }
         } else {
-            throw InsightError;
+            throw new InsightError("And object is not an array");
         }
     }
 

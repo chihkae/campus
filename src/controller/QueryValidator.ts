@@ -12,7 +12,7 @@ export default class QueryValidator implements IQueryValidator {
         if (this.where === undefined && s !== null) {
             this.where = s;
         } else {
-            throw InsightError;
+            throw new InsightError("where never set");
         }
     }
     public whereSet(): boolean {
@@ -23,7 +23,7 @@ export default class QueryValidator implements IQueryValidator {
     }
     public whereSetError(): void {
         if (typeof this.where === undefined) {
-            throw new InsightError();
+            throw new InsightError("where is not set");
         }
         return;
     }
@@ -31,7 +31,7 @@ export default class QueryValidator implements IQueryValidator {
         if (this.options === undefined && s !== null) {
             this.options = s;
         } else {
-            throw InsightError;
+            throw new InsightError("options already set");
         }
     }
     public optionsSet(): boolean {
@@ -44,7 +44,7 @@ export default class QueryValidator implements IQueryValidator {
         if (this.columns === undefined && s !== null) {
             this.columns = s;
         } else {
-            throw InsightError;
+            throw new InsightError("columns can not be set again");
         }
     }
     public columnsSet(): boolean {
@@ -62,7 +62,7 @@ export default class QueryValidator implements IQueryValidator {
                 this.columnsKey.push(val);
             }
         } else {
-            throw InsightError;
+            throw new InsightError("columns key already set ");
         }
     }
     public getColumnsKey(): string[] {
@@ -90,7 +90,7 @@ export default class QueryValidator implements IQueryValidator {
             this.setIdString(id);
             this.orderKey = s;
         } else {
-            throw InsightError;
+            throw new InsightError("two order keys");
         }
     }
     public getOrderKey(): string {
@@ -106,7 +106,7 @@ export default class QueryValidator implements IQueryValidator {
         if (s !== null && this.idString === undefined) {
             this.idString = s;
         } else if (this.idString.valueOf() !== s.toString().valueOf()) {
-            throw InsightError;
+            throw new InsightError("two different id's in query, should only have one dataset id in query");
         }
     }
     public getIdString(): string {
@@ -116,7 +116,7 @@ export default class QueryValidator implements IQueryValidator {
         if (this.whereSet() && this.columnsSet() && this.orderKeySet()) {
             return;
         } else {
-            throw InsightError;
+            throw new InsightError("where/columns/order not set");
         }
     }
     public validateQuery(query: any): boolean {
@@ -154,19 +154,19 @@ export default class QueryValidator implements IQueryValidator {
                             this.setColumns(query[key].toString());
                             this.validateColumnsArray(query[key]);
                         } else {
-                            throw InsightError;
+                            throw new InsightError("Columns key set before where and options");
                         }
                     } else if (key === "ORDER") {
                         if (!this.whereSet() || !this.columnsSet() || !this.optionsSet()) {
-                            throw InsightError;
+                            throw new InsightError("Order key without where/columns/options existing");
                         } else {
                             this.setOrderKey(query[key]);
                             this.validateOrderKey(query[key]);
                         }
                     }
                 }
-            } catch (error) {
-                throw InsightError;
+            } catch (e) {
+                throw new Error(e.toString());
             }
             return true;
         }
@@ -183,10 +183,10 @@ export default class QueryValidator implements IQueryValidator {
                 }
             }
             if (!matchesColumnskey) {
-                throw InsightError;
+                throw new InsightError("order string does not equal column key");
             }
         } else {
-            throw InsightError;
+            throw new InsightError("No column strings exist");
         }
     }
     private validateColumnsArray(query: any) {
@@ -195,16 +195,16 @@ export default class QueryValidator implements IQueryValidator {
                 let columnsKey: string[] = [];
                 for (const value of Object.values(query)) {
                     if (!this.validateMKey(value) && !this.validateSkey(value)) {
-                        throw InsightError;
+                        throw new InsightError("Mkey or Skey not valid");
                     }
                     columnsKey.push(value.toString());
                 }
                 this.setColumnsKey(columnsKey);
             } else {
-                throw InsightError;
+                throw new InsightError("columns array not an object");
             }
         } else {
-            throw InsightError;
+            throw new InsightError("columns not an array");
         }
     }
     private validateQueryWithArray(query: any) {
@@ -215,12 +215,12 @@ export default class QueryValidator implements IQueryValidator {
                 }
             }
         } else {
-            throw InsightError;
+            throw new InsightError("sub query not an array");
         }
     }
     private validateIS(query: any): void {
         if (Object.keys(query).length > 1 || Object.values(query).length > 1) {
-            throw InsightError;
+            throw new InsightError("no keys/value in IS");
         } else {
             let key = Object.keys(query);
             let value = Object.values(query);
@@ -234,7 +234,7 @@ export default class QueryValidator implements IQueryValidator {
         if (re.test(inpustring)) {
             return true;
         }
-        throw InsightError;
+        throw new InsightError("inputstring has asterik");
     }
     private validateMKey(mKey: string): boolean {
         let re = /[^_]+_(avg|pass|fail|audit|year)/g;
@@ -242,7 +242,7 @@ export default class QueryValidator implements IQueryValidator {
             let id = mKey.split("_")[0];
             this.setIdString(id);
             if (!this.isIDinListofIDs(id)) {
-                throw InsightError;
+                throw new InsightError("dataset of id in mkey has not been added");
             }
             return true;
         } else {
@@ -251,7 +251,7 @@ export default class QueryValidator implements IQueryValidator {
     }
     private isIDinListofIDs(id: any): boolean {
         let fs = require("fs");
-        let currentDataFiles: string[] = fs.readdirSync("./test/data/");
+        let currentDataFiles: string[] = fs.readdirSync("./data/");
         if (currentDataFiles.indexOf(id) > -1) {
             return true;
         } else {
@@ -265,7 +265,7 @@ export default class QueryValidator implements IQueryValidator {
             let id = sKey.split("_")[0];
             this.setIdString(id);
             if (!this.isIDinListofIDs(id)) {
-                throw InsightError;
+                throw new InsightError("Id in skey not part of added datasets");
             }
             return true;
         } else {
@@ -282,7 +282,7 @@ export default class QueryValidator implements IQueryValidator {
     }
     private validateCompare(query: any) {
         if (Object.keys(query).length > 1 || Object.values(query).length > 1) {
-            throw InsightError;
+            throw new InsightError("no key value pair in Compare object");
         } else {
             const key = Object.keys(query);
             const value = Object.values(query);
