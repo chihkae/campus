@@ -35,14 +35,15 @@ function initializeDataset(id: string, kind: InsightDatasetKind): Dataset {
 function writeDatasetToDisk(dataset: Dataset, id: string): string[] {
     let fs = require("fs");
     let myJSON: string = JSON.stringify(dataset);
-    fs.writeFileSync(`data/${id}`, myJSON);
+    fs.writeFileSync(`./data/${id}`, myJSON);
+    Log.info(`wrote ${id} to disk`);
     return getCurrentlyAddedDatasetIds();
 }
 
 // returns a string array of the currently added datasets
 function getCurrentlyAddedDatasetIds(): string[] {
     let fs = require("fs");
-    let currentDataFiles: string[] = fs.readdirSync("data");
+    let currentDataFiles: string[] = fs.readdirSync("./data");
     return currentDataFiles;
 }
 
@@ -157,7 +158,7 @@ export default class InsightFacade implements IInsightFacade {
                 }
             });
         }).catch((err) => {
-            return Promise.reject(new InsightError(err));
+            return Promise.reject(new InsightError(err.toString()));
         });
     }
 
@@ -173,18 +174,9 @@ export default class InsightFacade implements IInsightFacade {
         }
 
         const fs = require("fs");
-        const path = `data/${id}`;
-
-        // TODO: use the async version
-        // return fs.unlink(path, (err: any) => {
-        //     if (err) {
-        //         return Promise.reject(err.toString());
-        //     } else {
-        //         return Promise.resolve(id);
-        //     }
-        // });
-
+        const path = `./data/${id}`;
         fs.unlinkSync(path);
+        Log.info(`removed ${id} from disk`);
         return Promise.resolve(id);
     }
 
@@ -197,8 +189,7 @@ export default class InsightFacade implements IInsightFacade {
         let currentlyAddedDatasets: string[] = fs.readdirSync("data");
         let toReturn: InsightDataset[] = [];
         currentlyAddedDatasets.forEach(function (dataset) {
-            // TODO: use the async version
-            let datasetAsString: string = fs.readFileSync(`data/${dataset}`).toString();
+            let datasetAsString: string = fs.readFileSync(`./data/${dataset}`).toString();
             // theoretically this JSON.parse() call should always work,
             // since we have validation when we add the dataset, they should all be properly formatted
             let datasetJson = JSON.parse(datasetAsString);
@@ -208,20 +199,9 @@ export default class InsightFacade implements IInsightFacade {
             datasetToAdd.numRows = datasetJson.numRows;
             toReturn.push(datasetToAdd);
         });
+        toReturn.forEach(function (d) {
+            Log.info(`Found dataset id "${d.id}" with kind: "${d.kind}" and numRows: ${d.numRows}`);
+        });
         return Promise.resolve(toReturn);
-        // const fs = require("fs");
-        // let toReturn: InsightDataset[] = [];
-        // fs.readdir("data", (err: NodeJS.ErrnoException, files: string[]) => {
-        //     if (err) { Log.error(err); }
-        //     files.forEach(function (file) {
-        //         let datasetAsString: string = fs.readFile(`data/${file}`).then(()).toString();
-        //         let datasetJson = JSON.parse(datasetAsString);
-        //         const datasetToAdd: InsightDataset = {} as InsightDataset;
-        //         datasetToAdd.id = datasetJson.id;
-        //         datasetToAdd.kind = datasetJson.kind;
-        //         datasetToAdd.numRows = datasetJson.numRows;
-        //         toReturn.push(datasetToAdd);
-        //     });
-        // });
     }
 }

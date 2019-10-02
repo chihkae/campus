@@ -107,7 +107,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             expect.fail();
         }).catch((err: any) => {
             expect(err).to.be.instanceOf(InsightError);
-            expect(err.message).to.equal("There were no courses, or there were no sections");
+            expect(err.message).to.deep.equal("Error: There were no courses, or there were no sections");
         });
     });
 
@@ -117,7 +117,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             expect.fail();
         }).catch((err: any) => {
             expect(err).to.be.instanceOf(InsightError);
-            expect(err.message).to.equal("There were no courses, or there were no sections");
+            expect(err.message).to.equal("Error: There were no courses, or there were no sections");
         });
     });
 
@@ -127,7 +127,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             expect.fail();
         }).catch((err: any) => {
             expect(err).to.be.instanceOf(InsightError);
-            expect(err.message).to.equal("There were no courses, or there were no sections");
+            expect(err.message).to.equal("Error: There were no courses, or there were no sections");
         });
     });
 
@@ -147,7 +147,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
             expect.fail();
         }).catch((err: any) => {
             expect(err).to.be.instanceOf(InsightError);
-            expect(err.message).to.equal("There were no courses, or there were no sections");
+            expect(err.message).to.equal("Error: There were no courses, or there were no sections");
         });
     });
 
