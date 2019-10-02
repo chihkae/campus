@@ -206,33 +206,35 @@ export default class InsightFacade implements IInsightFacade {
                         if (err) {
                             reject(err);
                         } else {
-                            let content = JSON.parse(data);
-                            let queryEvaluator = new QueryEvaluator(query, content);
-                            let unsortedResult = queryEvaluator.evaluateResult(query);
-                            let keys = queryValidator.getColumnsKeyWithoutUnderscore();
-                            let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
-                            let orderkeys = queryValidator.getOrderKeyWithoutUnderscore();
-                            let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
-                            let id = queryValidator.getIdString();
-                            let sortedWithKeys = queryEvaluator.addID(sorted, id, keys);
-                            if (sortedWithKeys.length > 5000) {
-                                reject(new ResultTooLargeError());
-                            } else {
-                                resolve(sortedWithKeys);
+                            try {
+                                let content = JSON.parse(data);
+                                let queryEvaluator = new QueryEvaluator(query, content);
+                                let unsortedResult = queryEvaluator.evaluateResult(query);
+                                let keys = queryValidator.getColumnsKeyWithoutUnderscore();
+                                let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
+                                let orderkeys = queryValidator.getOrderKeyWithoutUnderscore();
+                                let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
+                                let id = queryValidator.getIdString();
+                                let sortedWithKeys = queryEvaluator.addID(sorted, id, keys);
+                                if (sortedWithKeys.length > 5000) {
+                                    reject(new ResultTooLargeError());
+                                } else {
+                                    resolve(sortedWithKeys);
+                                }
+                            } catch (e) {
+                                if (e instanceof ResultTooLargeError) {
+                                    reject(new ResultTooLargeError());
+                                } else if (e instanceof InsightError) {
+                                    reject(new InsightError());
+                                } else {
+                                    reject(e);
+                                }
                             }
                         }
                     });
-                } else {
-                    reject(new InsightError());
                 }
             } catch (e) {
-                if (e instanceof ResultTooLargeError) {
-                    reject(new ResultTooLargeError());
-                } else if (e instanceof InsightError) {
-                    reject(new InsightError());
-                } else {
-                    reject(e);
-                }
+                reject(new InsightError());
             }
         });
     }
