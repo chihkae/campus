@@ -185,7 +185,7 @@ export default class QueryEvaluator {
 
     private evaluateNot(result: any): any {
         let content = this.getData();
-        let notResult = []
+        let notResult = [];
         for (const section of Object.values(content.courses)) {
             for (const courseSection of Object.values(Object(section).sections)) {
                 if (!result.includes(courseSection)) {
