@@ -195,47 +195,46 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public performQuery(query: any): Promise <any[]> {
-            return new Promise(function (resolve, reject) {
-                let queryValidator = new QueryValidator();
-                try {
-                    if (queryValidator.validateQuery(query)) {
-                        queryValidator.validateAllQueryPartsExist();
-                        let fs = require("fs");
-                        fs.readFile("./test/data/courses", (err: any, data: any) => {
-                            if (err) {
-                                reject("err");
+        return new Promise(function (resolve, reject) {
+            let queryValidator = new QueryValidator();
+            try {
+                if (queryValidator.validateQuery(query)) {
+                    queryValidator.validateAllQueryPartsExist();
+                    let fileIDtoRead = queryValidator.getIdString();
+                    let fs = require("fs");
+                    fs.readFile(`./data/${fileIDtoRead}`, (err: any, data: any) => {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            let content = JSON.parse(data);
+                            let queryEvaluator = new QueryEvaluator(query, content);
+                            let unsortedResult = queryEvaluator.evaluateResult(query);
+                            let keys = queryValidator.getColumnsKeyWithoutUnderscore();
+                            let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
+                            let orderkeys = queryValidator.getOrderKeyWithoutUnderscore();
+                            let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
+                            let id = queryValidator.getIdString();
+                            let sortedWithKeys = queryEvaluator.addID(sorted, id, keys);
+                            if (sortedWithKeys.length > 5000) {
+                                reject(new ResultTooLargeError());
                             } else {
-                                try {
-                                    let content = JSON.parse(data);
-                                    let queryEvaluator = new QueryEvaluator(query, content);
-                                    let unsortedResult = queryEvaluator.evaluateResult(query);
-                                    let keys = queryValidator.getColumnsKeyWithoutUnderscore();
-                                    let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
-                                    let orderkeys = queryValidator.getOrderKeyWithoutUnderscore();
-                                    let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
-                                    let id = queryValidator.getIdString();
-                                    let sortedWithKeys = queryEvaluator.addID(sorted, id, keys );
-                                    if (sortedWithKeys.length > 5000) {
-                                        reject(new ResultTooLargeError());
-                                    } else {
-                                        resolve(sortedWithKeys);
-                                    }
-                                } catch (e) {
-                                    if ( e instanceof ResultTooLargeError) {
-                                        reject(new ResultTooLargeError());
-                                    } else if (e instanceof InsightError) {
-                                        reject(new InsightError());
-                                    } else {
-                                        reject(e);
-                                    }
-                                }
+                                resolve(sortedWithKeys);
                             }
-                        });
-                    }
-                } catch (err) {
+                        }
+                    });
+                } else {
                     reject(new InsightError());
                 }
-            });
+            } catch (e) {
+                if (e instanceof ResultTooLargeError) {
+                    reject(new ResultTooLargeError());
+                } else if (e instanceof InsightError) {
+                    reject(new InsightError());
+                } else {
+                    reject(e);
+                }
+            }
+        });
     }
 
     public listDatasets(): Promise<InsightDataset[]> {

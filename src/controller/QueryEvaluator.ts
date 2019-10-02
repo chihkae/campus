@@ -185,10 +185,21 @@ export default class QueryEvaluator {
 
     private evaluateNot(result: any): any {
         let content = this.getData();
-        let arrayAfterRemove = content.result.filter(function (el: any) {
-            return !result.includes(el);
+        let notResult = []
+        for (const section of Object.values(content.courses)) {
+            for (const courseSection of Object.values(Object(section).sections)) {
+                if (!result.includes(courseSection)) {
+                    notResult.push(courseSection);
+                }
+            }
+        }
+        return notResult;
+        /*let arrayAfterRemove = content.courses.filter(function (el: any) {
+            for(const coursSection of Object.values(el.sections)) {
+                return !result.includes(el);
+            }
         });
-        return arrayAfterRemove;
+        return arrayAfterRemove;*/
     }
 
     public selectColumns(result: any, keys: any): any {

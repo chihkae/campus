@@ -137,6 +137,13 @@ export default class QueryValidator implements IQueryValidator {
                         this.validateCompare(query[key]);
                     } else if (key === "OR" || key === "AND") {
                         this.whereSetError();
+                        /*for(const values in Object.values(query[key])) {
+                            for (const keys in Object.keys(values)) {
+                                if (keys.length === 0) {
+                                    throw new InsightError();
+                                }
+                            }
+                        }*/
                         this.validateQueryWithArray(query[key]);
                     } else if (key === "OPTIONS") {
                         this.whereSetError();
