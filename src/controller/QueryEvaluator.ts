@@ -98,27 +98,34 @@ export default class QueryEvaluator {
         }
     }
 
-    private evaluateIS(key: any, value: any): any {
+    private evaluateIS(key: any, value: any): any[] {
         let content = this.getData();
+        let countNumberofAsterisks = value.toString().split("*").length - 1;
 
         let result: any[] = [];
         content.courses.forEach(function (course: any) {
             course.sections.forEach(function (section: any) {
-                let re1 = /^[*]?[^*]*[*]?/g;
-                let re2 = /[^*]*[*]?/g;
-                let re3 = /^[*]?[^*]*/g;
-                let stringBefore = new RegExp("[^*]*" + value.toString() );
-                let re4 = /[^*]*/g;
-                let stringMiddle = new RegExp("[^*]" + value.toString() + "[^*]*");
-                let stringAfter = new RegExp(value.toString() + "[^*]*");
-                if (re1.test(value.toString()) && stringMiddle.test(section[key].toString())) {
-                    result.push(section);
-                } else if (re2.test(value.toString()) && stringAfter.test(section[key].toString())) {
-                  result.push(section);
-               } else if (re3.test(value.toString()) && stringBefore.test(section[key].toString())) {
-                    result.push(section);
-                } else if (re4.test(value.toString())) {
-                    if (section[key] === value) {
+                if (countNumberofAsterisks > 0) {
+                    if (countNumberofAsterisks === 1) {
+                        if (value.toString().indexOf("*") > 0) {
+                            let stringbeforeAsterik = value.toString().substring(0, (value.toString().length - 1));
+                            if (section[key].indexOf(stringbeforeAsterik) === 0 || section[key].toString() === stringbeforeAsterik.toString()) {
+                                result.push(section);
+                            }
+                        } else if (value.toString().indexOf("*") === 0) {
+                            let stringAfterAsterik = value.toString().substring(1, (value.toString().length));
+                            if (section[key].toString().indexOf(stringAfterAsterik) > 0 || section[key].toString() === stringAfterAsterik.toString() ) {
+                                result.push(section);
+                            }
+                        }
+                    } else if (countNumberofAsterisks === 2) {
+                        let stringBetweenAsterik = value.toString().substring(1, (value.toString().length - 1));
+                        if (section[key].toString().includes(stringBetweenAsterik)) {
+                            result.push(section);
+                        }
+                    }
+                } else {
+                    if (section[key].toString() === value.toString()) {
                         result.push(section);
                     }
                 }

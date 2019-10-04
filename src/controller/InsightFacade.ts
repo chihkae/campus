@@ -92,14 +92,14 @@ function extractSectionData(section: any): Section {
     let sect = new Section();
     // extract the numbers from the file name (for the course id)
     sect.id = section.Course;
-    sect.uuid = section.id;
+    sect.uuid = section.id.toString();
     sect.instructor = section.Professor;
     sect.title = section.Title;
     sect.pass = section.Pass;
     sect.fail = section.Fail;
     sect.audit = section.Audit;
     sect.avg = section.Avg;
-    sect.year = section.Year;
+    sect.year = Number(section.Year);
     sect.dept = section.Subject;
     return sect;
 }

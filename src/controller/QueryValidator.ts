@@ -224,20 +224,58 @@ export default class QueryValidator implements IQueryValidator {
         } else {
             let key = Object.keys(query);
             let value = Object.values(query);
-            this.validateInputString(value[0]);
-            this.validateSkey(key[0]);
+            if ( !(this.validateInputString(value[0])) || !(this.validateSkey(key[0]))) {
+                throw new InsightError();
+            }
         }
     }
 
     private validateInputString(inpustring: any): boolean {
-        let re = /^[*]?[^*]*[*]?/g;
+        let asterikOccurences = inpustring.split("*").length - 1 ;
+        let inpustringWithoutAsterik;
+        if (asterikOccurences > 2) {
+            throw new InsightError();
+        } else if (asterikOccurences === 2) {
+            inpustringWithoutAsterik = inpustring.toString().substring(1, inpustring.toString().length - 1);
+        } else if (asterikOccurences === 1) {
+            if (inpustring.toString().indexOf("*") === 0){
+                inpustringWithoutAsterik = inpustring.toString().substring(1, inpustring.toString().length);
+            } else if (inpustring.toString().indexOf("*") === inpustring.toString().length - 1){
+                inpustringWithoutAsterik = inpustring.toString().substring(0, inpustring.toString().length - 1);
+            } else {
+                throw new InsightError();
+            }
+        }
+        if (asterikOccurences > 2 || inpustringWithoutAsterik.includes("*")) {
+            throw new InsightError("more than 2 wildcards");
+        } else if (asterikOccurences > 0 && asterikOccurences < 2) {
+            if (inpustringWithoutAsterik.toString().indexOf("*") > 0) {
+                throw new InsightError("asteriks wrong");
+            }
+        }
+        return true;
+      /*  let re = /^[*]?[^*]*[*]?/g;
         if (re.test(inpustring)) {
             return true;
         }
-        throw new InsightError("inputstring has asterik");
+        throw new InsightError("inputstring has asterik");*/
     }
     private validateMKey(mKey: string): boolean {
-        let re = /[^_]+_(avg|pass|fail|audit|year)/g;
+        if(mKey !== null || mKey !== undefined){
+            let indexofUnderscore = mKey.indexOf("_");
+            let id = mKey.substr(0, indexofUnderscore);
+            let mfield = mKey.substr(indexofUnderscore + 1);
+            if (!this.isIDinListofIDs(id)){
+                throw new InsightError("id not in list of id's of currently added datasets");
+            } else {
+                let mFields = ["avg", "pass", "fail", "audit", "year"];
+                if (!(mFields.indexOf(mfield) > -1)) {
+                    return false;
+                }
+                return true;
+            }
+        }
+        /*let re = /[^_]+_(avg|pass|fail|audit|year)/g;
         if (re.test(mKey)) {
             let id = mKey.split("_")[0];
             this.setIdString(id);
@@ -247,7 +285,7 @@ export default class QueryValidator implements IQueryValidator {
             return true;
         } else {
             return false;
-        }
+        }*/
     }
     private isIDinListofIDs(id: any): boolean {
         let fs = require("fs");
@@ -260,7 +298,21 @@ export default class QueryValidator implements IQueryValidator {
     }
 
     private validateSkey(sKey: string): boolean {
-        let re = /[^_]+_(dept|id|instructor|title|uuid)/g;
+        if(sKey !== null || sKey !== undefined){
+            let indexofUnderscore = sKey.indexOf("_");
+            let id = sKey.substr(0, indexofUnderscore);
+            let sfield = sKey.substr(indexofUnderscore + 1);
+            if (!this.isIDinListofIDs(id)){
+                throw new InsightError("id not in list of id's of currently added datasets");
+            } else {
+                let sFields = ["dept","id", "instructor","title", "uuid"];
+                if (!(sFields.indexOf(sfield) > -1)){
+                    return false;
+                }
+                return true;
+            }
+        }
+        /*let re = /[^_]+_(dept|id|instructor|title|uuid)/g;
         if (re.test(sKey)) {
             let id = sKey.split("_")[0];
             this.setIdString(id);
@@ -270,7 +322,7 @@ export default class QueryValidator implements IQueryValidator {
             return true;
         } else {
             return false;
-        }
+        }*/
     }
     private validateNumber(num: any): boolean {
         let re = /^[0-9]+$/g;
