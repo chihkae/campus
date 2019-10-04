@@ -104,10 +104,6 @@ function extractSectionData(section: any): Section {
     return sect;
 }
 
-// This will contain the Dataset most recently written to disk
-// Use for queries
-let InMemoryDataset: Dataset = new Dataset();
-
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -156,8 +152,6 @@ export default class InsightFacade implements IInsightFacade {
             return Promise.all(promises).then(() => {
                 datasetToAdd.numRows = getNumberOfSections(datasetToAdd);
                 if (datasetToAdd.numRows > 0) {
-                    // set InMemoryDataset
-                    InMemoryDataset = datasetToAdd;
                     return Promise.resolve(writeDatasetToDisk(datasetToAdd, id));
                 } else {
                     return Promise.reject(new InsightError("There were no courses, or there were no sections"));
@@ -183,8 +177,6 @@ export default class InsightFacade implements IInsightFacade {
         const path = `./data/${id}`;
         fs.unlinkSync(path);
         Log.info(`removed ${id} from disk`);
-        // re-initialize InMemoryDataset
-        InMemoryDataset = new Dataset();
         return Promise.resolve(id);
     }
 
