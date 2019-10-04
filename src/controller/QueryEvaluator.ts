@@ -15,21 +15,18 @@ export default class QueryEvaluator {
         this.data = data;
         this.result = [];
     }
-
     private getQuery(): string {
         if (this.query !== undefined) {
             return this.query;
         }
         return null;
     }
-
     private getData(): any {
         if (this.data !== undefined) {
             return this.data;
         }
         return null;
     }
-
     public evaluateResult(query: any): any[] {
         for (const key of Object.keys(query)) {
             if (key === "WHERE") {
@@ -58,7 +55,7 @@ export default class QueryEvaluator {
                 return this.evaluateORArray(query[key]);
             } else if (key === "AND") {
                 return this.evaluateANDArray(query[key]);
-            }else{
+            } else {
                 throw new InsightError();
             }
         }
@@ -99,7 +96,6 @@ export default class QueryEvaluator {
             throw new InsightError("And object is not an array");
         }
     }
-
     private evaluateIS(key: any, value: any): any[] {
         let content = this.getData();
         let countNumberofAsterisks = value.toString().split("*").length - 1;
@@ -111,12 +107,14 @@ export default class QueryEvaluator {
                     if (countNumberofAsterisks === 1) {
                         if (value.toString().indexOf("*") > 0) {
                             let stringbeforeAsterik = value.toString().substring(0, (value.toString().length - 1));
-                            if (section[key].indexOf(stringbeforeAsterik) === 0 || section[key].toString() === stringbeforeAsterik.toString()) {
+                            if (section[key].indexOf(stringbeforeAsterik) === 0 || section[key].toString() ===
+                                stringbeforeAsterik.toString()) {
                                 result.push(section);
                             }
                         } else if (value.toString().indexOf("*") === 0) {
                             let stringAfterAsterik = value.toString().substring(1, (value.toString().length));
-                            if (section[key].toString().indexOf(stringAfterAsterik) > 0 || section[key].toString() === stringAfterAsterik.toString() ) {
+                            if (section[key].toString().indexOf(stringAfterAsterik) > 0 || section[key].toString() ===
+                                stringAfterAsterik.toString() ) {
                                 result.push(section);
                             }
                         }
@@ -135,7 +133,6 @@ export default class QueryEvaluator {
         });
         return result;
     }
-
     private evaluateAnd(result1: any, result2: any): any {
         return result1.filter(function (e1: string) {
             return result2.indexOf(e1) > -1;
@@ -179,7 +176,6 @@ export default class QueryEvaluator {
         }
         return sortedResult;
     }
-
     private evaluateOR(result1: any, result2: any): any {
         let merged = result1.concat(result2);
         let removedDuplicateofMerged = merged.filter(function (item: any, pos: any) {
@@ -187,7 +183,6 @@ export default class QueryEvaluator {
         });
         return removedDuplicateofMerged;
     }
-
     private evaluateNot(result: any): any {
         let content = this.getData();
         let notResult = [];
@@ -206,19 +201,16 @@ export default class QueryEvaluator {
         });
         return arrayAfterRemove;*/
     }
-
     public selectColumns(result: any, keys: any): any {
             for (let i = 0 ; i < Object(result).length ; i++) {
                 for (const key of Object.keys(result[i])) {
                     if (keys.indexOf(key) === -1) {
                         delete result[i][key];
-
                     }
                 }
             }
             return result;
     }
-
     private evaluateComparator(key: any, value: any, comparator: any): any {
         let mapper = new Map();
         mapper.set("GT", ">");
@@ -246,5 +238,4 @@ export default class QueryEvaluator {
         });
         return result;
     }
-
 }
