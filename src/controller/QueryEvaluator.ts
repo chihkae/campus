@@ -58,6 +58,8 @@ export default class QueryEvaluator {
                 return this.evaluateORArray(query[key]);
             } else if (key === "AND") {
                 return this.evaluateANDArray(query[key]);
+            }else{
+                throw new InsightError();
             }
         }
     }

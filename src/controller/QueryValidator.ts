@@ -122,6 +122,9 @@ export default class QueryValidator implements IQueryValidator {
     public validateQuery(query: any): boolean {
         if (query != null && typeof query === "object") {
             try {
+                /*if (query.length !== Object.keys(query).length){
+                    throw new InsightError();
+                }*/
                 for (const key of Object.keys(query)) {
                     if (key === "WHERE") {
                         this.setWhere(query[key].toString());
@@ -131,19 +134,13 @@ export default class QueryValidator implements IQueryValidator {
                         this.validateIS(query[key]);
                     } else if (key === "NOT") {
                         this.whereSetError();
+                        this.validateNot(query[key]);
                         this.validateQuery(query[key]);
                     } else if (key === "GT" || key === "LT" || key === "EQ") {
                         this.whereSetError();
                         this.validateCompare(query[key]);
                     } else if (key === "OR" || key === "AND") {
                         this.whereSetError();
-                        /*for(const values in Object.values(query[key])) {
-                            for (const keys in Object.keys(values)) {
-                                if (keys.length === 0) {
-                                    throw new InsightError();
-                                }
-                            }
-                        }*/
                         this.validateQueryWithArray(query[key]);
                     } else if (key === "OPTIONS") {
                         this.whereSetError();
@@ -171,6 +168,11 @@ export default class QueryValidator implements IQueryValidator {
             return true;
         }
         return false;
+    }
+    private validateNot(notObject: any){
+        if (Object.keys(notObject).length === 0 ) {
+            throw new InsightError();
+        }
     }
     private validateOrderKey(orderKey: any) {
         let columnsKey: string[] = this.getColumnsKey();
@@ -210,6 +212,11 @@ export default class QueryValidator implements IQueryValidator {
     private validateQueryWithArray(query: any) {
         if (Array.isArray(query)) {
             if (query != null && typeof query === "object") {
+                for (const key of Object.keys(query)){
+                    if (Object.keys(query[Number(key)]).length === 0) {
+                        throw new InsightError();
+                    }
+                }
                 for (const value of Object.values(query)) {
                     this.validateQuery(value);
                 }
@@ -233,7 +240,7 @@ export default class QueryValidator implements IQueryValidator {
     private validateInputString(inpustring: any): boolean {
         let asterikOccurences = inpustring.split("*").length - 1 ;
         let inpustringWithoutAsterik;
-        if (asterikOccurences > 2) {
+        if (asterikOccurences > 2 || (typeof inpustring !== "string")) {
             throw new InsightError();
         } else if (asterikOccurences === 2) {
             inpustringWithoutAsterik = inpustring.toString().substring(1, inpustring.toString().length - 1);
@@ -246,11 +253,13 @@ export default class QueryValidator implements IQueryValidator {
                 throw new InsightError();
             }
         }
-        if (asterikOccurences > 2 || inpustringWithoutAsterik.includes("*")) {
-            throw new InsightError("more than 2 wildcards");
-        } else if (asterikOccurences > 0 && asterikOccurences < 2) {
-            if (inpustringWithoutAsterik.toString().indexOf("*") > 0) {
-                throw new InsightError("asteriks wrong");
+        if (inpustringWithoutAsterik !== undefined) {
+            if (asterikOccurences > 2 || inpustringWithoutAsterik.includes("*")) {
+                throw new InsightError("more than 2 wildcards");
+            } else if (asterikOccurences > 0 && asterikOccurences < 2) {
+                if (inpustringWithoutAsterik.toString().indexOf("*") > 0) {
+                    throw new InsightError("asteriks wrong");
+                }
             }
         }
         return true;
@@ -326,10 +335,10 @@ export default class QueryValidator implements IQueryValidator {
     }
     private validateNumber(num: any): boolean {
         let re = /^[0-9]+$/g;
-        if (re.test(num)) {
-            return;
+        if (!re.test(num) || (typeof num === "string")) {
+            throw InsightError;
         } else {
-            return false;
+            return true;
         }
     }
     private validateCompare(query: any) {
@@ -338,8 +347,9 @@ export default class QueryValidator implements IQueryValidator {
         } else {
             const key = Object.keys(query);
             const value = Object.values(query);
-            this.validateMKey(key[0]);
-            this.validateNumber(value[0]);
+            if(!this.validateMKey(key[0]) || !this.validateNumber(value[0])){
+                throw new InsightError();
+            }
         }
     }
 }
