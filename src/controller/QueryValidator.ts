@@ -92,11 +92,13 @@ export default class QueryValidator implements IQueryValidator {
                 throw new InsightError();
             }
         } else if (columnsKey && options && where) {
-            if (typeof this.options === undefined || typeof this.where === undefined || typeof this.columnsKey === undefined) {
+            if (typeof this.options === undefined || typeof this.where === undefined
+                || typeof this.columnsKey === undefined) {
                 throw new InsightError();
             }
         } else if (columnsKey && options && where && orderKey) {
-            if (typeof this.options === undefined || typeof this.where === undefined || typeof this.columnsKey === undefined || typeof  this.orderKey === undefined) {
+            if (typeof this.options === undefined || typeof this.where === undefined
+                || typeof this.columnsKey === undefined || typeof  this.orderKey === undefined) {
                 throw new InsightError();
             }
         }
