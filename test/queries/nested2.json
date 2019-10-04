@@ -50,7 +50,7 @@
         }
     },
 
-    "isQueryValid": false,
+    "isQueryValid": true,
     "result":[
         {
             "courses_dept":"bmeg",

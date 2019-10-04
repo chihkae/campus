@@ -17,7 +17,7 @@
         }
     },
 
-    "isQueryValid": true,
+    "isQueryValid": false,
 
     "result":"ResultTooLargeError"
 }

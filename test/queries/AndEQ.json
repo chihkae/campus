@@ -2,13 +2,13 @@
     "title": "Select department, id, avg where course average is less than 50 and not of the cpsc department || courses with average equal to 50",
     "query": {
         "WHERE": {
-            "NOT":
-            {
-                "IS": {
-                    "courses_dept": "CPSC"
+            "AND": [
+                {
+                    "EQ": {
+                        "courses_avg": 55
+                    }
                 }
-
-            }
+            ]
         },
         "OPTIONS": {
             "COLUMNS": [
@@ -19,7 +19,12 @@
             "ORDER": "courses_avg"
         }
     },
-    "isQueryValid": false,
-    "result":"ResultTooLargeError"
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_dept":"phar",
+            "courses_id":"435",
+            "courses_avg":55
+        }
+    ]
 }
-

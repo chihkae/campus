@@ -1,10 +1,13 @@
 {
-    "title": "Select with No filter in where-ResultTooLarge",
+    "title": "SELECT dept, avg WHERE avg > 97",
     "query": {
         "WHERE": {
+            "IS": {
+                "courses_instructor": "wolfman, steven"
+            }
         },
         "OPTIONS": {
-            "COLUMNS": [
+            "H": [
                 "courses_title",
                 "courses_avg"
             ],
@@ -12,7 +15,5 @@
         }
     },
     "isQueryValid": false,
-    "result": "ResultTooLargeError"
+    "result":"InsightError"
 }
-
-

@@ -1,7 +1,12 @@
 {
-    "title": "Select with No filter in where-ResultTooLarge",
+    "title": "Select course title, avg where Steven Wolfman is the instructor",
     "query": {
         "WHERE": {
+            "IS": {
+                "LT":{
+                    "courses_avg":50
+                }
+            }
         },
         "OPTIONS": {
             "COLUMNS": [
@@ -12,7 +17,5 @@
         }
     },
     "isQueryValid": false,
-    "result": "ResultTooLargeError"
+    "result": "InsightError"
 }
-
-

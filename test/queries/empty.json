@@ -1,7 +1,12 @@
+
+
 {
-    "title": "Select with No filter in where-ResultTooLarge",
+    "title": "Select course title, avg where course dept = dfadfadsfasd",
     "query": {
         "WHERE": {
+            "IS": {
+                "courses_dept": "dfadfadsfasd"
+            }
         },
         "OPTIONS": {
             "COLUMNS": [
@@ -11,8 +16,6 @@
             "ORDER": "courses_avg"
         }
     },
-    "isQueryValid": false,
-    "result": "ResultTooLargeError"
+    "isQueryValid": true,
+    "result":[]
 }
-
-

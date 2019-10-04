@@ -1,10 +1,12 @@
 {
-    "title": "Select course title, avg with averages that are not > 40 and < 100",
+    "title": "Select course title, avg where Steven Wolfman is the instructor",
     "query": {
         "WHERE": {
-            "NOT": {
-                "EQ": {
-                    "courses_avg": 40
+            "IS": {
+                "GT": {
+                    "IS": {
+                        "courses_instructor": "wolfman, steven"
+                    }
                 }
             }
         },
@@ -17,5 +19,5 @@
         }
     },
     "isQueryValid": false,
-    "result": "ResultTooLargeError"
+    "result": "InsightError"
 }

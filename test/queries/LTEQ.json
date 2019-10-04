@@ -1,0 +1,22 @@
+{
+    "title": "SELECT instructor, title,pass WHERE avg < 50",
+    "query": {
+        "WHERE": {
+            "LT": {
+                "EQ": {
+                    "course_avg": 50
+                }
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_title",
+                "courses_pass"
+            ],
+            "ORDER": "courses_pass"
+        }
+    },
+    "isQueryValid": false,
+    "result":"InsightError"
+}
