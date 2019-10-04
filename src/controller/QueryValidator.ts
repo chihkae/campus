@@ -94,9 +94,11 @@ export default class QueryValidator implements IQueryValidator {
             throw new InsightError("two order keys");
         }
     }
+
     public getOrderKey(): string {
         return this.orderKey;
     }
+
     public orderKeySet(): boolean {
         if (this.orderKey === undefined) {
             return false;
