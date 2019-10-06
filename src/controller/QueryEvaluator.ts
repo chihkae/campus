@@ -31,7 +31,14 @@ export default class QueryEvaluator {
         for (const key of Object.keys(query)) {
             if (key === "WHERE") {
                 if (Object.keys(query[key]).length === 0) {
-                    return this.getData();
+                    let totalData =  this.getData();
+                    let onlyCourses = [];
+                    for (const courses of Object.values(totalData.courses)) {
+                        for (const section of Object.values(Object(courses).sections)) {
+                                onlyCourses.push(section);
+                        }
+                    }
+                    return onlyCourses;
                 } else {
                     return this.evaluateResult(query[key]);
                 }
@@ -153,8 +160,8 @@ export default class QueryEvaluator {
     }
     public sort(result: any, keyToSort: string): any[] {
         let sortedResult = [];
-        try {
-            if (keyToSort === "instructor" || keyToSort === "title" || keyToSort === "dept") {
+        if (keyToSort === "instructor" || keyToSort === "title" || keyToSort === "dept" || keyToSort === "id" ||
+keyToSort === "uuid") {
                 sortedResult = result.sort(function (a: any, b: any) {
                     return a[keyToSort].toString().localeCompare(b[keyToSort].toString());
                 });
@@ -163,17 +170,6 @@ export default class QueryEvaluator {
                     return Number(a[keyToSort]) - Number(b[keyToSort]);
                 });
             }
-        } catch (e) {
-            if (result["courses"] !== undefined) {
-                let counter = 0;
-                for (const values of Object(Object.values(result.courses))) {
-                    counter += values["sections"].length;
-                }
-                if (counter > 5000) {
-                    throw new ResultTooLargeError();
-                }
-            }
-        }
         return sortedResult;
     }
     private evaluateOR(result1: any, result2: any): any {

@@ -192,7 +192,7 @@ export default class InsightFacade implements IInsightFacade {
             try {
                 if (queryValidator.validateQuery(query)) {
                     try {
-                        queryValidator.checkKeys(true, true, true, true);
+                        queryValidator.checkKeys(true, true, true, false);
                     } catch (e) {
                         reject(new InsightError());
                     }

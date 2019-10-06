@@ -1,0 +1,216 @@
+{
+    "title": "Select course title, avg where Steven Wolfman is the instructor",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "* dave"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_avg",
+                "courses_uuid"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":67.95,
+                "courses_uuid":"91928"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":75.91,
+                "courses_uuid":"62727"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":77.77,
+                "courses_uuid":"36015"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":78.21,
+                "courses_uuid":"91924"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":78.24,
+                "courses_uuid":"36012"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":79.47,
+                "courses_uuid":"36005"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":79.83,
+                "courses_uuid":"79477"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":79.84,
+                "courses_uuid":"68538"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":79.88,
+                "courses_uuid":"19178"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":80.44,
+                "courses_uuid":"62724"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":81.45,
+                "courses_uuid":"36006"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":81.45,
+                "courses_uuid":"62721"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":81.62,
+                "courses_uuid":"79471"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":81.71,
+                "courses_uuid":"27556"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":81.89,
+                "courses_uuid":"79470"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":82.76,
+                "courses_uuid":"79474"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":82.78,
+                "courses_uuid":"75624"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":83.33,
+                "courses_uuid":"68529"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":83.41,
+                "courses_uuid":"62720"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":83.45,
+                "courses_uuid":"46421"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":83.48,
+                "courses_uuid":"68541"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":83.57,
+                "courses_uuid":"27553"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":83.91,
+                "courses_uuid":"68531"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":84.52,
+                "courses_uuid":"75620"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":84.57,
+                "courses_uuid":"75623"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":84.87,
+                "courses_uuid":"85068"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":85.39,
+                "courses_uuid":"17259"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":85.6,
+                "courses_uuid":"17256"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":85.81,
+                "courses_uuid":"91247"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":86,
+                "courses_uuid":"85072"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":86.04,
+                "courses_uuid":"17258"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":86.17,
+                "courses_uuid":"75619"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":86.24,
+                "courses_uuid":"19183"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":86.26,
+                "courses_uuid":"91249"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":86.44,
+                "courses_uuid":"46420"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":86.65,
+                "courses_uuid":"17255"
+            },
+            {
+                "courses_title":"teach adult",
+                "courses_avg":88.53,
+                "courses_uuid":"66143"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":89,
+                "courses_uuid":"66145"
+            },
+            {
+                "courses_title":"dev wkshp/sem",
+                "courses_avg":89.38,
+                "courses_uuid":"88897"
+            }
+        ]
+}

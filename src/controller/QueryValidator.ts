@@ -83,15 +83,15 @@ export default class QueryValidator implements IQueryValidator {
         return this.idString;
     }
     public checkKeys(where: boolean, options: boolean, columnsKey: boolean, orderKey: boolean): void {
-        if (where) {
+        if (where && !options && !columnsKey && !orderKey) {
             if (typeof this.where === undefined) {
                 throw new InsightError();
             }
-        } else if (where && options) {
+        } else if (where && options && !columnsKey && !orderKey) {
             if (typeof this.options === undefined || typeof this.where === undefined) {
                 throw new InsightError();
             }
-        } else if (columnsKey && options && where) {
+        } else if (columnsKey && options && where && !orderKey) {
             if (typeof this.options === undefined || typeof this.where === undefined
                 || typeof this.columnsKey === undefined) {
                 throw new InsightError();
@@ -189,6 +189,9 @@ export default class QueryValidator implements IQueryValidator {
                     }
                 }
                 for (const value of Object.values(query)) {
+                    if (Object.keys(value).length !== 1) {
+                        throw new InsightError();
+                    }
                     this.validateQuery(value);
                 }
             }
@@ -225,8 +228,8 @@ export default class QueryValidator implements IQueryValidator {
         if (inpustringWithoutAsterik !== undefined) {
             if (asterikOccurences > 2 || inpustringWithoutAsterik.includes("*")) {
                 throw new InsightError("more than 2 wildcards");
-            } else if (asterikOccurences > 0 && asterikOccurences < 2) {
-                if (inpustringWithoutAsterik.toString().indexOf("*") > 0) {
+            } else if (asterikOccurences > 0 && asterikOccurences < 3) {
+                if (inpustringWithoutAsterik.toString().indexOf("*") > -1) {
                     throw new InsightError("asteriks wrong");
                 }
             }

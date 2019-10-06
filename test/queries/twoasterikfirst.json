@@ -1,0 +1,20 @@
+{
+    "title": "Select course title, avg where Steven Wolfman is the instructor",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "** dave"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_avg",
+                "courses_uuid"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
