@@ -99,7 +99,12 @@ function extractSectionData(section: any): Section {
     sect.fail = section.Fail;
     sect.audit = section.Audit;
     sect.avg = section.Avg;
-    sect.year = Number(section.Year);
+    // if the Section property is "overall", set year to 1900
+    if (section.Section === "overall") {
+        sect.year = 1900;
+    } else {
+        sect.year = Number(section.Year);
+    }
     sect.dept = section.Subject;
     return sect;
 }
