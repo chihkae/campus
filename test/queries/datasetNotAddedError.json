@@ -1,0 +1,18 @@
+{
+    "title": "Select dfadfadsf title where course dept is cpsc order by course title",
+    "query":{
+        "WHERE": {
+            "IS": {
+                "courses_dept": "CPSC"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "dfdasfads_title"
+            ],
+            "ORDER": "courses_title"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

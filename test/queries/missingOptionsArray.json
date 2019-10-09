@@ -1,0 +1,17 @@
+{
+    "title": "Missing options ",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "wolfman, steven"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result":"InsightError"
+}

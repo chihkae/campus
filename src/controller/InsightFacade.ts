@@ -1,5 +1,5 @@
 import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
 import * as JSZip from "jszip";
 import {JSZipObject} from "jszip";
@@ -92,16 +92,27 @@ function extractSectionData(section: any): Section {
     let sect = new Section();
     // extract the numbers from the file name (for the course id)
     sect.id = section.Course;
-    sect.uuid = section.id;
+    sect.uuid = section.id.toString();
     sect.instructor = section.Professor;
     sect.title = section.Title;
     sect.pass = section.Pass;
     sect.fail = section.Fail;
     sect.audit = section.Audit;
     sect.avg = section.Avg;
-    sect.year = section.Year;
+    // if the Section property is "overall", set year to 1900
+    if (section.Section === "overall") {
+        sect.year = 1900;
+    } else {
+        sect.year = Number(section.Year);
+    }
     sect.dept = section.Subject;
     return sect;
+}
+import QueryValidator from "./QueryValidator";
+import QueryEvaluator from "./QueryEvaluator";
+
+export interface IQueryValidator {
+    validateQuery(query: any): boolean;
 }
 
 /**
@@ -181,7 +192,52 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public performQuery(query: any): Promise <any[]> {
-        return Promise.reject("Not implemented.");
+        return new Promise(function (resolve, reject) {
+            let queryValidator = new QueryValidator();
+            try {
+                if (queryValidator.validateQuery(query)) {
+                    try {
+                        queryValidator.checkKeys(true, true, true, false);
+                    } catch (e) {
+                        reject(new InsightError());
+                    }
+                    let fileIDtoRead = queryValidator.getIdString();
+                    let fs = require("fs");
+                    fs.readFile(`./data/${fileIDtoRead}`, (err: any, data: any) => {
+                        if (err) {
+                            reject(new InsightError());
+                        } else {
+                            try {
+                                let content = JSON.parse(data);
+                                let queryEvaluator = new QueryEvaluator(query, content);
+                                let unsortedResult = queryEvaluator.evaluateResult(query);
+                                let keys = queryValidator.getColumnsKeyWithoutUnderscore();
+                                let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
+                                let orderkeys = queryValidator.getOrderKeyWithoutUnderscore();
+                                let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
+                                let id = queryValidator.getIdString();
+                                let sortedWithKeys = queryEvaluator.addID(sorted, id, keys);
+                                if (sortedWithKeys.length > 5000) {
+                                    reject(new ResultTooLargeError("result is more than 5000 sections"));
+                                } else {
+                                    resolve(sortedWithKeys);
+                                }
+                            } catch (e) {
+                                if (e instanceof ResultTooLargeError) {
+                                    reject(e);
+                                } else if (e instanceof InsightError) {
+                                    reject(e);
+                                } else {
+                                    reject(e);
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                reject(new InsightError());
+            }
+        });
     }
 
     public listDatasets(): Promise<InsightDataset[]> {

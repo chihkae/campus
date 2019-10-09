@@ -4,6 +4,8 @@
  * You should not change this interface at all or the test suite will not work.
  */
 
+import {Course, Dataset, Section} from "./Dataset";
+
 export enum InsightDatasetKind {
     Courses = "courses",
     Rooms = "rooms",
@@ -107,4 +109,5 @@ export interface IInsightFacade {
      * The promise should fulfill an array of currently added InsightDatasets, and will only fulfill.
      */
     listDatasets(): Promise<InsightDataset[]>;
+
 }

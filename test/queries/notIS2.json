@@ -1,0 +1,24 @@
+{
+    "title":"Select courses title, avg where courses dept is not cpsc",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "IS": {
+                    "courses_dept": "cpsc"
+                }
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_avg"
+            ],
+        "ORDER": "courses_avg"
+        }
+    },
+
+    "isQueryValid": false,
+
+    "result":"ResultTooLargeError"
+}
+

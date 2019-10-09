@@ -1,0 +1,19 @@
+{
+    "title": "Select instructor, title, pass where average = 50",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_dept": "CPSC"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_avg"
+            ],
+            "ORDER": " "
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

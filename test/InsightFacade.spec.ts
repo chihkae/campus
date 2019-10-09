@@ -269,7 +269,6 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
 });
-
 /*
  * This test suite dynamically generates tests from the JSON files in test/queries.
  * You should not need to modify it; instead, add additional files to the queries directory.
