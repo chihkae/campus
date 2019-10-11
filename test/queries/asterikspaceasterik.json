@@ -3,7 +3,7 @@
     "query": {
         "WHERE": {
             "IS": {
-                "courses_uuid": "* *"
+                "courses_uuid": "* 241 *"
             }
         },
         "OPTIONS": {

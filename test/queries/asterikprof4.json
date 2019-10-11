@@ -1,0 +1,22 @@
+{
+    "title": "Select course title, avg where Steven Wolfman is the instructor",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "* schmidt,  *"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_avg",
+                "courses_uuid",
+                "courses_id"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+    ]
+}
