@@ -134,6 +134,8 @@ export default class QueryValidator implements IQueryValidator {
                         this.validateOrderKey(query[key]);
                         this.setOrderKey(query[key]);
                         this.checkKeys(true, true, true, true);
+                    } else {
+                        throw new InsightError();
                     }
                 }
                 return true;
@@ -148,6 +150,9 @@ export default class QueryValidator implements IQueryValidator {
     private validateOrderKey(orderKey: any) {
         let columnsKey: string[] = this.getColumnsKey();
         let matchesColumnskey = false;
+        if (orderKey === "") {
+            throw new InsightError("No order key");
+        }
         if (columnsKey !== null) {
             for (const val of Object.values(columnsKey)) {
                 if (val === orderKey) {
