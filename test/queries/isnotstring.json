@@ -3,9 +3,7 @@
     "query": {
         "WHERE": {
             "IS": {
-                "LT":{
-                    "courses_avg": 50
-                }
+                "courses_instructor": 50
             }
         },
         "OPTIONS": {
