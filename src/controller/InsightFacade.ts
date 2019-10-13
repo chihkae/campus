@@ -121,6 +121,22 @@ export interface IQueryValidator {
     validateQuery(query: any): boolean;
 }
 
+export interface IQuery {
+    setWhere(s: string): void;
+    getWhere(): string;
+    setOptions(s: string): void;
+    getOptions(): string;
+    setColumns(s: string): void;
+    setColumnsKey(s: string[]): void;
+    getColumnsKey(): string[];
+    getColumnsKeyWithoutUnderscore(): string[];
+    getOrderKeyWithoutUnderscore(): string;
+    setOrderKey(s: string): void;
+    getOrderKey(): string;
+    setIdString(s: string): void;
+    getIdString(): string;
+}
+
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
@@ -209,7 +225,7 @@ export default class InsightFacade implements IInsightFacade {
                     } catch (e) {
                         reject(new InsightError());
                     }
-                    let fileIDtoRead = queryValidator.getIdString();
+                    let fileIDtoRead = queryValidator.getQuery().getIdString();
                     let fs = require("fs");
                     fs.readFile(`./data/${fileIDtoRead}`, (err: any, data: any) => {
                         if (err) {
@@ -219,11 +235,11 @@ export default class InsightFacade implements IInsightFacade {
                                 let content = JSON.parse(data);
                                 let queryEvaluator = new QueryEvaluator(query, content);
                                 let unsortedResult = queryEvaluator.evaluateResult(query);
-                                let keys = queryValidator.getColumnsKeyWithoutUnderscore();
+                                let keys = queryValidator.getQuery().getColumnsKeyWithoutUnderscore();
                                 let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
-                                let orderkeys = queryValidator.getOrderKeyWithoutUnderscore();
+                                let orderkeys = queryValidator.getQuery().getOrderKeyWithoutUnderscore();
                                 let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
-                                let id = queryValidator.getIdString();
+                                let id = queryValidator.getQuery().getIdString();
                                 let sortedWithKeys = queryEvaluator.addID(sorted, id, keys);
                                 if (sortedWithKeys.length > 5000) {
                                     reject(new ResultTooLargeError("result is more than 5000 sections"));
