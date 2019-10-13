@@ -15,30 +15,37 @@ export default class QueryEvaluator {
         this.data = data;
         this.result = [];
     }
-    private getQuery(): string {
+
+    /*private getQuery(): string {
         if (this.query !== undefined) {
             return this.query;
         }
         return null;
-    }
+    }*/
+
     private getData(): any {
         if (this.data !== undefined) {
             return this.data;
         }
         return null;
     }
+
+    private whereWithNoFilter(query: any, key: any): any[] {
+            let totalData =  this.getData();
+            let onlyCourses = [];
+            for (const courses of Object.values(totalData.courses)) {
+                for (const section of Object.values(Object(courses).sections)) {
+                    onlyCourses.push(section);
+                }
+            }
+            return onlyCourses;
+    }
+
     public evaluateResult(query: any): any[] {
         for (const key of Object.keys(query)) {
             if (key === "WHERE") {
                 if (Object.keys(query[key]).length === 0) {
-                    let totalData =  this.getData();
-                    let onlyCourses = [];
-                    for (const courses of Object.values(totalData.courses)) {
-                        for (const section of Object.values(Object(courses).sections)) {
-                                onlyCourses.push(section);
-                        }
-                    }
-                    return onlyCourses;
+                   return this.whereWithNoFilter(query, key);
                 } else {
                     return this.evaluateResult(query[key]);
                 }
@@ -67,6 +74,7 @@ export default class QueryEvaluator {
             }
         }
     }
+
     private evaluateORArray(query: any): any {
         if (Array.isArray(query)) {
             if (query != null && typeof query === "object") {
@@ -81,6 +89,7 @@ export default class QueryEvaluator {
             throw new InsightError("OR object is not an array");
         }
     }
+
     private evaluateANDArray(query: any): any {
         if (Array.isArray(query)) {
             if (query != null && typeof query === "object") {
@@ -103,6 +112,7 @@ export default class QueryEvaluator {
             throw new InsightError("And object is not an array");
         }
     }
+
     private evaluateIS(key: any, value: any): any[] {
         let content = this.getData();
         let countNumberofAsterisks = value.toString().split("*").length - 1;
@@ -138,6 +148,7 @@ export default class QueryEvaluator {
         });
         return result;
     }
+
     private evaluateAnd(result1: any, result2: any): any {
         return result1.filter(function (e1: string) {
             return result2.indexOf(e1) > -1;
@@ -156,6 +167,7 @@ export default class QueryEvaluator {
         }
         return list;
     }
+
     public sort(result: any, keyToSort: string): any[] {
         let sortedResult = [];
         if (keyToSort === "instructor" || keyToSort === "title" || keyToSort === "dept" || keyToSort === "id" ||
@@ -170,6 +182,7 @@ keyToSort === "uuid") {
             }
         return sortedResult;
     }
+
     private evaluateOR(result1: any, result2: any): any {
         let merged = result1.concat(result2);
         let removedDuplicateofMerged = merged.filter(function (item: any, pos: any) {
@@ -177,6 +190,7 @@ keyToSort === "uuid") {
         });
         return removedDuplicateofMerged;
     }
+
     private evaluateNot(result: any): any {
         let content = this.getData();
         let notResult = [];
@@ -188,13 +202,8 @@ keyToSort === "uuid") {
             }
         }
         return notResult;
-        /*let arrayAfterRemove = content.courses.filter(function (el: any) {
-            for(const coursSection of Object.values(el.sections)) {
-                return !result.includes(el);
-            }
-        });
-        return arrayAfterRemove;*/
     }
+
     public selectColumns(result: any, keys: any): any {
             for (let i = 0 ; i < Object(result).length ; i++) {
                 for (const key of Object.keys(result[i])) {
@@ -205,25 +214,21 @@ keyToSort === "uuid") {
             }
             return result;
     }
+
     private evaluateComparator(key: any, value: any, comparator: any): any {
-        let mapper = new Map();
-        mapper.set("GT", ">");
-        mapper.set("LT", "<");
-        mapper.set("EQ", "=");
-        let sign = mapper.get(comparator);
         let content = this.getData();
         let result: any[] = [];
         content.courses.forEach(function (course: any) {
             course.sections.forEach(function (section: any) {
-                if (sign === ">") {
+                if (comparator === "GT") {
                     if (section[key] > Number(value)) {
                         result.push(section);
                     }
-                } else if (sign === "<") {
+                } else if (comparator === "LT") {
                     if (section[key] < Number(value)) {
                         result.push(section);
                     }
-                } else if (sign === "=") {
+                } else if (comparator === "EQ") {
                     if (section[key] === Number(value)) {
                         result.push(section);
                     }

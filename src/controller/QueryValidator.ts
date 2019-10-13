@@ -15,6 +15,7 @@ export default class QueryValidator implements IQueryValidator {
         }
         throw new InsightError("where never set");
     }
+
     public setOptions(s: string): void {
         if (this.options === undefined && s !== null) {
             this.options = s;
@@ -22,6 +23,7 @@ export default class QueryValidator implements IQueryValidator {
         }
         throw new InsightError("options already set");
     }
+
     public setColumns(s: string): void {
         if (this.columns === undefined && s !== null) {
             this.columns = s;
@@ -29,6 +31,7 @@ export default class QueryValidator implements IQueryValidator {
         }
         throw new InsightError("columns can not be set again");
     }
+
     public setColumnsKey(s: string[]): void {
         if (s !== null && this.columnsKey === undefined) {
             this.columnsKey = [];
@@ -41,9 +44,11 @@ export default class QueryValidator implements IQueryValidator {
         }
         throw new InsightError("columns key already set ");
     }
+
     public getColumnsKey(): string[] {
         return this.columnsKey;
     }
+
     public getColumnsKeyWithoutUnderscore(): string[] {
         if (this.getColumnsKey()) {
             let columnsWithotUndescore = [];
@@ -53,12 +58,14 @@ export default class QueryValidator implements IQueryValidator {
             return columnsWithotUndescore;
         }
     }
+
     public getOrderKeyWithoutUnderscore(): string {
         if (this.getOrderKey()) {
             let orderKey = this.getOrderKey();
             return orderKey.split("_")[1];
         }
     }
+
     public setOrderKey(s: string): void {
         if (this.orderKey === undefined && s !== null) {
             let id = s.split("_")[0];
@@ -72,6 +79,7 @@ export default class QueryValidator implements IQueryValidator {
     public getOrderKey(): string {
         return this.orderKey;
     }
+
     public setIdString(s: string): void {
         if (s !== null && this.idString === undefined) {
             this.idString = s;
@@ -79,9 +87,11 @@ export default class QueryValidator implements IQueryValidator {
             throw new InsightError("two different id's in query, should only have one dataset id in query");
         }
     }
+
     public getIdString(): string {
         return this.idString;
     }
+
     public checkKeys(where: boolean, options: boolean, columnsKey: boolean, orderKey: boolean): void {
         if (where && !options && !columnsKey && !orderKey) {
             if (typeof this.where === undefined) {
@@ -103,6 +113,7 @@ export default class QueryValidator implements IQueryValidator {
             }
         }
     }
+
     public validateQuery(query: any): boolean {
         if (query != null && typeof query === "object") {
                 for (const key of Object.keys(query)) {
@@ -142,11 +153,13 @@ export default class QueryValidator implements IQueryValidator {
         }
         return false;
     }
+
     private validateNot(notObject: any) {
         if (Object.keys(notObject).length === 0) {
             throw new InsightError();
         }
     }
+
     private validateOrderKey(orderKey: any) {
         let columnsKey: string[] = this.getColumnsKey();
         let matchesColumnskey = false;
@@ -167,14 +180,13 @@ export default class QueryValidator implements IQueryValidator {
             throw new InsightError("No column strings exist");
         }
     }
+
     private validateColumnsArray(query: any) {
         if (Array.isArray(query)) {
             if (query != null && typeof query === "object") {
                 let columnsKey: string[] = [];
                 for (const value of Object.values(query)) {
-                    if (!this.validateMKey(value) && !this.validateSkey(value)) {
-                        throw new InsightError("Mkey or Skey not valid");
-                    }
+                    this.validateKey(value, "either");
                     columnsKey.push(value.toString());
                 }
                 this.setColumnsKey(columnsKey);
@@ -185,6 +197,7 @@ export default class QueryValidator implements IQueryValidator {
             throw new InsightError("columns not an array");
         }
     }
+
     private validateQueryWithArray(query: any) {
         if (Array.isArray(query)) {
             if (query != null && typeof query === "object") {
@@ -204,58 +217,60 @@ export default class QueryValidator implements IQueryValidator {
             throw new InsightError("sub query not an array");
         }
     }
+
     private validateIS(query: any): void {
         if (Object.keys(query).length > 1 || Object.values(query).length > 1) {
             throw new InsightError("no keys/value in IS");
         }
         let key = Object.keys(query);
         let value = Object.values(query);
-        if (!(this.validateInputString(value[0])) || !(this.validateSkey(key[0]))) {
-            throw new InsightError();
-        }
+        this.validateInputString(value[0]);
+        this.validateKey(key[0], "sKey");
     }
-    private validateInputString(inpustring: any): boolean {
+
+    private validateInputString(inpustring: any): void {
         if (typeof inpustring !== "string") {
             throw new InsightError();
         }
         let asterikOccurences = inpustring.split("*").length - 1;
-        let inpustringWithoutAsterik;
-        if (asterikOccurences > 2 || (typeof inpustring !== "string")) {
+        if (asterikOccurences > 2) {
             throw new InsightError();
         } else if (asterikOccurences === 2) {
-            inpustringWithoutAsterik = inpustring.toString().substring(1, inpustring.toString().length - 1);
+            if (!(inpustring.toString().startsWith("*") && inpustring.toString().endsWith("*"))) {
+                throw new InsightError();
+            }
         } else if (asterikOccurences === 1) {
-            if (inpustring.toString().indexOf("*") === 0) {
-                inpustringWithoutAsterik = inpustring.toString().substring(1, inpustring.toString().length);
-            } else if (inpustring.toString().indexOf("*") === inpustring.toString().length - 1) {
-                inpustringWithoutAsterik = inpustring.toString().substring(0, inpustring.toString().length - 1);
-            } else {
+            if (!(inpustring.toString().startsWith("*") || inpustring.toString().endsWith("*"))) {
                 throw new InsightError();
             }
         }
-        if (inpustringWithoutAsterik !== undefined) {
-            if (asterikOccurences > 2 || inpustringWithoutAsterik.includes("*")) {
-                throw new InsightError("more than 2 wildcards");
-            } else if (asterikOccurences > 0 && asterikOccurences < 3) {
-                if (inpustringWithoutAsterik.toString().indexOf("*") > -1) {
-                    throw new InsightError("asteriks wrong");
+    }
+
+    private validateKey(key: string, type: string): void {
+        if (key !== null || key !== undefined) {
+            let id = key.substring(0, key.indexOf("_"));
+            let field = key.substring(key.indexOf("_") + 1);
+            let mFields = ["avg", "pass", "fail", "audit", "year"];
+            let sFields = ["dept", "id", "instructor", "title", "uuid"];
+            this.isIDinListofIDs(id);
+            if (type === "mKey") {
+                if (!(mFields.indexOf(field) > -1)) {
+                    throw new InsightError();
+                }
+            } else if (type === "sKey") {
+                if (!(sFields.indexOf(field) > -1)) {
+                    throw new InsightError();
+                }
+            } else if (type === "either") {
+                if ( !(mFields.indexOf(field) > -1) && !(sFields.indexOf(field) > -1 )) {
+                    throw new InsightError();
                 }
             }
-        }
-        return true;
-    }
-    private validateMKey(mKey: string): boolean {
-        if (mKey !== null || mKey !== undefined) {
-            let id = mKey.substring(0, mKey.indexOf("_"));
-            let mfield = mKey.substring(mKey.indexOf("_") + 1);
-            this.isIDinListofIDs(id);
-            let mFields = ["avg", "pass", "fail", "audit", "year"];
-            if (!(mFields.indexOf(mfield) > -1)) {
-                return false;
-            }
-            return true;
+        } else {
+            throw new InsightError();
         }
     }
+
     private isIDinListofIDs(id: any): void {
         let fs = require("fs");
         let currentDataFiles: string[] = fs.readdirSync("./data/");
@@ -263,37 +278,20 @@ export default class QueryValidator implements IQueryValidator {
             throw new InsightError();
         }
     }
-    private validateSkey(sKey: string): boolean {
-        if (sKey !== null || sKey !== undefined) {
-            let indexofUnderscore = sKey.indexOf("_");
-            let id = sKey.substr(0, indexofUnderscore);
-            let sfield = sKey.substr(indexofUnderscore + 1);
-            this.isIDinListofIDs(id);
-            let sFields = ["dept", "id", "instructor", "title", "uuid"];
-            if (!(sFields.indexOf(sfield) > -1)) {
-                return false;
-            }
-            return true;
-        }
+
+    private validateNumber(num: any): void {
+      if (typeof num !== "number") {
+          throw new InsightError();
+      }
     }
-    private validateNumber(num: any): boolean {
-        let re = /^[0-9]+$/g;
-        if (!re.test(num) || (typeof num === "string")) {
-            throw InsightError;
-        }
-        return true;
-    }
+
     private validateCompare(query: any) {
         if (Object.keys(query).length > 1 || Object.values(query).length > 1) {
             throw new InsightError("no key value pair in Compare object");
         }
         const key = Object.keys(query);
         const value = Object.values(query);
-        if (typeof value[0] !== "number") {
-            throw new InsightError();
-        }
-        if (!this.validateMKey(key[0]) || !this.validateNumber(value[0])) {
-            throw new InsightError();
-        }
+        this.validateKey(key[0], "mKey");
+        this.validateNumber(value[0]);
     }
 }

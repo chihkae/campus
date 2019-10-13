@@ -12,7 +12,9 @@ function validateId(id: string): boolean {
 }
 
 function getNumberOfSections(dataset: Dataset): number {
-    if (dataset.courses.length === 0) { return 0; }
+    if (dataset.courses.length === 0) {
+        return 0;
+    }
     let total: number = 0;
     dataset.courses.forEach(function (course) {
         total += course.sections.length;
@@ -59,7 +61,9 @@ function parseCourse(text: string, fileName: string): Course {
     }
     // get the results key (holds all the courses)
     let courses: [] = courseAsJSON["result"];
-    if (courses === undefined || courses === null) { return undefined; }
+    if (courses === undefined || courses === null) {
+        return undefined;
+    }
     let sections: Section[] = [];
     // check if the course has any sections
     if (courses.length > 0) {
@@ -81,7 +85,9 @@ function parseCourse(text: string, fileName: string): Course {
 // returns true if the given object is empty
 function isEmpty(obj: {}) {
     for (let key in obj) {
-        if (obj.hasOwnProperty(key)) { return false; }
+        if (obj.hasOwnProperty(key)) {
+            return false;
+        }
     }
     return true;
 }
@@ -155,7 +161,9 @@ export default class InsightFacade implements IInsightFacade {
                             // remove the "courses/" part of the file name
                             let courseName = filename.split("/").pop();
                             let course = parseCourse(txt, courseName);
-                            if (course !== undefined) { datasetToAdd.courses.push(course); }
+                            if (course !== undefined) {
+                                datasetToAdd.courses.push(course);
+                            }
                         });
                 }
             });
