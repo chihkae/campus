@@ -134,6 +134,8 @@ export default class QueryValidator implements IQueryValidator {
                         this.validateOrderKey(query[key]);
                         this.setOrderKey(query[key]);
                         this.checkKeys(true, true, true, true);
+                    } else {
+                        throw new InsightError();
                     }
                 }
                 return true;
@@ -148,6 +150,9 @@ export default class QueryValidator implements IQueryValidator {
     private validateOrderKey(orderKey: any) {
         let columnsKey: string[] = this.getColumnsKey();
         let matchesColumnskey = false;
+        if (orderKey === "") {
+            throw new InsightError("No order key");
+        }
         if (columnsKey !== null) {
             for (const val of Object.values(columnsKey)) {
                 if (val === orderKey) {
@@ -210,6 +215,9 @@ export default class QueryValidator implements IQueryValidator {
         }
     }
     private validateInputString(inpustring: any): boolean {
+        if (typeof inpustring !== "string") {
+            throw new InsightError();
+        }
         let asterikOccurences = inpustring.split("*").length - 1;
         let inpustringWithoutAsterik;
         if (asterikOccurences > 2 || (typeof inpustring !== "string")) {
@@ -281,6 +289,9 @@ export default class QueryValidator implements IQueryValidator {
         }
         const key = Object.keys(query);
         const value = Object.values(query);
+        if (typeof value[0] !== "number") {
+            throw new InsightError();
+        }
         if (!this.validateMKey(key[0]) || !this.validateNumber(value[0])) {
             throw new InsightError();
         }

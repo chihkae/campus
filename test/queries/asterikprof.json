@@ -1,0 +1,46 @@
+{
+    "title": "Select course title, avg where Steven Wolfman is the instructor",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "*chmidt, mar*"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_avg",
+                "courses_uuid",
+                "courses_id"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_title":"machine lrn mine",
+            "courses_avg":80.29,
+            "courses_uuid":"62410",
+            "courses_id":"340"
+        },
+        {
+            "courses_title":"machine lrn mine",
+            "courses_avg":82.66,
+            "courses_uuid":"3397",
+            "courses_id":"340"
+        },
+        {
+            "courses_title":"machine learn i",
+            "courses_avg":90.53,
+            "courses_uuid":"62474",
+            "courses_id":"540"
+        },
+        {
+            "courses_title":"machine learn i",
+            "courses_avg":91.22,
+            "courses_uuid":"1376",
+            "courses_id":"540"
+        }
+    ]
+}

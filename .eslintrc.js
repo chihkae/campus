@@ -10,7 +10,9 @@ module.exports = {
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint",
+        "@typescript-eslin" +
+
+
         "@typescript-eslint/tslint"
     ],
     "overrides": [

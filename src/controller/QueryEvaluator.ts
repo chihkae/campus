@@ -114,14 +114,12 @@ export default class QueryEvaluator {
                     if (countNumberofAsterisks === 1) {
                         if (value.toString().indexOf("*") > 0) {
                             let stringbeforeAsterik = value.toString().substring(0, (value.toString().length - 1));
-                            if (section[key].indexOf(stringbeforeAsterik) === 0 || section[key].toString() ===
-                                stringbeforeAsterik.toString()) {
+                            if (section[key].toString().startsWith(stringbeforeAsterik)) {
                                 result.push(section);
                             }
                         } else if (value.toString().indexOf("*") === 0) {
                             let stringAfterAsterik = value.toString().substring(1, (value.toString().length));
-                            if (section[key].toString().indexOf(stringAfterAsterik) > 0 || section[key].toString() ===
-                                stringAfterAsterik.toString() ) {
+                            if (section[key].toString().endsWith(stringAfterAsterik)) {
                                 result.push(section);
                             }
                         }

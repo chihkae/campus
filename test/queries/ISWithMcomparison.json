@@ -4,7 +4,7 @@
         "WHERE": {
             "IS": {
                 "LT":{
-                    "courses_avg":50
+                    "courses_avg": 50
                 }
             }
         },
