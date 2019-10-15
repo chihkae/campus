@@ -73,7 +73,7 @@ export default class QueryValidator extends Query implements IQueryValidator {
     }
 
     private validateNot(notObject: any) {
-        if (Object.keys(notObject).length === 0) {
+        if (Object.keys(notObject).length !== 1) {
             throw new InsightError();
         }
     }
@@ -101,6 +101,9 @@ export default class QueryValidator extends Query implements IQueryValidator {
 
     private validateColumnsArray(query: any) {
         if (Array.isArray(query)) {
+            if (query.length === 0) {
+                throw new InsightError();
+            }
             if (query != null && typeof query === "object") {
                 let columnsKey: string[] = [];
                 for (const value of Object.values(query)) {
@@ -118,6 +121,9 @@ export default class QueryValidator extends Query implements IQueryValidator {
 
     private validateQueryWithArray(query: any) {
         if (Array.isArray(query)) {
+            if (query.length === 0) {
+                throw new InsightError();
+            }
             if (query != null && typeof query === "object") {
                 for (const key of Object.keys(query)) {
                     if (Object.keys(query[Number(key)]).length === 0) {
