@@ -168,7 +168,8 @@ export default class QueryEvaluator {
         return list;
     }
 
-    public sort(result: any, keyToSort: string): any[] {
+    public sort(result: any, keyToSort: any[]): any[] {
+        if()
         let sortedResult = [];
         if (keyToSort === "instructor" || keyToSort === "title" || keyToSort === "dept" || keyToSort === "id" ||
 keyToSort === "uuid") {

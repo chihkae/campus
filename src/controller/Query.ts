@@ -1,13 +1,90 @@
 import {InsightError} from "./IInsightFacade";
 import {IQuery} from "./InsightFacade";
+import QueryValidator from "./QueryValidator";
 
 export default class Query implements IQuery {
     private where: string;
     private options: string;
     private columns: string;
     private columnsKey: string[];
-    private orderKey: string;
+    private orderKey: string[];
     private idString: string;
+    private transformations: string;
+    private group: string[];
+    private apply: string[];
+    private applyKeys: string[];
+    private groupKeys: string[];
+    private dir: string;
+
+    public setDir(s: any): void {
+        if(typeof s !== "string") {
+            throw new InsightError();
+        }
+        if (this.dir === undefined) {
+            this.dir = s;
+        } else {
+            throw new InsightError();
+        }
+    }
+
+    public getDir(): string {
+        return this.dir;
+    }
+
+    public setGroup(s: string[]): void {
+        if (this.group === undefined) {
+            let values = Object.values(s);
+            this.group = new Array(values[0]);
+            return;
+        }
+        throw new InsightError();
+    }
+
+    public setApply(s: string[]): void {
+        if (this.apply === undefined) {
+            let values = Object.values(s);
+            this.apply = new Array(values[1]);
+            return;
+        }
+        throw new InsightError();
+    }
+
+    public getApplyKeys(): string[]{
+        return this.applyKeys;
+    }
+
+    public setGroupKeys(s: any): void {
+        if (!Array.isArray(s)) {
+           throw new InsightError();
+        }
+        for (const val of Object.values(s)) {
+            let QV = new QueryValidator();
+            QV.validateKey(val, "either");
+            this.groupKeys.push(val);
+        }
+    }
+
+    public getGroupKeys(): string[] {
+        return this.groupKeys;
+    }
+
+    public setApplyKeys(s: any) {
+        if (typeof  s !== "string") {
+            throw new InsightError();
+        }
+        if (this.applyKeys === undefined) {
+            this.applyKeys = [];
+        }
+        this.applyKeys.push(s);
+    }
+
+    public setTransformations(s: string): void {
+        if (this.transformations === undefined) {
+            this.transformations = s;
+            return;
+        }
+        throw new InsightError();
+    }
 
     public setWhere(s: string): void {
         if (this.where === undefined) {
@@ -75,17 +152,21 @@ export default class Query implements IQuery {
         }
     }
 
-    public setOrderKey(s: string): void {
+    public setOrderKey(s: any): void {
         if (this.orderKey === undefined && s !== null) {
-            let id = s.split("_")[0];
-            this.setIdString(id);
-            this.orderKey = s;
+            if (Array.isArray(s)) {
+                for (const val of Object.values(s)) {
+                    this.orderKey.push(val);
+                }
+            } else {
+                this.orderKey.push(s);
+            }
             return;
         }
         throw new InsightError("two order keys");
     }
 
-    public getOrderKey(): string {
+    public getOrderKey(): string[] {
         return this.orderKey;
     }
 

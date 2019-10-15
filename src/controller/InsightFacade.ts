@@ -116,9 +116,13 @@ function extractSectionData(section: any): Section {
 }
 import QueryValidator from "./QueryValidator";
 import QueryEvaluator from "./QueryEvaluator";
+import QueryGrouper from "./QueryGrouper";
+import Query from "./Query";
+import QueryApplier from "./QueryApplier";
 
 export interface IQueryValidator {
     validateQuery(query: any): boolean;
+    getQuery(): Query;
 }
 
 export interface IQuery {
@@ -132,9 +136,12 @@ export interface IQuery {
     getColumnsKeyWithoutUnderscore(): string[];
     getOrderKeyWithoutUnderscore(): string;
     setOrderKey(s: string): void;
-    getOrderKey(): string;
+    getOrderKey(): string[];
     setIdString(s: string): void;
     getIdString(): string;
+    setGroup(s: string[]): void;
+    setApply(s: string[]): void;
+    setTransformations(s: string): void;
 }
 
 /**
@@ -221,7 +228,7 @@ export default class InsightFacade implements IInsightFacade {
             try {
                 if (queryValidator.validateQuery(query)) {
                     try {
-                        queryValidator.checkKeys(true, true, true, false);
+                        queryValidator.checkKeys(true, true, true, false, false);
                     } catch (e) {
                         reject(new InsightError());
                     }
@@ -235,9 +242,18 @@ export default class InsightFacade implements IInsightFacade {
                                 let content = JSON.parse(data);
                                 let queryEvaluator = new QueryEvaluator(query, content);
                                 let unsortedResult = queryEvaluator.evaluateResult(query);
+                                let queryApplier = new QueryApplier();
+                                if (queryValidator.getQuery().getGroupKeys() !== undefined) {
+                                    queryApplier.applytoGroup(queryValidator.getQuery().getGroupKeys(), unsortedResult);
+                                }
                                 let keys = queryValidator.getQuery().getColumnsKeyWithoutUnderscore();
                                 let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
-                                let orderkeys = queryValidator.getQuery().getOrderKeyWithoutUnderscore();
+                                let orderkeys = undefined;
+                                if (queryValidator.getQuery().getOrderKey() === undefined) {
+                                    orderkeys = undefined;
+                                } else {
+                                    orderkeys = queryValidator.getQuery().getOrderKeyWithoutUnderscore();
+                                }
                                 let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
                                 let id = queryValidator.getQuery().getIdString();
                                 let sortedWithKeys = queryEvaluator.addID(sorted, id, keys);
