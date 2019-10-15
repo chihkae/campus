@@ -23,7 +23,7 @@ export default class QueryApplier{
                         group = this.groupSum(group, val);
                         break;
                     case "AVG":
-                        group = this.groupAvg(group, val;
+                        group = this.groupAvg(group, val);
                 }
             });
         });

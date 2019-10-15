@@ -242,9 +242,17 @@ export default class InsightFacade implements IInsightFacade {
                                 let content = JSON.parse(data);
                                 let queryEvaluator = new QueryEvaluator(query, content);
                                 let unsortedResult = queryEvaluator.evaluateResult(query);
+                                let queryGrouper = new QueryGrouper();
                                 let queryApplier = new QueryApplier();
+                                let groupedResult: any[];
                                 if (queryValidator.getQuery().getGroupKeys() !== undefined) {
-                                    queryApplier.applytoGroup(queryValidator.getQuery().getGroupKeys(), unsortedResult);
+                                   groupedResult = queryGrouper.groupResult(queryValidator.getQuery().getGroupKeys(), unsortedResult);
+                                } else {
+                                    groupedResult = unsortedResult;
+                                }
+                                let appliedResult;
+                                if(queryValidator.getQuery().getApplyKeys() !== undefined){
+                                    appliedResult = queryApplier.applytoGroup(groupedResult,)
                                 }
                                 let keys = queryValidator.getQuery().getColumnsKeyWithoutUnderscore();
                                 let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);

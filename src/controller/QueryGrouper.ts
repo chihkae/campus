@@ -5,7 +5,7 @@ import {InsightError, NotFoundError} from "./IInsightFacade";
 export default class QueryGrouper {
 
 
-    public groupResult(groupKey: any[], result: string[]) {
+    public groupResult(groupKey: any[], result: string[]): any[] {
         for (let i = 0; i < groupKey.length ; i++) {
             if (typeof groupKey[i] !== "string") {
                 throw new InsightError();
