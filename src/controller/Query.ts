@@ -2,12 +2,12 @@ import {InsightError} from "./IInsightFacade";
 import {IQuery} from "./InsightFacade";
 
 export default class Query implements IQuery {
-    private where: string;
-    private options: string;
-    private columns: string;
-    private columnsKey: string[];
-    private orderKey: string;
-    private idString: string;
+    private where: string = undefined;
+    private options: string = undefined;
+    private columns: string = undefined;
+    private columnsKey: string[] = undefined;
+    private orderKey: string = undefined;
+    private idString: string = undefined;
 
     public setWhere(s: string): void {
         if (this.where === undefined) {
