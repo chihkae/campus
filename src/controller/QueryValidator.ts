@@ -1,6 +1,8 @@
 import {InsightError} from "./IInsightFacade";
 import InsightFacade, {IQueryValidator} from "./InsightFacade";
 import Query from "./Query";
+import * as util from "util";
+import {Logger} from "tslint/lib/runner";
 
 
 export default class QueryValidator implements IQueryValidator {
@@ -13,21 +15,25 @@ export default class QueryValidator implements IQueryValidator {
     public checkKeys(where: boolean, options: boolean, columnsKey: boolean, orderKey: boolean, transformations: boolean):
         void {
         if (where && !options && !columnsKey && !orderKey) {
-            if (typeof this.query.getWhere() === undefined) {
+            if (typeof this.query.getWhere() === "undefined" || typeof this.query.getOrderKey() !== "undefined" ||
+            typeof  this.query.getColumnsKey() !== "undefined" || typeof  this.query.getOptions() !== "undefined") {
                 throw new InsightError();
             }
         } else if (where && options && !columnsKey && !orderKey) {
-            if (typeof this.query.getOptions() === undefined || typeof this.query.getWhere() === undefined) {
+            if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined" ||
+            typeof  this.query.getColumnsKey() !== "undefined" || typeof this.query.getOrderKey() !== "undefined") {
                 throw new InsightError();
             }
         } else if (columnsKey && options && where && !orderKey) {
-            if (typeof this.query.getOptions() === undefined || typeof this.query.getWhere() === undefined
-                || typeof this.query.getColumnsKey() === undefined) {
+            if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined"
+                || typeof this.query.getColumnsKey() === "undefined"
+                || typeof this.query.getOrderKey() !== "undefined") {
                 throw new InsightError();
             }
         } else if (columnsKey && options && where && orderKey) {
-            if (typeof this.query.getOptions() === undefined || typeof this.query.getWhere() === undefined
-                || typeof this.query.getColumnsKey() === undefined || typeof  this.query.getOrderKey() === undefined) {
+            if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined"
+                || typeof this.query.getColumnsKey() === "undefined"
+                || typeof  this.query.getOrderKey() === "undefined") {
                 throw new InsightError();
             }
         } else if (columnsKey && options && where && orderKey && transformations) {
@@ -43,31 +49,43 @@ export default class QueryValidator implements IQueryValidator {
         if (query != null && typeof query === "object") {
                 for (const key of Object.keys(query)) {
                     if (key === "WHERE") {
+                        this.checkKeys(false, false, false, false);
                         this.query.setWhere(query[key].toString());
+                        this.checkKeys(true, false, false, false);
                         this.validateQuery(query[key]);
                     } else if (key === "IS") {
-                        this.checkKeys(true, false, false, false, false);
+                        this.checkKeys(true, false, false, false);
                         this.validateIS(query[key]);
+                        this.checkKeys(true, false, false, false);
                     } else if (key === "NOT") {
-                        this.checkKeys(true, false, false, false, false);
+                        this.checkKeys(true, false, false, false);
                         this.validateNot(query[key]);
+                        this.checkKeys(true, false, false, false);
                         this.validateQuery(query[key]);
                     } else if (key === "GT" || key === "LT" || key === "EQ") {
-                        this.checkKeys(true, false, false, false, false);
+                        this.checkKeys(true, false, false, false);
                         this.validateCompare(query[key]);
+                        this.checkKeys(true, false, false, false);
                     } else if (key === "OR" || key === "AND") {
-                        this.checkKeys(true, false, false, false, false);
+                        this.checkKeys(true, false, false, false);
                         this.validateQueryWithArray(query[key]);
+                        this.checkKeys(true, false, false, false);
                     } else if (key === "OPTIONS") {
+                        this.checkKeys(true, false, false, false);
                         this.query.setOptions(query[key].toString());
-                        this.checkKeys(true, true, false, false, false);
+                        this.checkKeys(true, true, false, false);
                         this.validateQuery(query[key]);
                     } else if (key === "COLUMNS") {
+                        this.checkKeys(true , true, false, false);
                         this.query.setColumns(query[key].toString());
                         this.validateColumnsArray(query[key]);
-                        this.checkKeys(true, true, true, false, false);
+                        this.checkKeys(true, true, true, false);
                     } else if (key === "ORDER") {
+                        this.checkKeys(true, true, true, false);
                         this.validateOrderKey(query[key]);
+                        this.checkKeys(true, true, true, false);
+                        this.query.setOrderKey(query[key]);
+                        this.checkKeys(true, true, true, true);
                         this.checkKeys(true, true, true, true, false);
                     } else if (key === "TRANSFORMATIONS") {
                         this.checkKeys(true, true, true, true, false);
@@ -136,7 +154,7 @@ export default class QueryValidator implements IQueryValidator {
     }
 
     private validateNot(notObject: any) {
-        if (Object.keys(notObject).length === 0) {
+        if (Object.keys(notObject).length !== 1) {
             throw new InsightError();
         }
     }
@@ -190,7 +208,7 @@ export default class QueryValidator implements IQueryValidator {
         if (typeof orderKey === "object") {
             this.validateOrderWithDirAndMultipleKeys(orderKey);
         } else if (typeof orderKey === "string") {
-            if (orderKey === "") {
+            if (orderKey === "" || Object.entries(orderKey).length === 0) {
                 throw new InsightError("No order key");
             }
             if (columnsKey !== undefined) {
@@ -207,6 +225,9 @@ export default class QueryValidator implements IQueryValidator {
 
     private validateColumnsArray(query: any) {
         if (Array.isArray(query)) {
+            if (query.length === 0) {
+                throw new InsightError();
+            }
             if (query != null && typeof query === "object") {
                 let columnsKey: string[] = [];
                 for (const value of Object.values(query)) {
@@ -226,6 +247,9 @@ export default class QueryValidator implements IQueryValidator {
 
     private validateQueryWithArray(query: any) {
         if (Array.isArray(query)) {
+            if (query.length === 0) {
+                throw new InsightError();
+            }
             if (query != null && typeof query === "object") {
                 for (const key of Object.keys(query)) {
                     if (Object.keys(query[Number(key)]).length === 0) {
