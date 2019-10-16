@@ -11,13 +11,14 @@ export default class Query implements IQuery {
     private idString: string;
     private transformations: string;
     private group: string[];
-    private apply: string[];
-    private applyKeys: string[];
+    private applyRulesTokenKey: ApplyRule[];
+    private applyKeys: any[];
     private groupKeys: string[];
     private dir: string;
 
+
     public setDir(s: any): void {
-        if(typeof s !== "string") {
+        if (typeof s !== "string") {
             throw new InsightError();
         }
         if (this.dir === undefined) {
@@ -31,7 +32,7 @@ export default class Query implements IQuery {
         return this.dir;
     }
 
-    public setGroup(s: string[]): void {
+    public setGroup(s: any[]): void {
         if (this.group === undefined) {
             let values = Object.values(s);
             this.group = new Array(values[0]);
@@ -40,17 +41,36 @@ export default class Query implements IQuery {
         throw new InsightError();
     }
 
-    public setApply(s: string[]): void {
-        if (this.apply === undefined) {
-            let values = Object.values(s);
-            this.apply = new Array(values[1]);
-            return;
+    public setApplyKeys(s: any[]): void {
+        if (this.applyKeys === undefined) {
+            this.applyKeys = s;
+        }
+    }
+
+    public getApplyKeys(): any[] {
+           return this.applyKeys;
+    }
+
+    public setApplyRulesTokenKey(s: any[]): void {
+        if (this.applyRulesTokenKey === undefined) {
+            for (const val of Object.values(s)) {
+                let applyRule = {} as ApplyRule;
+                applyRule.applyKey = Object.keys(val).toString();
+                let applyTokenKeyPair = Object.values(val);
+                for (const key of Object.keys(applyTokenKeyPair)) {
+                    applyRule.applyToken = key.toString();
+                }
+                for (const value of Object.values(applyTokenKeyPair)) {
+                    applyRule.key = value.toString();
+                }
+                this.applyRulesTokenKey.push(applyRule);
+            }
         }
         throw new InsightError();
     }
 
-    public getApplyKeys(): string[]{
-        return this.applyKeys;
+    public getApplyRulesTokenKeys(): object[] {
+        return this.applyRulesTokenKey;
     }
 
     public setGroupKeys(s: any): void {
@@ -66,16 +86,6 @@ export default class Query implements IQuery {
 
     public getGroupKeys(): string[] {
         return this.groupKeys;
-    }
-
-    public setApplyKeys(s: any) {
-        if (typeof  s !== "string") {
-            throw new InsightError();
-        }
-        if (this.applyKeys === undefined) {
-            this.applyKeys = [];
-        }
-        this.applyKeys.push(s);
     }
 
     public setTransformations(s: string): void {
@@ -136,19 +146,35 @@ export default class Query implements IQuery {
     }
 
     public getColumnsKeyWithoutUnderscore(): string[] {
-        if (this.getColumnsKey()) {
+        if (this.getColumnsKey() !== undefined) {
             let columnsWithotUndescore = [];
+            let toAdd;
             for (const val of this.getColumnsKey()) {
-                columnsWithotUndescore.push(val.split("_")[1]);
+                if (val.toString().includes("_")) {
+                    toAdd = val.split("_")[1];
+                } else {
+                    toAdd = val;
+                }
+                columnsWithotUndescore.push(toAdd);
             }
             return columnsWithotUndescore;
         }
     }
 
-    public getOrderKeyWithoutUnderscore(): string {
-        if (this.getOrderKey()) {
-            let orderKey = this.getOrderKey();
-            return orderKey.split("_")[1];
+    public getOrderKeyWithoutUnderscore(): any[] {
+        if (this.getOrderKey() !== undefined) {
+            let orderKeys = this.getOrderKey();
+            let newOrderkeys = [];
+            let toAdd;
+            for (const val of orderKeys) {
+                if (val.toString().includes("_")) {
+                    toAdd = val.split("_")[1];
+                } else {
+                    toAdd = val;
+                }
+                newOrderkeys.push(toAdd);
+            }
+            return newOrderkeys;
         }
     }
 

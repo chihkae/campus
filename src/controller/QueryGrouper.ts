@@ -6,8 +6,8 @@ export default class QueryGrouper {
 
 
     public groupResult(groupKey: any[], result: string[]): any[] {
-        for (let i = 0; i < groupKey.length ; i++) {
-            if (typeof groupKey[i] !== "string") {
+        for (const key of groupKey) {
+            if (typeof key !== "string") {
                 throw new InsightError();
             }
         }

@@ -155,20 +155,30 @@ export default class QueryEvaluator {
         });
     }
 
-    public addID(result: any[], id: string, keys: string[]): any[] {
+    public addID(result: any[], id: string, keys: string[], nonGroupKeys: string[]): any[] {
         let list = [];
         for (const val of result) {
             let obj: any = {};
+            let newKey;
             for (const key of Object.keys(val)) {
-                let newKey = id.concat("_", key.toString());
-                obj[newKey] = val[key];
+                if (nonGroupKeys !== undefined) {
+                    if (nonGroupKeys.indexOf(key) === -1) {
+                        newKey = id.concat("_", key.toString());
+                    } else {
+                        newKey = key;
+                    }
+                    obj[newKey] = val[key];
+                } else {
+                    newKey = id.concat("_", key.toString());
+                    obj[newKey] = val[key];
+                }
+                list.push(obj);
             }
-            list.push(obj);
         }
         return list;
     }
 
-    public sort(result: any, keyToSort: any[]): any[] {
+    /*public sort(result: any, keyToSort: any[]): any[] {
         if()
         let sortedResult = [];
         if (keyToSort === "instructor" || keyToSort === "title" || keyToSort === "dept" || keyToSort === "id" ||
@@ -182,7 +192,7 @@ keyToSort === "uuid") {
                 });
             }
         return sortedResult;
-    }
+    }*/
 
     private evaluateOR(result1: any, result2: any): any {
         let merged = result1.concat(result2);

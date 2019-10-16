@@ -12,8 +12,8 @@ export default class QueryValidator implements IQueryValidator {
         return this.query;
     }
 
-    public checkKeys(where: boolean, options: boolean, columnsKey: boolean, orderKey: boolean, transformations: boolean):
-        void {
+    public checkKeys(where: boolean, options: boolean, columnsKey: boolean, orderKey: boolean,
+                     transformations: boolean): void {
         if (where && !options && !columnsKey && !orderKey) {
             if (typeof this.query.getWhere() === "undefined" || typeof this.query.getOrderKey() !== "undefined" ||
             typeof  this.query.getColumnsKey() !== "undefined" || typeof  this.query.getOptions() !== "undefined") {
@@ -49,50 +49,50 @@ export default class QueryValidator implements IQueryValidator {
         if (query != null && typeof query === "object") {
                 for (const key of Object.keys(query)) {
                     if (key === "WHERE") {
-                        this.checkKeys(false, false, false, false);
+                        this.checkKeys(false, false, false, false, false);
                         this.query.setWhere(query[key].toString());
-                        this.checkKeys(true, false, false, false);
+                        this.checkKeys(true, false, false, false, false);
                         this.validateQuery(query[key]);
                     } else if (key === "IS") {
-                        this.checkKeys(true, false, false, false);
+                        this.checkKeys(true, false, false, false, false);
                         this.validateIS(query[key]);
-                        this.checkKeys(true, false, false, false);
+                        this.checkKeys(true, false, false, false, false);
                     } else if (key === "NOT") {
-                        this.checkKeys(true, false, false, false);
+                        this.checkKeys(true, false, false, false, false);
                         this.validateNot(query[key]);
-                        this.checkKeys(true, false, false, false);
+                        this.checkKeys(true, false, false, false, false);
                         this.validateQuery(query[key]);
                     } else if (key === "GT" || key === "LT" || key === "EQ") {
-                        this.checkKeys(true, false, false, false);
+                        this.checkKeys(true, false, false, false, false);
                         this.validateCompare(query[key]);
-                        this.checkKeys(true, false, false, false);
+                        this.checkKeys(true, false, false, false, false);
                     } else if (key === "OR" || key === "AND") {
-                        this.checkKeys(true, false, false, false);
+                        this.checkKeys(true, false, false, false, false);
                         this.validateQueryWithArray(query[key]);
-                        this.checkKeys(true, false, false, false);
+                        this.checkKeys(true, false, false, false, false);
                     } else if (key === "OPTIONS") {
-                        this.checkKeys(true, false, false, false);
+                        this.checkKeys(true, false, false, false, false);
                         this.query.setOptions(query[key].toString());
-                        this.checkKeys(true, true, false, false);
+                        this.checkKeys(true, true, false, false, false);
                         this.validateQuery(query[key]);
                     } else if (key === "COLUMNS") {
-                        this.checkKeys(true , true, false, false);
+                        this.checkKeys(true , true, false, false, false);
                         this.query.setColumns(query[key].toString());
                         this.validateColumnsArray(query[key]);
-                        this.checkKeys(true, true, true, false);
+                        this.checkKeys(true, true, true, false, false);
                     } else if (key === "ORDER") {
-                        this.checkKeys(true, true, true, false);
+                        this.checkKeys(true, true, true, false, false);
                         this.validateOrderKey(query[key]);
-                        this.checkKeys(true, true, true, false);
+                        this.checkKeys(true, true, true, false, false);
                         this.query.setOrderKey(query[key]);
-                        this.checkKeys(true, true, true, true);
+                        this.checkKeys(true, true, true, true, false);
                         this.checkKeys(true, true, true, true, false);
                     } else if (key === "TRANSFORMATIONS") {
                         this.checkKeys(true, true, true, true, false);
                         this.validateTransformations(query[key]);
                         this.query.setTransformations(query[key]);
-                        this.query.setGroup(query[key]);
-                        this.query.setApply(query[key]);
+                        this.checkKeys(true, true, true, true, true);
+                        this.query.setApplyRulesTokenKey(query[key]["APPLY"]);
                     } else {
                         throw new InsightError();
                     }
@@ -117,9 +117,9 @@ export default class QueryValidator implements IQueryValidator {
     }
 
     private validateColumnsAfterTransformations() {
-        let allKeys = this.query.getGroupKeys().concat(this.query.getApplyKeys());
+        let allKeys = this.query.getGroupKeys().concat(this.query.getApplyKeys().toString());
         for (const key of this.query.getColumnsKey()) {
-            if (allKeys.indexOf(key)) {
+            if (allKeys.indexOf(key) === -1) {
                 throw new InsightError();
             }
         }
@@ -136,8 +136,8 @@ export default class QueryValidator implements IQueryValidator {
                     throw new InsightError();
                 }
                 hasSeen.push(key);
-                this.query.setApplyKeys(key);
             }
+            this.query.setApplyKeys(hasSeen);
             for (const val of Object.values(value)) {
                 if (Object.keys(val).length !== 1 && Object.values(val).length !== 1) {
                     throw new InsightError();

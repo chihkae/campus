@@ -119,6 +119,7 @@ import QueryEvaluator from "./QueryEvaluator";
 import QueryGrouper from "./QueryGrouper";
 import Query from "./Query";
 import QueryApplier from "./QueryApplier";
+import QuerySorter from "./QuerySorter";
 
 export interface IQueryValidator {
     validateQuery(query: any): boolean;
@@ -134,13 +135,12 @@ export interface IQuery {
     setColumnsKey(s: string[]): void;
     getColumnsKey(): string[];
     getColumnsKeyWithoutUnderscore(): string[];
-    getOrderKeyWithoutUnderscore(): string;
+    getOrderKeyWithoutUnderscore(): any[];
     setOrderKey(s: string): void;
     getOrderKey(): string[];
     setIdString(s: string): void;
     getIdString(): string;
     setGroup(s: string[]): void;
-    setApply(s: string[]): void;
     setTransformations(s: string): void;
 }
 
@@ -240,26 +240,35 @@ export default class InsightFacade implements IInsightFacade {
                                 let queryGrouper = new QueryGrouper();
                                 let queryApplier = new QueryApplier();
                                 let groupedResult: any[];
+                                let appliedResult;
                                 if (queryValidator.getQuery().getGroupKeys() !== undefined) {
-                                   groupedResult = queryGrouper.groupResult(queryValidator.getQuery().getGroupKeys(), unsortedResult);
+                                    let groupKeys = queryValidator.getQuery().getGroupKeys();
+                                    groupedResult = queryGrouper.groupResult(groupKeys, unsortedResult);
+                                    if (queryValidator.getQuery().getApplyRulesTokenKeys() !== undefined) {
+                                        let applyRulesTokenKeys = queryValidator.getQuery().getApplyRulesTokenKeys();
+                                        appliedResult = queryApplier.applytoGroup(groupedResult, applyRulesTokenKeys);
+                                    } else {
+                                        throw new InsightError();
+                                    }
                                 } else {
                                     groupedResult = unsortedResult;
                                 }
-                                let appliedResult;
-                                if(queryValidator.getQuery().getApplyKeys() !== undefined){
-                                    appliedResult = queryApplier.applytoGroup(groupedResult,)
-                                }
                                 let keys = queryValidator.getQuery().getColumnsKeyWithoutUnderscore();
-                                let selectedColumnsResult = queryEvaluator.selectColumns(unsortedResult, keys);
-                                let orderkeys = undefined;
+                                let selectedColumnsResult = queryEvaluator.selectColumns(groupedResult, keys);
+                                let orderkeys;
                                 if (queryValidator.getQuery().getOrderKey() === undefined) {
                                     orderkeys = undefined;
                                 } else {
                                     orderkeys = queryValidator.getQuery().getOrderKeyWithoutUnderscore();
                                 }
-                                let sorted = queryEvaluator.sort(selectedColumnsResult, orderkeys);
+                                let querySorter = new QuerySorter();
+                                let sorted = querySorter.sort(selectedColumnsResult, orderkeys);
+                                if (queryValidator.getQuery().getDir() !== undefined) {
+                                    sorted = querySorter.sortDirection(sorted, queryValidator.getQuery().getDir());
+                                }
                                 let id = queryValidator.getQuery().getIdString();
-                                let sortedWithKeys = queryEvaluator.addID(sorted, id, keys);
+                                let nonGroupKeys = queryValidator.getQuery().getGroupKeys();
+                                let sortedWithKeys = queryEvaluator.addID(sorted, id, keys, nonGroupKeys);
                                 if (sortedWithKeys.length > 5000) {
                                     reject(new ResultTooLargeError("result is more than 5000 sections"));
                                 } else {
