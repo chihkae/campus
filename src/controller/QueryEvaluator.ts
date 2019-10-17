@@ -172,8 +172,8 @@ export default class QueryEvaluator {
                     newKey = id.concat("_", key.toString());
                     obj[newKey] = val[key];
                 }
-                list.push(obj);
             }
+            list.push(obj);
         }
         return list;
     }

@@ -14,32 +14,45 @@ export default class QueryValidator implements IQueryValidator {
 
     public checkKeys(where: boolean, options: boolean, columnsKey: boolean, orderKey: boolean,
                      transformations: boolean): void {
-        if (where && !options && !columnsKey && !orderKey) {
+        if (!where && !options && !columnsKey && !orderKey && !transformations) {
+            if (typeof this.query.getWhere() !== "undefined" || typeof this.query.getOrderKey() !== "undefined" ||
+                typeof  this.query.getColumnsKey() !== "undefined" || typeof  this.query.getOptions() !== "undefined"
+                || typeof  this.query.getApplyKeys() !== "undefined" || typeof this.query.getGroupKeys() !== "undefined"
+            ) {
+                throw new InsightError();
+            }
+        } else if (where && !options && !columnsKey && !orderKey && !transformations) {
             if (typeof this.query.getWhere() === "undefined" || typeof this.query.getOrderKey() !== "undefined" ||
-            typeof  this.query.getColumnsKey() !== "undefined" || typeof  this.query.getOptions() !== "undefined") {
+            typeof  this.query.getColumnsKey() !== "undefined" || typeof  this.query.getOptions() !== "undefined"
+                || typeof  this.query.getApplyKeys() !== "undefined" || typeof this.query.getGroupKeys() !== "undefined"
+            ) {
                 throw new InsightError();
             }
-        } else if (where && options && !columnsKey && !orderKey) {
+        } else if (where && options && !columnsKey && !orderKey && !transformations) {
             if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined" ||
-            typeof  this.query.getColumnsKey() !== "undefined" || typeof this.query.getOrderKey() !== "undefined") {
+            typeof  this.query.getColumnsKey() !== "undefined" || typeof this.query.getOrderKey() !== "undefined" ||
+            typeof  this.query.getGroupKeys() !== "undefined" || typeof  this.query.getApplyRulesTokenKeys() !== "undefined"
+            ) {
                 throw new InsightError();
             }
-        } else if (columnsKey && options && where && !orderKey) {
+        } else if (columnsKey && options && where && !orderKey && !transformations) {
             if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined"
                 || typeof this.query.getColumnsKey() === "undefined"
-                || typeof this.query.getOrderKey() !== "undefined") {
+                || typeof this.query.getOrderKey() !== "undefined" || typeof this.query.getApplyRulesTokenKeys() !== "undefined"
+            || typeof  this.query.getGroupKeys() !== "undefined") {
                 throw new InsightError();
             }
-        } else if (columnsKey && options && where && orderKey) {
+        } else if (columnsKey && options && where && orderKey && !transformations) {
             if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined"
                 || typeof this.query.getColumnsKey() === "undefined"
-                || typeof  this.query.getOrderKey() === "undefined") {
+                || typeof  this.query.getOrderKey() === "undefined" || typeof  this.query.getApplyRulesTokenKeys() !==
+            "undefined" || typeof this.query.getGroupKeys() !== "undefined") {
                 throw new InsightError();
             }
         } else if (columnsKey && options && where && orderKey && transformations) {
-            if (typeof this.query.getOptions() === undefined || typeof this.query.getWhere() === undefined
-                || typeof this.query.getColumnsKey() === undefined || typeof  this.query.getOrderKey() === undefined
-            && typeof this.query.getGroupKeys() === undefined && typeof this.query.getApplyKeys() === undefined) {
+            if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined"
+                || typeof this.query.getColumnsKey() === "undefined" || typeof  this.query.getOrderKey() === "undefined"
+            || typeof this.query.getGroupKeys() === "undefined" || typeof this.query.getApplyKeys() === "undefined") {
                 throw new InsightError();
             }
         }
@@ -83,9 +96,6 @@ export default class QueryValidator implements IQueryValidator {
                     } else if (key === "ORDER") {
                         this.checkKeys(true, true, true, false, false);
                         this.validateOrderKey(query[key]);
-                        this.checkKeys(true, true, true, false, false);
-                        this.query.setOrderKey(query[key]);
-                        this.checkKeys(true, true, true, true, false);
                         this.checkKeys(true, true, true, true, false);
                     } else if (key === "TRANSFORMATIONS") {
                         this.checkKeys(true, true, true, true, false);

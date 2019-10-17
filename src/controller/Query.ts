@@ -96,6 +96,10 @@ export default class Query implements IQuery {
         throw new InsightError();
     }
 
+    public getTransformations(): string {
+        return this.transformations;
+    }
+
     public setWhere(s: string): void {
         if (this.where === undefined) {
             this.where = s;
@@ -180,6 +184,7 @@ export default class Query implements IQuery {
 
     public setOrderKey(s: any): void {
         if (this.orderKey === undefined && s !== null) {
+            this.orderKey = [];
             if (Array.isArray(s)) {
                 for (const val of Object.values(s)) {
                     this.orderKey.push(val);
