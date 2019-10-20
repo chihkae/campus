@@ -114,10 +114,10 @@ function extractSectionData(section: any): Section {
     sect.dept = section.Subject;
     return sect;
 }
-import QueryValidator from "./QueryValidator";
+import {QueryValidator} from "./QueryValidator";
 import QueryEvaluator from "./QueryEvaluator";
 import QueryGrouper from "./QueryGrouper";
-import Query from "./Query";
+import {Query} from "./Query";
 import QueryApplier from "./QueryApplier";
 import QuerySorter from "./QuerySorter";
 
@@ -224,9 +224,10 @@ export default class InsightFacade implements IInsightFacade {
 
     public performQuery(query: any): Promise <any[]> {
         return new Promise(function (resolve, reject) {
-            let queryValidator = new QueryValidator();
+            let queryValidator = new QueryValidator(query);
             try {
                 if (queryValidator.validateQuery(query)) {
+                    queryValidator.getQueryOrderValidator().checkMinRequirements();
                     let fileIDtoRead = queryValidator.getQuery().getIdString();
                     let fs = require("fs");
                     fs.readFile(`./data/${fileIDtoRead}`,(err: any, data: any) => {

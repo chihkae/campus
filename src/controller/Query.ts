@@ -1,8 +1,7 @@
 import {InsightError} from "./IInsightFacade";
 import {IQuery} from "./InsightFacade";
-import QueryValidator from "./QueryValidator";
 
-export default class Query implements IQuery {
+export class Query {
     private where: string;
     private options: string;
     private columns: string;
@@ -73,15 +72,8 @@ export default class Query implements IQuery {
         return this.applyRulesTokenKey;
     }
 
-    public setGroupKeys(s: any): void {
-        if (!Array.isArray(s)) {
-           throw new InsightError();
-        }
-        for (const val of Object.values(s)) {
-            let QV = new QueryValidator();
-            QV.validateKey(val, "either");
-            this.groupKeys.push(val);
-        }
+    public setGroupKeys(s: any[]): void {
+        this.groupKeys = s;
     }
 
     public getGroupKeys(): string[] {

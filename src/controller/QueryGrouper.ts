@@ -1,4 +1,4 @@
-import Query from "./Query";
+import {Query} from "./Query";
 import {IQueryValidator} from "./InsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
 
