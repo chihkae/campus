@@ -1,10 +1,8 @@
 import {Decimal} from "decimal.js";
 
-
-
 export default class QueryApplier {
 
-    public applytoGroup(groups: any[], keysVals: any[]): any[]{
+    public applytoGroup(groups: any[], keysVals: any[]): any[] {
         keysVals.forEach(function (keyVal) {
             let toName = keyVal["applyKey"];
             let applyToken = keyVal["APPLTOKEN"];
@@ -94,7 +92,7 @@ export default class QueryApplier {
     }
 
     private groupMin(group: any[], key: any): any[] {
-        let min: any = undefined;
+        let min: number;
         let length = group.length;
         let acc = 1;
         group.forEach(function (section) {
@@ -114,7 +112,7 @@ export default class QueryApplier {
     }
 
     private groupMax(group: any[], key: any): any[] {
-        let max: any = undefined;
+        let max: number;
         let length = group.length;
         let acc = 1;
         group.forEach(function (section) {

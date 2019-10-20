@@ -18,8 +18,7 @@ export default class QueryGrouper {
         } else {
             let count = 0;
             let groupMapper = new Map();
-            result.forEach(function (section)
-            {
+            result.forEach(function (section) {
                 let group = section[groupKey[0]];
                 if (groupMapper.get(group) === undefined) {
                     groupMapper.set(group, count);
@@ -48,12 +47,12 @@ export default class QueryGrouper {
             groups.forEach(function (group: any[]) {
                 group.forEach(function (section: any) {
 
-                    let group = section[key];
-                    if (groupMapper.get(group) === undefined) {
-                        groupMapper.set(group, count);
+                    let g = section[key];
+                    if (groupMapper.get(g) === undefined) {
+                        groupMapper.set(g, count);
                         count++;
                     }
-                    let index = groupMapper.get(group);
+                    let index = groupMapper.get(g);
                     if (result[index] === undefined) {
                         result[index] = [];
                     }

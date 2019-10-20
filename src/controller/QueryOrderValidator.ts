@@ -1,10 +1,9 @@
 import {Query} from "./Query";
 import {InsightError} from "./IInsightFacade";
-import {QueryValidator} from "./QueryValidator";
 
 
 export class QueryOrderValidator {
-    private query: Query;
+    private query: Query = new Query();
 
     public setQuery(q: Query) {
         this.query = q;
@@ -14,11 +13,10 @@ export class QueryOrderValidator {
         return this.query;
     }
 
-    public checkBeforeAnything() {
-        if (typeof this.query.getWhere() !== "undefined" || typeof this.query.getOrderKey() !== "undefined" ||
+    public checkBeforeAnything(): void {
+         if (typeof this.query.getWhere() !== "undefined" || typeof this.query.getOrderKey() !== "undefined" ||
             typeof  this.query.getColumnsKey() !== "undefined" || typeof  this.query.getOptions() !== "undefined"
-            || typeof  this.query.getApplyKeys() !== "undefined" || typeof this.query.getGroupKeys() !== "undefined"
-        ) {
+            || typeof  this.query.getApplyKeys() !== "undefined" || typeof this.query.getGroupKeys() !== "undefined") {
             throw new InsightError();
         }
     }
@@ -35,7 +33,8 @@ export class QueryOrderValidator {
     public checkAfterOptions() {
         if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined"
             || typeof this.query.getColumnsKey() !== "undefined"
-            || typeof this.query.getOrderKey() !== "undefined" || typeof this.query.getApplyRulesTokenKeys() !== "undefined"
+            || typeof this.query.getOrderKey() !== "undefined" ||
+            typeof this.query.getApplyRulesTokenKeys() !== "undefined"
             || typeof  this.query.getGroupKeys() !== "undefined") {
             throw new InsightError();
         }
@@ -44,7 +43,8 @@ export class QueryOrderValidator {
     public checkAfterColumns() {
         if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined"
             || typeof this.query.getColumnsKey() === "undefined"
-            || typeof this.query.getOrderKey() !== "undefined" || typeof this.query.getApplyRulesTokenKeys() !== "undefined"
+            || typeof this.query.getOrderKey() !== "undefined" ||
+            typeof this.query.getApplyRulesTokenKeys() !== "undefined"
             || typeof  this.query.getGroupKeys() !== "undefined") {
             throw new InsightError();
         }
@@ -74,3 +74,4 @@ export class QueryOrderValidator {
         }
     }
 }
+

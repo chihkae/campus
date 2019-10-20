@@ -120,6 +120,7 @@ import QueryGrouper from "./QueryGrouper";
 import {Query} from "./Query";
 import QueryApplier from "./QueryApplier";
 import QuerySorter from "./QuerySorter";
+import {ResultHandler} from "./ResultHandler";
 
 export interface IQueryValidator {
     validateQuery(query: any): boolean;
@@ -230,7 +231,7 @@ export default class InsightFacade implements IInsightFacade {
                     queryValidator.getQueryOrderValidator().checkMinRequirements();
                     let fileIDtoRead = queryValidator.getQuery().getIdString();
                     let fs = require("fs");
-                    fs.readFile(`./data/${fileIDtoRead}`,(err: any, data: any) => {
+                    fs.readFile(`./data/${fileIDtoRead}`, (err: any, data: any) => {
                         if (err) {
                             reject(new InsightError());
                         } else {
@@ -238,43 +239,8 @@ export default class InsightFacade implements IInsightFacade {
                                 let content = JSON.parse(data);
                                 let queryEvaluator = new QueryEvaluator(query, content);
                                 let unsortedResult = queryEvaluator.evaluateResult(query);
-                                let queryGrouper = new QueryGrouper();
-                                let queryApplier = new QueryApplier();
-                                let groupedResult: any[];
-                                let appliedResult;
-                                if (queryValidator.getQuery().getGroupKeys() !== undefined) {
-                                    let groupKeys = queryValidator.getQuery().getGroupKeys();
-                                    groupedResult = queryGrouper.groupResult(groupKeys, unsortedResult);
-                                    if (queryValidator.getQuery().getApplyRulesTokenKeys() !== undefined) {
-                                        let applyRulesTokenKeys = queryValidator.getQuery().getApplyRulesTokenKeys();
-                                        appliedResult = queryApplier.applytoGroup(groupedResult, applyRulesTokenKeys);
-                                    } else {
-                                        throw new InsightError();
-                                    }
-                                } else {
-                                    groupedResult = unsortedResult;
-                                }
-                                let keys = queryValidator.getQuery().getColumnsKeyWithoutUnderscore();
-                                let selectedColumnsResult = queryEvaluator.selectColumns(groupedResult, keys);
-                                let orderkeys;
-                                if (queryValidator.getQuery().getOrderKey() === undefined) {
-                                    orderkeys = undefined;
-                                } else {
-                                    orderkeys = queryValidator.getQuery().getOrderKeyWithoutUnderscore();
-                                }
-                                let querySorter = new QuerySorter();
-                                let sorted = querySorter.sort(selectedColumnsResult, orderkeys);
-                                if (queryValidator.getQuery().getDir() !== undefined) {
-                                    sorted = querySorter.sortDirection(sorted, queryValidator.getQuery().getDir());
-                                }
-                                let id = queryValidator.getQuery().getIdString();
-                                let nonGroupKeys = queryValidator.getQuery().getGroupKeys();
-                                let sortedWithKeys = queryEvaluator.addID(sorted, id, keys, nonGroupKeys);
-                                if (sortedWithKeys.length > 5000) {
-                                    reject(new ResultTooLargeError("result is more than 5000 sections"));
-                                } else {
-                                    resolve(sortedWithKeys);
-                                }
+                                let rh: ResultHandler = new ResultHandler(queryEvaluator, queryValidator);
+                                resolve(rh.format(unsortedResult));
                             } catch (e) {
                                 if (e instanceof ResultTooLargeError) {
                                     reject(e);

@@ -1,7 +1,8 @@
 import {InsightError} from "./IInsightFacade";
 import {IQuery} from "./InsightFacade";
+import {QueryValidator} from "./QueryValidator";
 
-export class Query {
+export class Query implements IQuery {
     private where: string;
     private options: string;
     private columns: string;
@@ -10,11 +11,10 @@ export class Query {
     private idString: string;
     private transformations: string;
     private group: string[];
-    private applyRulesTokenKey: ApplyRule[];
+    private applyRulesTokenKey: IApplyRule[];
     private applyKeys: any[];
     private groupKeys: string[];
     private dir: string;
-
 
     public setDir(s: any): void {
         if (typeof s !== "string") {
@@ -53,7 +53,7 @@ export class Query {
     public setApplyRulesTokenKey(s: any[]): void {
         if (this.applyRulesTokenKey === undefined) {
             for (const val of Object.values(s)) {
-                let applyRule = {} as ApplyRule;
+                let applyRule = {} as IApplyRule;
                 applyRule.applyKey = Object.keys(val).toString();
                 let applyTokenKeyPair = Object.values(val);
                 for (const key of Object.keys(applyTokenKeyPair)) {

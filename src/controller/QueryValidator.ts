@@ -5,14 +5,14 @@ import {QueryKeyValidator} from "./QueryKeyValidator";
 import {QueryOrderValidator} from "./QueryOrderValidator";
 
 export class QueryValidator implements IQueryValidator {
-    private query: Query = new Query();
+    private query: Query;
     private queryOrderValidator: QueryOrderValidator = new QueryOrderValidator();
     private queryKeyValidator: QueryKeyValidator = new QueryKeyValidator();
 
     constructor(query: Query) {
-        this.query = query;
-        this.queryOrderValidator.setQuery(query);
-        this.queryKeyValidator.setQuery(query);
+        this.query = new Query();
+        this.queryOrderValidator.setQuery(this.query);
+        this.queryKeyValidator.setQuery(this.query);
     }
 
     public getQuery(): Query {
@@ -20,14 +20,14 @@ export class QueryValidator implements IQueryValidator {
     }
 
     public getQueryOrderValidator(): QueryOrderValidator {
-         return this.queryOrderValidator;
+        return this.queryOrderValidator;
     }
 
     public validateQuery(query: any): boolean {
         if (query != null && typeof query === "object") {
                 for (const key of Object.keys(query)) {
                     if (key === "WHERE") {
-                        this.getQueryOrderValidator().checkBeforeAnything();
+                        this.queryOrderValidator.checkBeforeAnything();
                         this.query.setWhere(query[key].toString());
                         this.queryOrderValidator.checkInsideWhere();
                         this.validateQuery(query[key]);

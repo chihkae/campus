@@ -1,6 +1,6 @@
-interface ApplyRule {
-    applyKey: string,
-    applyToken: string,
-    key: string
+interface IApplyRule {
+    applyKey: string;
+    applyToken: string;
+    key: string;
 }
 
