@@ -1,0 +1,277 @@
+{
+    "title": "sort courses with down direction",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 96
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "avgCount",
+                "overallAvg"
+            ]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title"
+            ],
+            "APPLY": [
+                {
+                    "overallAvg": {
+                        "MAX": "courses_avg"
+                    }
+                },
+                {
+                    "avgCount":{
+                        "COUNT": "courses_avg"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_title":"dev wkshp/sem",
+            "avgCount":1,
+            "overallAvg":96.11
+        },
+        {
+            "courses_title":"aud&non-txt arch",
+            "avgCount":1,
+            "overallAvg":96.94
+        },
+        {
+            "courses_title":"audi prctcm iv",
+            "avgCount":1,
+            "overallAvg":96.9
+        },
+        {
+            "courses_title":"dynam struct 2",
+            "avgCount":1,
+            "overallAvg":96.27
+        },
+        {
+            "courses_title":"career planning",
+            "avgCount":2,
+            "overallAvg":99.19
+        },
+        {
+            "courses_title":"prgm devl cnsl",
+            "avgCount":2,
+            "overallAvg":96.33
+        },
+        {
+            "courses_title":"thesis",
+            "avgCount":2,
+            "overallAvg":98
+        },
+        {
+            "courses_title":"adlt edu pract",
+            "avgCount":1,
+            "overallAvg":96.46
+        },
+        {
+            "courses_title":"res mthd in educ",
+            "avgCount":1,
+            "overallAvg":97.5
+        },
+        {
+            "courses_title":"multimedia sys",
+            "avgCount":1,
+            "overallAvg":98.75
+        },
+        {
+            "courses_title":"intro excp child",
+            "avgCount":2,
+            "overallAvg":96.9
+        },
+        {
+            "courses_title":"assess lrn diffi",
+            "avgCount":5,
+            "overallAvg":98.7
+        },
+        {
+            "courses_title":"classroom mgmt",
+            "avgCount":1,
+            "overallAvg":96.21
+        },
+        {
+            "courses_title":"educ stds autism",
+            "avgCount":5,
+            "overallAvg":98.8
+        },
+        {
+            "courses_title":"hn dev: inf-adlt",
+            "avgCount":1,
+            "overallAvg":96.23
+        },
+        {
+            "courses_title":"dev el sk df&hrd",
+            "avgCount":1,
+            "overallAvg":98.45
+        },
+        {
+            "courses_title":"specific lrn dis",
+            "avgCount":1,
+            "overallAvg":96.33
+        },
+        {
+            "courses_title":"acad assess schl",
+            "avgCount":3,
+            "overallAvg":97.78
+        },
+        {
+            "courses_title":"sem in autism",
+            "avgCount":1,
+            "overallAvg":97.69
+        },
+        {
+            "courses_title":"cor des ed res",
+            "avgCount":1,
+            "overallAvg":97.09
+        },
+        {
+            "courses_title":"coll&uni teachng",
+            "avgCount":1,
+            "overallAvg":97.67
+        },
+        {
+            "courses_title":"indig, tech&ed",
+            "avgCount":1,
+            "overallAvg":96.47
+        },
+        {
+            "courses_title":"mo pict prod i",
+            "avgCount":1,
+            "overallAvg":96.4
+        },
+        {
+            "courses_title":"ds intl forstry",
+            "avgCount":1,
+            "overallAvg":96.36
+        },
+        {
+            "courses_title":"phyl asp phy act",
+            "avgCount":1,
+            "overallAvg":96.06
+        },
+        {
+            "courses_title":"acad libraries",
+            "avgCount":1,
+            "overallAvg":96.1
+        },
+        {
+            "courses_title":"algebra ii",
+            "avgCount":1,
+            "overallAvg":96.44
+        },
+        {
+            "courses_title":"prt diff equa i",
+            "avgCount":1,
+            "overallAvg":96.25
+        },
+        {
+            "courses_title":"diff geometry i",
+            "avgCount":1,
+            "overallAvg":97.25
+        },
+        {
+            "courses_title":"algb topology i",
+            "avgCount":1,
+            "overallAvg":99.78
+        },
+        {
+            "courses_title":"algb geometry i",
+            "avgCount":1,
+            "overallAvg":97.48
+        },
+        {
+            "courses_title":"harmonic anal i",
+            "avgCount":1,
+            "overallAvg":97.09
+        },
+        {
+            "courses_title":"probability ii",
+            "avgCount":1,
+            "overallAvg":96.83
+        },
+        {
+            "courses_title":"msc major essay",
+            "avgCount":1,
+            "overallAvg":96.33
+        },
+        {
+            "courses_title":"cnsl mat cr prov",
+            "avgCount":1,
+            "overallAvg":96.5
+        },
+        {
+            "courses_title":"seminar",
+            "avgCount":1,
+            "overallAvg":96.59
+        },
+        {
+            "courses_title":"hydrmtllgcl rctr",
+            "avgCount":1,
+            "overallAvg":96.25
+        },
+        {
+            "courses_title":"ubc chamb string",
+            "avgCount":1,
+            "overallAvg":96.5
+        },
+        {
+            "courses_title":"cl pro prim care",
+            "avgCount":2,
+            "overallAvg":98.71
+        },
+        {
+            "courses_title":"fam nrs pract",
+            "avgCount":4,
+            "overallAvg":98.58
+        },
+        {
+            "courses_title":"eth&profl issues",
+            "avgCount":2,
+            "overallAvg":97.33
+        },
+        {
+            "courses_title":"nat resrce mngmt",
+            "avgCount":1,
+            "overallAvg":96.47
+        },
+        {
+            "courses_title":"masters thesis",
+            "avgCount":1,
+            "overallAvg":97
+        },
+        {
+            "courses_title":"social analysis",
+            "avgCount":1,
+            "overallAvg":96.15
+        },
+        {
+            "courses_title":"hlth & soc care",
+            "avgCount":1,
+            "overallAvg":96.09
+        },
+        {
+            "courses_title":"sociocult determ",
+            "avgCount":1,
+            "overallAvg":96.96
+        },
+        {
+            "courses_title":"work int health",
+            "avgCount":1,
+            "overallAvg":98.98
+        },
+        {
+            "courses_title":"survlnc&monitrng",
+            "avgCount":1,
+            "overallAvg":96.8
+        }
+    ]
+}

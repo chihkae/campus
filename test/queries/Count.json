@@ -1,0 +1,215 @@
+{
+    "title": "sort courses with down direction",
+    "query": {
+        "WHERE": {
+            "GT": { "courses_avg": 96 }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_title", "overallAvg"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_title"],
+            "APPLY": [{
+                "overallAvg": {
+                    "COUNT": "courses_avg"
+                }
+            }]
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_title":"dev wkshp/sem",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"aud&non-txt arch",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"audi prctcm iv",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"dynam struct 2",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"career planning",
+            "overallAvg":2
+        },
+        {
+            "courses_title":"prgm devl cnsl",
+            "overallAvg":2
+        },
+        {
+            "courses_title":"thesis",
+            "overallAvg":2
+        },
+        {
+            "courses_title":"adlt edu pract",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"res mthd in educ",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"multimedia sys",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"intro excp child",
+            "overallAvg":2
+        },
+        {
+            "courses_title":"assess lrn diffi",
+            "overallAvg":5
+        },
+        {
+            "courses_title":"classroom mgmt",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"educ stds autism",
+            "overallAvg":5
+        },
+        {
+            "courses_title":"hn dev: inf-adlt",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"dev el sk df&hrd",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"specific lrn dis",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"acad assess schl",
+            "overallAvg":3
+        },
+        {
+            "courses_title":"sem in autism",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"cor des ed res",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"coll&uni teachng",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"indig, tech&ed",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"mo pict prod i",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"ds intl forstry",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"phyl asp phy act",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"acad libraries",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"algebra ii",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"prt diff equa i",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"diff geometry i",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"algb topology i",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"algb geometry i",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"harmonic anal i",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"probability ii",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"msc major essay",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"cnsl mat cr prov",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"seminar",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"hydrmtllgcl rctr",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"ubc chamb string",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"cl pro prim care",
+            "overallAvg":2
+        },
+        {
+            "courses_title":"fam nrs pract",
+            "overallAvg":4
+        },
+        {
+            "courses_title":"eth&profl issues",
+            "overallAvg":2
+        },
+        {
+            "courses_title":"nat resrce mngmt",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"masters thesis",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"social analysis",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"hlth & soc care",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"sociocult determ",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"work int health",
+            "overallAvg":1
+        },
+        {
+            "courses_title":"survlnc&monitrng",
+            "overallAvg":1
+        }
+    ]
+}
+

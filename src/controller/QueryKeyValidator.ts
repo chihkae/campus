@@ -8,7 +8,7 @@ export class QueryKeyValidator {
        this.query = q;
     }
 
-    public validateGroupKey(groupKey: any): boolean {
+    public validateGroupKey(groupKey: any[]): boolean {
         if (!Array.isArray(groupKey)) {
             throw new InsightError();
         }
@@ -38,7 +38,7 @@ export class QueryKeyValidator {
     }
 
     public validateOrderWithDirAndMultipleKeys(orderKey: any) {
-        if (Object.keys(orderKey).length !== 0 ) {
+        if (Object.keys(orderKey).length !== 2 ) {
             throw new InsightError();
         }
 
@@ -50,6 +50,7 @@ export class QueryKeyValidator {
             if (count === 1 && key !== "keys") {
                 throw new InsightError();
             }
+            count++;
         }
         count = 0;
         let orderKeyArray;
@@ -57,7 +58,7 @@ export class QueryKeyValidator {
 
         for (const val of Object.values(orderKey)) {
             if (count === 0) {
-                if (val !== "UP" || val !== "DOWN") {
+                if (val !== "UP" && val !== "DOWN") {
                     throw new InsightError();
                 } else {
                     this.query.setDir(val);
@@ -73,7 +74,7 @@ export class QueryKeyValidator {
             }
             count++;
         }
-        for (const value of Object(orderKeyArray).values) {
+        for (const value of Object.values(orderKeyArray)) {
             if (columnsKey.indexOf(value) === -1) {
                 throw new InsightError();
             }

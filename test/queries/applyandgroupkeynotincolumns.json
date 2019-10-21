@@ -1,0 +1,82 @@
+
+{
+    "title": "apply, group key not in columns",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 98
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "courses_title"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title","courses_avg"
+            ],
+            "APPLY": [
+                {
+                    "MinoverallAvg": {
+                        "MIN": "courses_avg"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_title":"work int health"
+        },
+        {
+            "courses_title":"multimedia sys"
+        },
+        {
+            "courses_title":"fam nrs pract"
+        },
+        {
+            "courses_title":"fam nrs pract"
+        },
+        {
+            "courses_title":"educ stds autism"
+        },
+        {
+            "courses_title":"educ stds autism"
+        },
+        {
+            "courses_title":"educ stds autism"
+        },
+        {
+            "courses_title":"dev el sk df&hrd"
+        },
+        {
+            "courses_title":"cl pro prim care"
+        },
+        {
+            "courses_title":"cl pro prim care"
+        },
+        {
+            "courses_title":"career planning"
+        },
+        {
+            "courses_title":"assess lrn diffi"
+        },
+        {
+            "courses_title":"assess lrn diffi"
+        },
+        {
+            "courses_title":"assess lrn diffi"
+        },
+        {
+            "courses_title":"algb topology i"
+        }
+    ]
+}
