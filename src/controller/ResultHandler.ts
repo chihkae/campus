@@ -43,11 +43,11 @@ export class ResultHandler {
             if (this.QValidator.getQuery().getDir() !== undefined) {
                 this.isSorted = true;
                 this.isSortedWithDirection = true;
-                this.sortingKeys = this.QValidator.getQuery().getOrderKey();
+                this.sortingKeys = this.QValidator.getQuery().getOrderKeyWithoutUnderscore();
                 this.dir = this.QValidator.getQuery().getDir();
             } else {
                 this.isSorted = true;
-                this.sortingKeys = this.QValidator.getQuery().getOrderKey();
+                this.sortingKeys = this.QValidator.getQuery().getOrderKeyWithoutUnderscore();
             }
         } else {
             this.isSorted = false;
@@ -62,42 +62,44 @@ export class ResultHandler {
         let finalResult: any[];
         if (this.isTransformed && this.isSorted && this.isSortedWithDirection) {
             let groupedResult = this.QGrouper.groupResult(this.groupKeys, unsortedResult);
+            this.isResultTooLarge(groupedResult);
             let appliedResult = this.QApplier.applytoGroup(groupedResult, this.applyRulesTokenKeys);
             let selectedColumnsResult = this.QEvaluator.selectColumns(appliedResult, this.selectKeys);
-            let sorted = this.QSorter.sort(selectedColumnsResult, this.sortingKeys);
+            let sorted = this.QSorter.sort1(selectedColumnsResult, this.sortingKeys);
             sorted = this.QSorter.sortDirection(sorted, this.dir);
             finalResult = this.QEvaluator.addID(sorted, this.id, this.selectKeys, this.nonGroupKeys);
         } else if (this.isTransformed && this.isSorted && !this.isSortedWithDirection) {
             let groupedResult = this.QGrouper.groupResult(this.groupKeys, unsortedResult);
+            this.isResultTooLarge(groupedResult);
             let appliedResult = this.QApplier.applytoGroup(groupedResult, this.applyRulesTokenKeys);
             let selectedColumnsResult = this.QEvaluator.selectColumns(appliedResult, this.selectKeys);
-            let sorted = this.QSorter.sort(selectedColumnsResult, this.sortingKeys);
+            let sorted = this.QSorter.sort1(selectedColumnsResult, this.sortingKeys);
             finalResult = this.QEvaluator.addID(sorted, this.id, this.selectKeys, this.nonGroupKeys);
         } else if (this.isSorted && this.isSortedWithDirection && !this.isTransformed) {
             let selectedColumnsResult = this.QEvaluator.selectColumns(unsortedResult, this.selectKeys);
-            let sorted = this.QSorter.sort(selectedColumnsResult, this.sortingKeys);
+            this.isResultTooLarge(selectedColumnsResult);
+            let sorted = this.QSorter.sort1(selectedColumnsResult, this.sortingKeys);
             sorted = this.QSorter.sortDirection(sorted, this.dir);
             finalResult = this.QEvaluator.addID(sorted, this.id, this.selectKeys, this.nonGroupKeys);
         } else if (!this.isTransformed && this.isSorted && !this.isSortedWithDirection) {
             let selectedColumnsResult = this.QEvaluator.selectColumns(unsortedResult, this.selectKeys);
-            let sorted = this.QSorter.sort(selectedColumnsResult, this.sortingKeys);
+            this.isResultTooLarge(selectedColumnsResult);
+            let sorted = this.QSorter.sort1(selectedColumnsResult, this.sortingKeys);
             finalResult = this.QEvaluator.addID(sorted, this.id, this.selectKeys, this.nonGroupKeys);
         } else if (!this.isTransformed && !this.isSorted && !this.isSortedWithDirection) {
             let selectedColumnsResult = this.QEvaluator.selectColumns(unsortedResult, this.selectKeys);
+            this.isResultTooLarge(selectedColumnsResult);
             finalResult =
                 this.QEvaluator.addID(selectedColumnsResult, this.id, this.selectKeys, this.nonGroupKeys);
         }
-        if (!this.isResultTooLarge(finalResult)) {
-            return finalResult;
-        } else {
-            throw new ResultTooLargeError();
-        }
+        this.isResultTooLarge(finalResult);
+        return finalResult;
     }
 
     private isResultTooLarge(result: any[]): boolean {
         if (Array.isArray(result)) {
             if (result.length > ResultHandler.max ) {
-                return true;
+                throw new ResultTooLargeError();
             }
         }
         return false;
