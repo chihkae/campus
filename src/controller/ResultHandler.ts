@@ -64,7 +64,8 @@ export class ResultHandler {
             let groupedResult = this.QGrouper.groupResult(this.groupKeys, unsortedResult);
             this.isResultTooLarge(groupedResult);
             let appliedResult = this.QApplier.applytoGroup(groupedResult, this.applyRulesTokenKeys);
-            let selectedColumnsResult = this.QEvaluator.selectColumns(appliedResult, this.selectKeys);
+            let selectedColumnsResult = this.QEvaluator.selectColumnsApplied(appliedResult, this.selectKeys);
+            selectedColumnsResult = this.selectFirstofEachGroup(selectedColumnsResult);
             let sorted = this.QSorter.sort1(selectedColumnsResult, this.sortingKeys);
             sorted = this.QSorter.sortDirection(sorted, this.dir);
             finalResult = this.QEvaluator.addID(sorted, this.id, this.selectKeys, this.nonGroupKeys);
@@ -72,7 +73,8 @@ export class ResultHandler {
             let groupedResult = this.QGrouper.groupResult(this.groupKeys, unsortedResult);
             this.isResultTooLarge(groupedResult);
             let appliedResult = this.QApplier.applytoGroup(groupedResult, this.applyRulesTokenKeys);
-            let selectedColumnsResult = this.QEvaluator.selectColumns(appliedResult, this.selectKeys);
+            let selectedColumnsResult = this.QEvaluator.selectColumnsApplied(appliedResult, this.selectKeys);
+            selectedColumnsResult = this.selectFirstofEachGroup(selectedColumnsResult);
             let sorted = this.QSorter.sort1(selectedColumnsResult, this.sortingKeys);
             finalResult = this.QEvaluator.addID(sorted, this.id, this.selectKeys, this.nonGroupKeys);
         } else if (this.isSorted && this.isSortedWithDirection && !this.isTransformed) {
@@ -82,7 +84,7 @@ export class ResultHandler {
             sorted = this.QSorter.sortDirection(sorted, this.dir);
             finalResult = this.QEvaluator.addID(sorted, this.id, this.selectKeys, this.nonGroupKeys);
         } else if (!this.isTransformed && this.isSorted && !this.isSortedWithDirection) {
-            let selectedColumnsResult = this.QEvaluator.selectColumns(unsortedResult, this.selectKeys);
+            let selectedColumnsResult = this.QEvaluator.selectColumnsApplied(unsortedResult, this.selectKeys);
             this.isResultTooLarge(selectedColumnsResult);
             let sorted = this.QSorter.sort1(selectedColumnsResult, this.sortingKeys);
             finalResult = this.QEvaluator.addID(sorted, this.id, this.selectKeys, this.nonGroupKeys);
@@ -91,6 +93,13 @@ export class ResultHandler {
             this.isResultTooLarge(selectedColumnsResult);
             finalResult =
                 this.QEvaluator.addID(selectedColumnsResult, this.id, this.selectKeys, this.nonGroupKeys);
+        } else if (this.isTransformed && !this.isSorted && !this.isSortedWithDirection) {
+            let groupedResult = this.QGrouper.groupResult(this.groupKeys, unsortedResult);
+            this.isResultTooLarge(groupedResult);
+            let appliedResult = this.QApplier.applytoGroup(groupedResult, this.applyRulesTokenKeys);
+            let selectedColumnsResult = this.QEvaluator.selectColumnsApplied(appliedResult, this.selectKeys);
+            selectedColumnsResult = this.selectFirstofEachGroup(selectedColumnsResult);
+            finalResult = this.QEvaluator.addID(selectedColumnsResult, this.id, this.selectKeys, this.nonGroupKeys);
         }
         this.isResultTooLarge(finalResult);
         return finalResult;
@@ -103,6 +112,17 @@ export class ResultHandler {
             }
         }
         return false;
+    }
+
+    private selectFirstofEachGroup(result: any[]): any[] {
+        let final: any[] = [];
+        for (const group of Object.values(result)) {
+            for (const section of Object.values(group)) {
+                final.push(section);
+                break;
+            }
+        }
+        return final;
     }
 
 }

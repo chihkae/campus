@@ -118,7 +118,7 @@ export class QueryValidator implements IQueryValidator {
     }
 
     private validateColumnsAfterTransformations() {
-        let allKeys = this.query.getGroupKeys().concat(this.query.getApplyKeys().toString());
+        let allKeys = this.query.getGroupKeys().concat(this.query.getApplyKeys());
         for (const key of this.query.getColumnsKey()) {
             if (allKeys.indexOf(key) === -1) {
                 throw new InsightError();

@@ -52,8 +52,7 @@ export class QueryOrderValidator {
 
     public checkAfterOrder() {
         if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined"
-            || typeof this.query.getColumnsKey() === "undefined"
-            || typeof  this.query.getOrderKey() === "undefined" || typeof  this.query.getApplyRulesTokenKeys() !==
+            || typeof this.query.getColumnsKey() === "undefined" || typeof  this.query.getApplyRulesTokenKeys() !==
             "undefined" || typeof this.query.getGroupKeys() !== "undefined") {
             throw new InsightError();
         }
@@ -61,7 +60,7 @@ export class QueryOrderValidator {
 
     public checkAfterTransformations() {
         if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined"
-            || typeof this.query.getColumnsKey() === "undefined" || typeof  this.query.getOrderKey() === "undefined"
+            || typeof this.query.getColumnsKey() === "undefined"
             || typeof this.query.getGroupKeys() === "undefined" || typeof this.query.getApplyKeys() === "undefined") {
             throw new InsightError();
         }

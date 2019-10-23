@@ -113,8 +113,8 @@ export class QueryKeyValidator {
                     throw new InsightError();
                 }
                 hasSeen.push(key);
+                this.query.setApplyKeys(key);
             }
-            this.query.setApplyKeys(hasSeen);
             for (const val of Object.values(value)) {
                 if (Object.keys(val).length !== 1 && Object.values(val).length !== 1) {
                     throw new InsightError();
@@ -151,12 +151,14 @@ export class QueryKeyValidator {
     public validateKey(key: any, type: string): boolean {
         if (key !== null || key !== undefined || typeof key !== "string") {
             let id = key.substring(0, key.indexOf("_"));
-            this.query.setIdString(id);
+            if (key.indexOf("_") > -1) {
+                this.query.setIdString(id);
+                this.isIDinListofIDs(id);
+            }
             let field = key.substring(key.indexOf("_") + 1);
             let mFields = ["avg", "pass", "fail", "audit", "year", "lat" , "lon", "seats"];
             let sFields = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name",
                 "address", "type", "furniture", "href"];
-            this.isIDinListofIDs(id);
             if (type === "mKey") {
                 if (!(mFields.indexOf(field) > -1)) {
                     throw new InsightError();

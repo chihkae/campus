@@ -40,10 +40,11 @@ export class Query implements IQuery {
         throw new InsightError();
     }
 
-    public setApplyKeys(s: any[]): void {
+    public setApplyKeys(s: any): void {
         if (this.applyKeys === undefined) {
-            this.applyKeys = s;
+            this.applyKeys = [];
         }
+        this.applyKeys.push(s);
     }
 
     public getApplyKeys(): any[] {
@@ -134,8 +135,6 @@ export class Query implements IQuery {
         if (s !== null && this.columnsKey === undefined) {
             this.columnsKey = [];
             for (const val of s) {
-                let id = val.split("_")[0];
-                this.setIdString(id);
                 this.columnsKey.push(val);
             }
             return;

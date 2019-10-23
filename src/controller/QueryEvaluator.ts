@@ -226,6 +226,19 @@ keyToSort === "uuid") {
             return result;
     }
 
+    public selectColumnsApplied(result: any, keys: any): any {
+        for (const group of Object.values(result)) {
+            for (const section of Object.values(group)) {
+                for (const key of Object.keys(section)) {
+                    if (keys.indexOf(key) === -1) {
+                        delete section[key];
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
     private evaluateComparator(key: any, value: any, comparator: any): any {
         let content = this.getData();
         let result: any[] = [];
