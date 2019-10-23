@@ -25,6 +25,7 @@
             "APPLY": [
                 {
                     "MinoverallAvg": {
+
                         "MIN": "courses_avg"
                     }
                 }

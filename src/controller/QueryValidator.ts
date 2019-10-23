@@ -108,11 +108,12 @@ export class QueryValidator implements IQueryValidator {
         } else if (keys[1].toString() !== "APPLY") {
             throw new InsightError();
         }
-
-        if (this.queryKeyValidator.validateGroupKey(transformation["GROUP"])) {
-            this.query.setGroupKeys(transformation["GROUP"]);
+        let group = Object.values(transformation)[0];
+        let apply = Object.values(transformation)[1];
+        if (this.queryKeyValidator.validateGroupKey(group)) {
+            this.query.setGroupKeys(group);
         }
-        this.queryKeyValidator.validateApplyKey(transformation["APPLY"]);
+        this.queryKeyValidator.validateApplyKey(apply);
         this.validateColumnsAfterTransformations();
     }
 

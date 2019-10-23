@@ -50,25 +50,31 @@ export class Query implements IQuery {
            return this.applyKeys;
     }
 
-    public setApplyRulesTokenKey(s: any[]): void {
+    public setApplyRulesTokenKey(s: any): void {
         if (this.applyRulesTokenKey === undefined) {
+            this.applyRulesTokenKey = [];
             for (const val of Object.values(s)) {
                 let applyRule = {} as IApplyRule;
                 applyRule.applyKey = Object.keys(val).toString();
-                let applyTokenKeyPair = Object.values(val);
-                for (const key of Object.keys(applyTokenKeyPair)) {
-                    applyRule.applyToken = key.toString();
-                }
-                for (const value of Object.values(applyTokenKeyPair)) {
-                    applyRule.key = value.toString();
+                for (const value of Object.values(val)) {
+                    if (Object.keys(value).length !== 1 && Object.values(value).length !== 1) {
+                        throw new InsightError();
+                    }
+                    for (const key of Object.keys(value)) {
+                        applyRule.applyToken = key.toString();
+                    }
+                    for (const v of Object.values(value)) {
+                        applyRule.key = v.toString();
+                    }
                 }
                 this.applyRulesTokenKey.push(applyRule);
             }
+        } else {
+            throw new InsightError();
         }
-        throw new InsightError();
     }
 
-    public getApplyRulesTokenKeys(): object[] {
+    public getApplyRulesTokenKeys(): IApplyRule[] {
         return this.applyRulesTokenKey;
     }
 
@@ -154,6 +160,28 @@ export class Query implements IQuery {
                 columnsWithotUndescore.push(toAdd);
             }
             return columnsWithotUndescore;
+        }
+    }
+
+    private withoutUnderscoreInArray(s: any): any[] {
+        let withoutUnderscore = [];
+        let toAdd;
+        for (const val of s) {
+            if (val.toString().includes("_")) {
+                toAdd = val.split("_")[1];
+            } else {
+                toAdd = val;
+            }
+            withoutUnderscore.push(toAdd);
+        }
+        return withoutUnderscore;
+    }
+
+    public getGroupsWithoutUnderscore(): string[] {
+        if (this.getGroupKeys() !== undefined) {
+            return this.withoutUnderscoreInArray(this.getGroupKeys());
+        } else {
+            return undefined;
         }
     }
 

@@ -102,8 +102,8 @@ export class QueryKeyValidator {
         }
     }
 
-    public validateApplyKey(applyArray: any) {
-        if (Array.isArray(applyArray)) {
+    public validateApplyKey(applyArray: any[]) {
+        if (!Array.isArray(applyArray)) {
             throw new InsightError();
         }
         let hasSeen: any[] = [];

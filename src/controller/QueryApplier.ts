@@ -1,21 +1,26 @@
 import {Decimal} from "decimal.js";
+import deleteProperty = Reflect.deleteProperty;
 
 export default class QueryApplier {
 
     public applytoGroup(groups: any[], keysVals: any[]): any[] {
-        keysVals.forEach(function (keyVal) {
+        keysVals.forEach( (keyVal) => {
             let toName = keyVal["applyKey"];
-            let applyToken = keyVal["APPLTOKEN"];
+            let applyToken = keyVal["applyToken"];
             let key = keyVal["key"];
-            groups.forEach(function (group) {
+            if (key.toString().includes("_")) {
+                key = key.split("_")[1];
+            }
+            groups.map( (group) => {
                 switch (applyToken) {
                     case "MAX":
                         group = this.groupMax(group, key);
                         group = this.renameKeyToApplyKey(group, toName, key);
                         break;
                     case "MIN":
-                        group = this.groupMin(group, key);
-                        group = this.renameKeyToApplyKey(group, toName, key);
+                        let temp = this.groupMin(group, key);
+                        temp = this.renameKeyToApplyKey(group, toName, key);
+                        return Object.assign(temp, group);
                         break;
                     case "COUNT":
                         group = this.groupCount(group, key);
@@ -37,8 +42,15 @@ export default class QueryApplier {
     }
 
     private renameKeyToApplyKey(group: any, applyKey: any, origKey: any): any {
-            group[origKey] = group[applyKey];
-            return group;
+       group.forEach( function (sec: any) {
+           sec[applyKey] = sec[origKey];
+           delete sec[origKey];
+       });
+            /*if (applyKey !== origKey) {
+                Object.defineProperty(group[0], applyKey,
+                    Object.getOwnPropertyDescriptor(group[0], origKey));
+            }*/
+       return group;
     }
 
     private groupAvg(group: any[], key: any): any[] {
@@ -95,20 +107,24 @@ export default class QueryApplier {
         let min: number;
         let length = group.length;
         let acc = 1;
-        group.forEach(function (section) {
+        let final: any[] = [];
+        group.forEach( (section) => {
             if (min === undefined) {
                 min = section[key];
             }
             if (section[key] < min) {
                 min = section[key];
             }
-            if (acc !== length) {
-                section.delete();
+            if (acc === length) {
+                final.push(section);
             }
             acc++;
         });
-        group[key] = min;
-        return group;
+
+        for (const val of Object.values(final)) {
+            val[key] = min;
+        }
+        return final;
     }
 
     private groupMax(group: any[], key: any): any[] {

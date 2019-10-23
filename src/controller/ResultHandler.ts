@@ -20,7 +20,7 @@ export class ResultHandler {
     private sortingKeys: any[];
     private dir: any;
     private groupKeys: any;
-    private applyRulesTokenKeys: any[];
+    private applyRulesTokenKeys: IApplyRule[];
     private nonGroupKeys: any[];
     private selectKeys: any[];
 
@@ -35,7 +35,7 @@ export class ResultHandler {
     private extractFormat() {
         if (this.QValidator.getQuery().getGroupKeys() !== undefined) {
             this.isTransformed = true;
-            this.groupKeys = this.QValidator.getQuery().getGroupKeys();
+            this.groupKeys = this.QValidator.getQuery().getGroupsWithoutUnderscore();
             this.applyRulesTokenKeys = this.QValidator.getQuery().getApplyRulesTokenKeys();
             this.nonGroupKeys = this.QValidator.getQuery().getApplyKeys();
         }
