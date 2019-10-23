@@ -1,7 +1,9 @@
 import {Decimal} from "decimal.js";
 import deleteProperty = Reflect.deleteProperty;
+import {QueryKeyValidator} from "./QueryKeyValidator";
 
 export default class QueryApplier {
+    private queryKeyValidator = new QueryKeyValidator();
 
     public applytoGroup(groups: any[], keysVals: any[]): any[] {
         keysVals.forEach( (keyVal) => {
@@ -52,26 +54,32 @@ export default class QueryApplier {
     }
 
     private groupAvg(group: any[], key: any): number {
-        let sum = new Decimal(0);
-        let rows = 0;
-        group.forEach(function (section) {
-            sum.add(new Decimal(Number(section[key])));
+        this.queryKeyValidator.validateKey(key, "mKey");
+        let sum: Decimal = new Decimal(0);
+        let rows = Number(0);
+        group.forEach( (section) => {
+            sum.add(section[key]);
             rows++;
         });
         let avg = sum.toNumber() / rows;
-        avg = Number(avg.toFixed(2));
-        return avg;
+        let final = Number(avg.toFixed(2));
+        return final;
     }
 
     private groupCount(group: any[], key: any): number {
         let count = 0;
+        let hasSeen: any[] = [];
         group.forEach(function (section) {
-            count++;
+            if (hasSeen.indexOf(section[key]) === -1) {
+               count++;
+               hasSeen.push(section[key]);
+            }
         });
         return count;
     }
 
     private groupSum(group: any[], key: any): number {
+        this.queryKeyValidator.validateKey(key, "mKey");
         let sum = 0;
         group.forEach(function (section) {
             sum += Number(section[key]);
@@ -81,6 +89,7 @@ export default class QueryApplier {
     }
 
     private groupMin(group: any[], key: any): number {
+        this.queryKeyValidator.validateKey(key, "mKey");
         let min: number;
      /*   let length = group.length;*/
        /* let acc = 1;
@@ -105,6 +114,7 @@ export default class QueryApplier {
     }
 
     private groupMax(group: any[], key: any): number {
+        this.queryKeyValidator.validateKey(key, "mKey");
         let max: number;
         group.forEach(function (section) {
             if (max === undefined) {
