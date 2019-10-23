@@ -4,6 +4,7 @@ import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from ".
 import InsightFacade from "../src/controller/InsightFacade";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
+import {getGeoResponse} from "../src/controller/DomTraverser";
 
 // This should match the schema given to TestUtil.validate(..) in TestUtil.readTestQueries(..)
 // except 'filename' which is injected when the file is read.
@@ -26,7 +27,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
         oneCourse: "./test/data/oneCourse.zip",
         resultsNull: "./test/data/resultsNull.zip",
         under_score: "./test/data/under_score.zip",
-        jpg: "./test/data/RBC Cheque Image.jpg"
+        jpg: "./test/data/RBC Cheque Image.jpg",
+        rooms: "./test/data/rooms.zip"
     };
     let datasets: { [id: string]: string } = {};
     let insightFacade: InsightFacade;
@@ -182,6 +184,25 @@ describe("InsightFacade Add/Remove Dataset", function () {
         }).catch((err: any) => {
             expect(err).to.be.instanceOf(InsightError);
             expect(err.message).to.equal("id is invalid");
+        });
+    });
+
+    it("test adding a valid rooms dataset", function () {
+        const id: string = "rooms";
+        const expected: string[] = [id];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms).then((result: string[]) => {
+            expect(result).to.deep.equal(expected);
+        }).catch((err: any) => {
+            expect.fail(err, expected, "Should not have rejected");
+        });
+    });
+
+    it ("test getting lat and lon", function () {
+        let address = "1866 Main Mall";
+        return getGeoResponse(address).then((result: any) => {
+            Log.info(result);
+        }).catch((err: any) => {
+            Log.error(err);
         });
     });
 

@@ -4,7 +4,7 @@ import {InsightError, NotFoundError} from "./IInsightFacade";
 import * as JSZip from "jszip";
 import {JSZipObject} from "jszip";
 import {type} from "os";
-import {Dataset, Course, Section} from "./Dataset";
+import Dataset, {Course, Section, addCoursesDataset, addRoomsDataset} from "./Dataset";
 
 // returns false if id is whitespace, includes an underscore, or is null
 function validateId(id: string): boolean {
@@ -167,42 +167,11 @@ export default class InsightFacade implements IInsightFacade {
             return Promise.reject((new InsightError("A dataset with a corresponding Id has already been added")));
         }
 
-        // initialize the dataset object that will eventually be saved to disk
-        let datasetToAdd: Dataset = initializeDataset(id, kind);
-
-        // initialize the array of promises for the Promise.all call
-        let promises: Array<Promise<void>> = [];
-
-        // get a Buffer of the file content to use with loadAsync()
-        let buff = new Buffer(content, "base64");
-        return JSZip.loadAsync(buff).then(function (zip: JSZip) {
-            // for each file, retrieve its contents as a string
-            promises = Object.keys(zip.files).map(function (filename) {
-                if (filename !== "courses/") { // in order to avoid the root "courses" file
-                    return zip.files[filename].async("text")
-                    // use the string data to parse course information
-                        .then(function (txt: string) {
-                            // remove the "courses/" part of the file name
-                            let courseName = filename.split("/").pop();
-                            let course = parseCourse(txt, courseName);
-                            if (course !== undefined) {
-                                datasetToAdd.courses.push(course);
-                            }
-                        });
-                }
-            });
-            // Once all the courses and sections are parsed, serialize and save them to disk
-            return Promise.all(promises).then(() => {
-                datasetToAdd.numRows = getNumberOfSections(datasetToAdd);
-                if (datasetToAdd.numRows > 0) {
-                    return Promise.resolve(writeDatasetToDisk(datasetToAdd, id));
-                } else {
-                    return Promise.reject(new InsightError("There were no courses, or there were no sections"));
-                }
-            });
-        }).catch((err) => {
-            return Promise.reject(new InsightError(err.toString()));
-        });
+        if (kind === InsightDatasetKind.Courses) {
+            return addCoursesDataset(id, content, kind);
+        } else if (kind === InsightDatasetKind.Rooms) {
+            return addRoomsDataset(id, content, kind);
+        }
     }
 
     public removeDataset(id: string): Promise<string> {
