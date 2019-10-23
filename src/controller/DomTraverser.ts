@@ -197,13 +197,31 @@ function getAllNodes(root: Node): Node[] {
 export function getGeoResponse(address: string): Promise<any> {
     const http = require("http");
     let uriEncodedAddress = encodeURIComponent(address);
-    let url: string = "http://cs310.students.cs.ubc.ca:11316/api/v1/project_team219/" + address;
+    let url: string = "http://cs310.students.cs.ubc.ca:11316/api/v1/project_team219/" + uriEncodedAddress;
+    let toReturn: any;
     return http.get(url, function (res: any) {
-        if (res.error) {
-            Log.error(res.error);
-        }
-        Log.info(res.lat);
-        Log.info(res.lon);
-        return Promise.resolve(res);
+        res.on("data", (data: any) => {
+            let geoResponse = JSON.parse(data.toString());
+            let error = geoResponse.error;
+            let lat = geoResponse.lat;
+            let lon = geoResponse.lon;
+            Log.info("Lat: " + lat + " Lon: " + lon + " Error: " + error);
+            toReturn = geoResponse;
+        }).then(() => {
+            return toReturn;
+        });
+    });
+}
+
+export function getGeoLocation(address: string) {
+    return new Promise((resolve, reject) => {
+        const http = require("http");
+        let uriEncodedAddress = encodeURIComponent(address);
+        let url: string = "http://cs310.students.cs.ubc.ca:11316/api/v1/project_team219/" + uriEncodedAddress;
+        return http.get(url, function (res: any) {
+            res.on("data", (data: any) => {
+                resolve(JSON.parse(data.toString()));
+            });
+        });
     });
 }

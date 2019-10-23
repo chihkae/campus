@@ -1,7 +1,7 @@
 import Log from "../Util";
 import {InsightDataset, InsightDatasetKind, InsightError} from "./IInsightFacade";
 import * as JSZip from "jszip";
-import {extractBuildingData, extractRoomData} from "./DomTraverser";
+import {extractBuildingData, extractRoomData, getGeoLocation, getGeoResponse} from "./DomTraverser";
 
 export default class Dataset implements InsightDataset {
     public id: string;
@@ -89,18 +89,15 @@ export function addCoursesDataset(id: string, content: string, kind: InsightData
 }
 
 export function addRoomsDataset(id: string, content: string, kind: InsightDatasetKind): any {
-    // initialize the dataset object that will eventually be saved to disk
-    let datasetToAdd: Dataset = initializeDataset(id, kind);
-    const parse5 = require("parse5");
+    let datasetToAdd: Dataset = initializeDataset(id, kind); // initialize the dataset object
     let promises: Array<Promise<void>> = []; // initialize the array of promises for the Promise.all call
     let buildings: Building[] = [];
     let rooms: Room[] = [];
-    let buff = new Buffer(content, "base64");
-    return JSZip.loadAsync(buff).then(function (zip: JSZip) {
+    return JSZip.loadAsync(new Buffer(content, "base64")).then(function (zip: JSZip) {
         promises = Object.keys(zip.files).map(function (filename) {
             return zip.files[filename].async("text")
                 .then(function (txt: string) {
-                    let document = parse5.parse(txt);
+                    let document = require("parse5").parse(txt);
                     if (filename === "rooms/index.htm") {
                         let buildingData = extractBuildingData(document);
                         buildings = buildingData;
@@ -113,26 +110,30 @@ export function addRoomsDataset(id: string, content: string, kind: InsightDatase
                 });
         });
         return Promise.all(promises).then(() => {
-            let neededRooms: Room[] = [];
-            // we only need room data from the buildings from index.htm
+            let neededRooms: Room[] = []; // we only need room data from the buildings from index.htm
             rooms = [].concat.apply([], rooms); // flatten rooms array
             // add address info to each room
             rooms.forEach((room) => {
                 buildings.forEach((building) => {
                     if (building.shortname === room.shortname) {
                         room.address = building.address;
-                        // TODO: get building location
-                        room.lat = 1;
-                        room.lon = 2;
                         neededRooms.push(room);
                     }
                 });
             });
-            datasetToAdd.rooms = neededRooms;
-            datasetToAdd.numRows = neededRooms.length;
-            if (datasetToAdd.rooms.length > 0) {
-                return Promise.resolve(writeDatasetToDisk(datasetToAdd, id));
-            }
+            let geoPromises = neededRooms.map((room) => {
+                return getGeoLocation(room.address).then((res: any) => {
+                    room.lat = res.lat;
+                    room.lon = res.lon;
+                });
+            });
+            return Promise.all(geoPromises).then(() => {
+                datasetToAdd.rooms = neededRooms;
+                datasetToAdd.numRows = neededRooms.length;
+                if (datasetToAdd.rooms.length > 0) {
+                    return Promise.resolve(writeDatasetToDisk(datasetToAdd, id));
+                }
+            });
         });
     }).catch((err) => {
         return Promise.reject(new InsightError(err.toString()));
