@@ -79,6 +79,15 @@ export class QueryValidator implements IQueryValidator {
         }
     }
 
+    public validateColumnsWithoutTransformations() {
+        let columKeys = this.query.getColumnsKey();
+        for (const key of Object.values(columKeys)) {
+            if (!this.queryKeyValidator.validateKey(key, "either")) {
+                throw new InsightError();
+            }
+        }
+    }
+
     private validateCompare(query: any) {
         if (Object.keys(query).length > 1 || Object.values(query).length > 1) {
             throw new InsightError("no key value pair in Compare object");

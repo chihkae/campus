@@ -1,5 +1,6 @@
 import {Query} from "./Query";
 import {InsightError} from "./IInsightFacade";
+import {QueryValidator} from "./QueryValidator";
 
 
 export class QueryOrderValidator {
@@ -66,7 +67,10 @@ export class QueryOrderValidator {
         }
     }
 
-    public checkMinRequirements() {
+    public checkMinRequirements(qValidatator: QueryValidator) {
+        if (this.query.getTransformations() === undefined) {
+            qValidatator.validateColumnsWithoutTransformations();
+        }
         if (typeof this.query.getOptions() === "undefined" || typeof this.query.getWhere() === "undefined"
             || typeof this.query.getColumnsKey() === "undefined") {
             throw new InsightError();

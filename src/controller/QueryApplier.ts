@@ -55,10 +55,11 @@ export default class QueryApplier {
 
     private groupAvg(group: any[], key: any): number {
         this.queryKeyValidator.validateKey(key, "mKey");
-        let sum: Decimal = new Decimal(0);
+        let sum = new Decimal(0);
         let rows = Number(0);
         group.forEach( (section) => {
-            sum.add(section[key]);
+            let x = new Decimal(section[key])
+            sum = sum.add(x);
             rows++;
         });
         let avg = sum.toNumber() / rows;

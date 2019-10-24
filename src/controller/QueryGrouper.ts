@@ -42,11 +42,10 @@ export default class QueryGrouper {
         } else {
             let result: any[] = [];
             let key = groupKey[0];
-            let groupMapper = new Map();
             let count = 0;
             groups.forEach(function (group: any[]) {
+                let groupMapper = new Map();
                 group.forEach(function (section: any) {
-
                     let g = section[key];
                     if (groupMapper.get(g) === undefined) {
                         groupMapper.set(g, count);

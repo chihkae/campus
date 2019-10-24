@@ -4,7 +4,7 @@ import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from ".
 import InsightFacade from "../src/controller/InsightFacade";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
-import {getGeoResponse} from "../src/controller/DomTraverser";
+import {getGeoLocation, getGeoResponse} from "../src/controller/DomTraverser";
 
 // This should match the schema given to TestUtil.validate(..) in TestUtil.readTestQueries(..)
 // except 'filename' which is injected when the file is read.
@@ -197,14 +197,17 @@ describe("InsightFacade Add/Remove Dataset", function () {
         });
     });
 
-    // it ("test getting lat and lon", function () {
-    //     let address = "1866 Main Mall";
-    //     return getGeoResponse(address).then((result: any) => {
-    //         Log.info(result);
-    //     }).catch((err: any) => {
-    //         Log.error(err);
-    //     });
-    // });
+    it ("test getting lat and lon", function () {
+        let address = "1866 Main Mall";
+        return getGeoLocation(address).then((result: any) => {
+            Log.info(result);
+            expect(result.lat).to.equal(49.26826);
+            expect(result.lon).to.equal(-123.25468);
+            expect(result.error).to.equal(undefined);
+        }).catch((err: any) => {
+            Log.error(err);
+        });
+    });
 
     it("test removing a dataset when there are no datasets added", function () {
         return insightFacade.removeDataset("doesn't matter").then((result: string) => {
