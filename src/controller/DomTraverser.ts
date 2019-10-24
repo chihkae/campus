@@ -33,7 +33,7 @@ export function extractRoomData(document: Node, filename: string): any {
             }
             if (hasAttribute(child, "room-capacity")) {
                 let childNode: any[] = getGivenChildNodes(child, "#text");
-                room.seats = childNode[0].value.trim();
+                room.seats = Number(childNode[0].value.trim());
             }
             if (hasAttribute(child, "room-furniture")) {
                 let childNode: any[] = getGivenChildNodes(child, "#text");

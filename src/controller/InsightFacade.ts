@@ -20,6 +20,7 @@ import {Query} from "./Query";
 import QueryApplier from "./QueryApplier";
 import QuerySorter from "./QuerySorter";
 import {ResultHandler} from "./ResultHandler";
+import {Formatter} from "./Formatter";
 
 export interface IQueryValidator {
     validateQuery(query: any): boolean;
@@ -105,6 +106,12 @@ export default class InsightFacade implements IInsightFacade {
                         } else {
                             try {
                                 let content = JSON.parse(data);
+                                let formatter = new Formatter();
+                                if (fileIDtoRead === "courses") {
+                                    content = formatter.formatCourses(content);
+                                } else if (fileIDtoRead === "rooms") {
+                                    content = formatter.formatRooms(content);
+                                }
                                 let queryEvaluator = new QueryEvaluator(query, content);
                                 let unsortedResult = queryEvaluator.evaluateResult(query);
                                 let rh: ResultHandler = new ResultHandler(queryEvaluator, queryValidator);

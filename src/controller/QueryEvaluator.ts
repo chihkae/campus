@@ -32,13 +32,7 @@ export default class QueryEvaluator {
 
     private whereWithNoFilter(query: any, key: any): any[] {
             let totalData =  this.getData();
-            let onlyCourses = [];
-            for (const courses of Object.values(totalData.courses)) {
-                for (const section of Object.values(Object(courses).sections)) {
-                    onlyCourses.push(section);
-                }
-            }
-            return onlyCourses;
+            return totalData;
     }
 
     public evaluateResult(query: any): any[] {
@@ -118,8 +112,7 @@ export default class QueryEvaluator {
         let countNumberofAsterisks = value.toString().split("*").length - 1;
 
         let result: any[] = [];
-        content.courses.forEach(function (course: any) {
-            course.sections.forEach(function (section: any) {
+        content.forEach(function (section: any) {
                 if (countNumberofAsterisks > 0) {
                     if (countNumberofAsterisks === 1) {
                         if (value.toString().indexOf("*") > 0) {
@@ -145,7 +138,6 @@ export default class QueryEvaluator {
                     }
                 }
             });
-        });
         return result;
     }
 
@@ -205,11 +197,9 @@ keyToSort === "uuid") {
     private evaluateNot(result: any): any {
         let content = this.getData();
         let notResult = [];
-        for (const section of Object.values(content.courses)) {
-            for (const courseSection of Object.values(Object(section).sections)) {
-                if (!result.includes(courseSection)) {
-                    notResult.push(courseSection);
-                }
+        for (const val of Object.values(content)) {
+            if (!result.includes(val)) {
+                notResult.push(val);
             }
         }
         return notResult;
@@ -242,22 +232,20 @@ keyToSort === "uuid") {
     private evaluateComparator(key: any, value: any, comparator: any): any {
         let content = this.getData();
         let result: any[] = [];
-        content.courses.forEach(function (course: any) {
-            course.sections.forEach(function (section: any) {
-                if (comparator === "GT") {
-                    if (section[key] > Number(value)) {
-                        result.push(section);
-                    }
-                } else if (comparator === "LT") {
-                    if (section[key] < Number(value)) {
-                        result.push(section);
-                    }
-                } else if (comparator === "EQ") {
-                    if (section[key] === Number(value)) {
-                        result.push(section);
-                    }
+        content.forEach(function (section: any) {
+            if (comparator === "GT") {
+                if (section[key] > Number(value)) {
+                    result.push(section);
                 }
-            });
+            } else if (comparator === "LT") {
+                if (section[key] < Number(value)) {
+                    result.push(section);
+                }
+            } else if (comparator === "EQ") {
+                if (section[key] === Number(value)) {
+                    result.push(section);
+                }
+            }
         });
         return result;
     }

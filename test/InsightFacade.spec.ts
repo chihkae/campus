@@ -345,21 +345,21 @@ describe("InsightFacade PerformQuery", () => {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
 
-   /* it("Should run test queries", function () {
-        describe("Dynamic InsightFacade PerformQuery tests", function () {
-            for (const test of testQueries) {
-                if (test.filename === "test/queries/AndAnd2.json") {
-                    it("dfdfdf", function (done) {
-                            insightFacade.performQuery(test.query).then((result) => {
-                                TestUtil.checkQueryResult(test, result, done);
-                            }).catch((err) => {
-                                TestUtil.checkQueryResult(test, err, done);
-                            });
-                    });
-                }
-            }
-        });
-    });*/
+    // it("Should run test queries", function () {
+    //     describe("Dynamic InsightFacade PerformQuery tests", function () {
+    //         for (const test of testQueries) {
+    //             if (test.filename === "test/queries/1.json") {
+    //                 it("dfdfd", function (done) {
+    //                         insightFacade.performQuery(test.query).then((result) => {
+    //                             TestUtil.checkQueryResult(test, result, done);
+    //                         }).catch((err) => {
+    //                             TestUtil.checkQueryResult(test, err, done);
+    //                         });
+    //                 });
+    //             }
+    //         }
+    //     });
+    // });
 
     // Dynamically create and run a test for each query in testQueries
     // Creates an extra "test" called "Should run test queries" as a byproduct. Don't worry about it
