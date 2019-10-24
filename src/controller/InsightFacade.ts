@@ -96,7 +96,7 @@ export default class InsightFacade implements IInsightFacade {
             let queryValidator = new QueryValidator(query);
             try {
                 if (queryValidator.validateQuery(query)) {
-                    queryValidator.getQueryOrderValidator().checkMinRequirements();
+                    queryValidator.getQueryOrderValidator().checkMinRequirements(queryValidator);
                     let fileIDtoRead = queryValidator.getQuery().getIdString();
                     let fs = require("fs");
                     fs.readFile(`./data/${fileIDtoRead}`, (err: any, data: any) => {

@@ -1,0 +1,21 @@
+
+
+{
+    "title": "Select room id and course title where department is CPSC ",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_dept": "CPSC"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "rooms_id"
+            ],
+            "ORDER": "courses_title"
+        }
+    },
+    "isQueryValid": false,
+    "result":"InsightError"
+}

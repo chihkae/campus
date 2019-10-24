@@ -1,0 +1,79 @@
+{
+    "title": "Select course title, avg with averages that are not > 40 and < 100",
+    "query": {
+        "WHERE": {
+            "NOT": {
+                "AND": [
+                    {
+                        "GT": {
+                            "courses_avg": 40
+                        }
+                    },
+                    {
+                        "LT": {
+                            "courses_avg": 100
+                        }
+                    }
+                ]
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_title":"forest ecology",
+            "courses_avg":0
+        },
+        {
+            "courses_title":"in land food com",
+            "courses_avg":0
+        },
+        {
+            "courses_title":"in land food com",
+            "courses_avg":0
+        },
+        {
+            "courses_title":"prpty,ident&uses",
+            "courses_avg":1
+        },
+        {
+            "courses_title":"found re apprai",
+            "courses_avg":4
+        },
+        {
+            "courses_title":"found re apprai",
+            "courses_avg":4
+        },
+        {
+            "courses_title":"sustnbt&frst ops",
+            "courses_avg":4.5
+        },
+        {
+            "courses_title":"engr econ anlys",
+            "courses_avg":33
+        },
+        {
+            "courses_title":"log & crit think",
+            "courses_avg":33.2
+        },
+        {
+            "courses_title":"hist 1500 - 20 c",
+            "courses_avg":34
+        },
+        {
+            "courses_title":"language & curr",
+            "courses_avg":39.03
+        },
+        {
+            "courses_title":"language & curr",
+            "courses_avg":39.03
+        }
+    ]
+}

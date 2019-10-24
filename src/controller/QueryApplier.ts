@@ -58,7 +58,7 @@ export default class QueryApplier {
         let sum = new Decimal(0);
         let rows = Number(0);
         group.forEach( (section) => {
-            let x = new Decimal(section[key])
+            let x = new Decimal(section[key]);
             sum = sum.add(x);
             rows++;
         });
@@ -70,7 +70,7 @@ export default class QueryApplier {
     private groupCount(group: any[], key: any): number {
         let count = 0;
         let hasSeen: any[] = [];
-        group.forEach(function (section) {
+        group.forEach( (section) => {
             if (hasSeen.indexOf(section[key]) === -1) {
                count++;
                hasSeen.push(section[key]);
@@ -117,7 +117,7 @@ export default class QueryApplier {
     private groupMax(group: any[], key: any): number {
         this.queryKeyValidator.validateKey(key, "mKey");
         let max: number;
-        group.forEach(function (section) {
+        group.forEach((section) => {
             if (max === undefined) {
                 max = section[key];
             }

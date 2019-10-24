@@ -84,7 +84,7 @@ export class ResultHandler {
             sorted = this.QSorter.sortDirection(sorted, this.dir);
             finalResult = this.QEvaluator.addID(sorted, this.id, this.selectKeys, this.nonGroupKeys);
         } else if (!this.isTransformed && this.isSorted && !this.isSortedWithDirection) {
-            let selectedColumnsResult = this.QEvaluator.selectColumnsApplied(unsortedResult, this.selectKeys);
+            let selectedColumnsResult = this.QEvaluator.selectColumns(unsortedResult, this.selectKeys);
             this.isResultTooLarge(selectedColumnsResult);
             let sorted = this.QSorter.sort1(selectedColumnsResult, this.sortingKeys);
             finalResult = this.QEvaluator.addID(sorted, this.id, this.selectKeys, this.nonGroupKeys);

@@ -1,0 +1,21 @@
+
+
+{
+    "title": "Select course title, avg where course dept = dfadfadsfasd",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_dept": "dfadfadsfasd"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result":[]
+}
