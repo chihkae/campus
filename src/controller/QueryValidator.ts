@@ -151,9 +151,10 @@ export class QueryValidator implements IQueryValidator {
             if (query != null && typeof query === "object") {
                 let columnsKey: string[] = [];
                 for (const value of Object.values(query)) {
-                    if ((!this.queryKeyValidator.validateKey(value, "either") &&
-                        !this.queryKeyValidator.validateKey(value, "applyKey"))) {
-                        throw new InsightError();
+                    if (value.indexOf("_") > -1) {
+                        this.queryKeyValidator.validateKeyColumnsWithTransformation(value);
+                    } else {
+                        this.queryKeyValidator.validateKey(value, "applyKey" );
                     }
                     columnsKey.push(value.toString());
                 }

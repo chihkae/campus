@@ -21,6 +21,7 @@ import QueryApplier from "./QueryApplier";
 import QuerySorter from "./QuerySorter";
 import {ResultHandler} from "./ResultHandler";
 import {Formatter} from "./Formatter";
+import {rejects} from "assert";
 
 export interface IQueryValidator {
     validateQuery(query: any): boolean;
@@ -59,19 +60,19 @@ export default class InsightFacade implements IInsightFacade {
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         // Validate id (must not contain underscore, be only whitespace, be null)
         // If invalid, reject with InsightError
-        if (!validateId(id)) {
-            return Promise.reject(new InsightError("id is invalid"));
-        }
+            if (!validateId(id)) {
+                return Promise.reject(new InsightError("id is invalid"));
+            }
         // If is has already been added, reject
-        if (getCurrentlyAddedDatasetIds().includes(id)) {
-            return Promise.reject((new InsightError("A dataset with a corresponding Id has already been added")));
-        }
+            if (getCurrentlyAddedDatasetIds().includes(id)) {
+                return Promise.reject((new InsightError("A dataset with a corresponding Id has already been added")));
+            }
 
-        if (kind === InsightDatasetKind.Courses) {
-            return addCoursesDataset(id, content, kind);
-        } else if (kind === InsightDatasetKind.Rooms) {
-            return addRoomsDataset(id, content, kind);
-        }
+            if (kind === InsightDatasetKind.Courses) {
+                return addCoursesDataset(id, content, kind);
+            } else if (kind === InsightDatasetKind.Rooms) {
+                return addRoomsDataset(id, content, kind);
+            }
     }
 
     public removeDataset(id: string): Promise<string> {

@@ -1,6 +1,7 @@
 import {Decimal} from "decimal.js";
 import deleteProperty = Reflect.deleteProperty;
 import {QueryKeyValidator} from "./QueryKeyValidator";
+import {InsightError} from "./IInsightFacade";
 
 export default class QueryApplier {
     private queryKeyValidator = new QueryKeyValidator();
@@ -68,6 +69,9 @@ export default class QueryApplier {
     }
 
     private groupCount(group: any[], key: any): number {
+        if (!this.queryKeyValidator.validateKey(key, "either")) {
+            throw new InsightError();
+        }
         let count = 0;
         let hasSeen: any[] = [];
         group.forEach( (section) => {

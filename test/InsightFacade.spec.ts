@@ -64,7 +64,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
 
-    // This is a unit test. You should create more like this!
+   // This is a unit test. You should create more like this!//
     it("Should add a valid dataset", function () {
         const id: string = "courses";
         const expected: string[] = [id];
@@ -303,6 +303,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery: { [id: string]: any } = {
         courses: {id: "courses", path: "./test/data/courses.zip", kind: InsightDatasetKind.Courses},
+        rooms: {id: "rooms", path: "./test/data/rooms.zip", kind: InsightDatasetKind.Rooms}
     };
     let insightFacade: InsightFacade;
     let testQueries: ITestQuery[] = [];

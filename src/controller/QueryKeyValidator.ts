@@ -148,6 +148,20 @@ export class QueryKeyValidator {
         }
     }
 
+    public validateKeyColumnsWithTransformation(key: any) {
+        if (key !== null || key !== undefined || typeof key !== "string") {
+            let field = key.substring(key.indexOf("_") + 1);
+            let mFields = ["avg", "pass", "fail", "audit", "year", "lat" , "lon", "seats"];
+            let sFields = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name",
+                "address", "type", "furniture", "href"];
+            if ( !(mFields.indexOf(field) > -1) && !(sFields.indexOf(field) > -1 )) {
+                throw new InsightError();
+            }
+        } else {
+            throw new InsightError();
+        }
+    }
+
     public validateKey(key: any, type: string): boolean {
         if (key !== null || key !== undefined || typeof key !== "string") {
             let id = key.substring(0, key.indexOf("_"));

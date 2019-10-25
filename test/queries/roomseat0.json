@@ -1,0 +1,28 @@
+{
+    "title": "sort courses with down direction",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "EQ": {
+                        "rooms_seats": 0
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_href"    ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "rooms_href"
+                ]
+            }
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+
+    ]
+}
