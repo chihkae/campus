@@ -346,10 +346,10 @@ describe("InsightFacade PerformQuery", () => {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
 
-    // it("Should run test queries", function () {
+    //  it("Should run test queries", function () {
     //     describe("Dynamic InsightFacade PerformQuery tests", function () {
     //         for (const test of testQueries) {
-    //             if (test.filename === "test/queries/1.json") {
+    //             if (test.filename === "test/queries/sortingEmptyArray.json") {
     //                 it("dfdfd", function (done) {
     //                         insightFacade.performQuery(test.query).then((result) => {
     //                             TestUtil.checkQueryResult(test, result, done);

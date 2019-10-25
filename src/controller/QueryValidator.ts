@@ -32,16 +32,20 @@ export class QueryValidator implements IQueryValidator {
                         this.queryOrderValidator.checkInsideWhere();
                         this.validateQuery(query[key]);
                     } else if (key === "IS") {
+                        this.queryOrderValidator.checkInsideWhere();
                         this.validateIS(query[key]);
                         this.queryOrderValidator.checkInsideWhere();
                     } else if (key === "NOT") {
+                        this.queryOrderValidator.checkInsideWhere();
                         this.validateNot(query[key]);
                         this.validateQuery(query[key]);
                         this.queryOrderValidator.checkInsideWhere();
                     } else if (key === "GT" || key === "LT" || key === "EQ") {
+                        this.queryOrderValidator.checkInsideWhere();
                         this.validateCompare(query[key]);
                         this.queryOrderValidator.checkInsideWhere();
                     } else if (key === "OR" || key === "AND") {
+                        this.queryOrderValidator.checkInsideWhere();
                         this.validateQueryWithArray(query[key]);
                         this.queryOrderValidator.checkInsideWhere();
                     } else if (key === "OPTIONS") {
@@ -59,11 +63,7 @@ export class QueryValidator implements IQueryValidator {
                         this.validateOrderKey(query[key]);
                         this.queryOrderValidator.checkAfterOrder();
                     } else if (key === "TRANSFORMATIONS") {
-                        this.queryOrderValidator.checkAfterOrder();
-                        this.validateTransformations(query[key]);
-                        this.query.setTransformations(query[key]);
-                        this.query.setApplyRulesTokenKey(query[key]["APPLY"]);
-                        this.queryOrderValidator.checkAfterTransformations();
+                        this.alidateTransformation(query[key]);
                     } else {
                         throw new InsightError();
                     }
@@ -71,6 +71,20 @@ export class QueryValidator implements IQueryValidator {
                 return true;
         }
         return false;
+    }
+
+    private alidateTransformation(res: any) {
+        if (this.getQuery().getOrderKey() !== undefined) {
+            this.queryOrderValidator.checkAfterOrder();
+        } else {
+            this.queryOrderValidator.checkAfterColumns();
+        }
+        this.validateTransformations(res);
+        this.query.setTransformations(res);
+        this.queryOrderValidator.checkAfterGroupKeys();
+        this.query.setApplyRulesTokenKey(res["APPLY"]);
+        this.queryOrderValidator.checkAfterApplyKeys();
+        this.queryOrderValidator.checkAfterTransformations();
     }
 
     private validateNot(notObject: any) {
@@ -121,6 +135,8 @@ export class QueryValidator implements IQueryValidator {
         let apply = Object.values(transformation)[1];
         if (this.queryKeyValidator.validateGroupKey(group)) {
             this.query.setGroupKeys(group);
+        } else {
+            throw new InsightError();
         }
         this.queryKeyValidator.validateApplyKey(apply);
         this.validateColumnsAfterTransformations();

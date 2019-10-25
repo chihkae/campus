@@ -88,7 +88,7 @@ export function addCoursesDataset(id: string, content: string, kind: InsightData
     });
 }
 
-export function addRoomsDataset(id: string, content: string, kind: InsightDatasetKind): any {
+export function addRoomsDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
     let datasetToAdd: Dataset = initializeDataset(id, kind); // initialize the dataset object
     let promises: Array<Promise<void>> = []; // initialize the array of promises for the Promise.all call
     let buildings: Building[] = [];

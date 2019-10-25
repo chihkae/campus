@@ -9,7 +9,7 @@ export class QueryKeyValidator {
     }
 
     public validateGroupKey(groupKey: any[]): boolean {
-        if (!Array.isArray(groupKey)) {
+        if (!Array.isArray(groupKey) || Object.values(groupKey).length === 0) {
             throw new InsightError();
         }
         for (const val of Object.values(groupKey)) {
@@ -103,7 +103,7 @@ export class QueryKeyValidator {
     }
 
     public validateApplyKey(applyArray: any[]) {
-        if (!Array.isArray(applyArray)) {
+        if (!Array.isArray(applyArray) || Object.values(applyArray).length === 0) {
             throw new InsightError();
         }
         let hasSeen: any[] = [];

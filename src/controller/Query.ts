@@ -205,6 +205,9 @@ export class Query implements IQuery {
         if (this.orderKey === undefined && s !== null) {
             this.orderKey = [];
             if (Array.isArray(s)) {
+                // if (Object.values(s).length === 0) {
+                //     throw new InsightError();
+                // }
                 for (const val of Object.values(s)) {
                     this.orderKey.push(val);
                 }
