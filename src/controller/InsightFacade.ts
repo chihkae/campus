@@ -107,10 +107,13 @@ export default class InsightFacade implements IInsightFacade {
                             try {
                                 let content = JSON.parse(data);
                                 let formatter = new Formatter();
-                                if (fileIDtoRead === "courses") {
+                                let kind = formatter.getKind(content);
+                                if (kind === "courses") {
                                     content = formatter.formatCourses(content);
-                                } else if (fileIDtoRead === "rooms") {
+                                } else if (kind === "rooms") {
                                     content = formatter.formatRooms(content);
+                                } else {
+                                    throw new InsightError();
                                 }
                                 let queryEvaluator = new QueryEvaluator(query, content);
                                 let unsortedResult = queryEvaluator.evaluateResult(query);
@@ -118,15 +121,17 @@ export default class InsightFacade implements IInsightFacade {
                                 resolve(rh.format(unsortedResult));
                             } catch (e) {
                                 if (e instanceof ResultTooLargeError) {
-                                    reject(e);
+                                    reject(new ResultTooLargeError());
                                 } else if (e instanceof InsightError) {
-                                    reject(e);
+                                    reject(new InsightError());
                                 } else {
-                                    reject(e);
+                                    reject(new InsightError());
                                 }
                             }
                         }
                     });
+                } else {
+                    reject(new InsightError());
                 }
             } catch (e) {
                 reject(new InsightError());

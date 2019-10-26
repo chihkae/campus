@@ -28,7 +28,8 @@ describe("InsightFacade Add/Remove Dataset", function () {
         resultsNull: "./test/data/resultsNull.zip",
         under_score: "./test/data/under_score.zip",
         jpg: "./test/data/RBC Cheque Image.jpg",
-        rooms: "./test/data/rooms.zip"
+        rooms: "./test/data/rooms.zip",
+        lalala: "./test/data/lalala.zip"
     };
     let datasets: { [id: string]: string } = {};
     let insightFacade: InsightFacade;
@@ -65,18 +66,28 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
    // This is a unit test. You should create more like this!//
-    it("Should add a valid dataset", function () {
-        const id: string = "courses";
-        const expected: string[] = [id];
-        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
-            expect(result).to.deep.equal(expected);
-        }).catch((err: any) => {
-            expect.fail(err, expected, "Should not have rejected");
-        });
-    });
+   //  it("Should add a valid dataset", function () {
+   //      const id: string = "courses";
+   //      const expected: string[] = [id];
+   //      return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+   //          expect(result).to.deep.equal(expected);
+   //      }).catch((err: any) => {
+   //          expect.fail(err, expected, "Should not have rejected");
+   //      });
+   //  });
+   //
+   //  it("test adding one course", function () {
+   //      const id: string = "oneCourse";
+   //      const expected: string[] = [id];
+   //      return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+   //          expect(result).to.deep.equal(expected);
+   //      }).catch((err: any) => {
+   //          expect.fail(err, expected, "Should not have rejected");
+   //      });
+   //  });
 
-    it("test adding one course", function () {
-        const id: string = "oneCourse";
+    it("test adding lalala course", function () {
+        const id: string = "lalala";
         const expected: string[] = [id];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
             expect(result).to.deep.equal(expected);
@@ -303,6 +314,7 @@ describe("InsightFacade Add/Remove Dataset", function () {
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery: { [id: string]: any } = {
         courses: {id: "courses", path: "./test/data/courses.zip", kind: InsightDatasetKind.Courses},
+        lalala: {id: "lalala", path: "./test/data/lalala.zip", kind: InsightDatasetKind.Courses},
         rooms: {id: "rooms", path: "./test/data/rooms.zip", kind: InsightDatasetKind.Rooms}
     };
     let insightFacade: InsightFacade;

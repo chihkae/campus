@@ -1,6 +1,16 @@
+import {InsightError} from "./IInsightFacade";
 
 
 export class Formatter {
+    public getKind(data: any): any {
+        let kind;
+        if (Object.values(data.kind).length !== 0) {
+            kind = data.kind;
+            return kind;
+        } else {
+            throw new InsightError();
+        }
+    }
 
     public formatCourses(data: any): any[] {
         let allcourses: any[] = [];
