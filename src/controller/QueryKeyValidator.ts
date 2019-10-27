@@ -103,13 +103,13 @@ export class QueryKeyValidator {
     }
 
     public validateApplyKey(applyArray: any[]) {
-        if (!Array.isArray(applyArray) || Object.values(applyArray).length === 0) {
+        if (!Array.isArray(applyArray)) {
             throw new InsightError();
         }
         let hasSeen: any[] = [];
         for (const value of Object.values(applyArray)) {
             for (const key of Object.keys(value)) {
-                if (hasSeen.indexOf(key) !== -1 || key.toString().includes("_")) {
+                if (hasSeen.indexOf(key) !== -1 || key.toString().includes("_") || key.toString() === "") {
                     throw new InsightError();
                 }
                 hasSeen.push(key);

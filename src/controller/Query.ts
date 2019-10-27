@@ -224,6 +224,9 @@ export class Query implements IQuery {
     }
 
     public setIdString(s: string): void {
+        if (s.length < 1) {
+            throw new InsightError();
+        }
         if (s !== null && this.idString === undefined) {
             this.idString = s;
         } else if (this.idString.valueOf() !== s.toString().valueOf()) {
