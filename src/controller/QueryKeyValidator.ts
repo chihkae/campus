@@ -5,6 +5,7 @@ import {Formatter} from "./Formatter";
 export class QueryKeyValidator {
     private query: Query;
     private kind: any;
+    private listofID: any[];
 
    public setQuery(q: Query) {
        this.query = q;
@@ -164,19 +165,29 @@ export class QueryKeyValidator {
         }
     }
 
-    private determineKind() {
+    private determineKind(): any {
         if (typeof this.query.getIdString() !== "undefined") {
-            let kind;
-            if (typeof this.kind === "undefined") {
                 let fs = require("fs");
                 let filetoRead = this.query.getIdString();
                 let data = fs.readFileSync(`./data/${filetoRead}`);
                 let content = JSON.parse(data);
                 let formatter = new Formatter();
-                this.kind = formatter.getKind(content);
-            }
+                let kind = formatter.getKind(content);
+                return kind;
         }
-    }
+   }
+
+   private determineKindFromId(id: any): any {
+       let kind;
+       if (id === "courses") {
+           kind = "courses";
+       } else if (id === "rooms") {
+           kind = "rooms";
+       } else {
+           kind = this.determineKind();
+       }
+       return kind;
+   }
 
     public validateKey(key: any, type: string): boolean {
         if (key !== null || key !== undefined || typeof key !== "string") {
@@ -185,8 +196,7 @@ export class QueryKeyValidator {
                 this.query.setIdString(id);
                 this.isIDinListofIDs(id);
             }
-            this.determineKind();
-            let kind = this.kind;
+            let kind = this.determineKindFromId(id);
             let field = key.substring(key.indexOf("_") + 1);
             let mFields;
             let sFields;
@@ -228,8 +238,10 @@ export class QueryKeyValidator {
 
     public isIDinListofIDs(id: any): void {
         let fs = require("fs");
-        let currentDataFiles: string[] = fs.readdirSync("./data/");
-        if (!(currentDataFiles.indexOf(id) > -1)) {
+        if (typeof this.listofID === "undefined") {
+            this.listofID = fs.readdirSync("./data/");
+        }
+        if (!(this.listofID.indexOf(id) > -1)) {
             throw new InsightError();
         }
     }
