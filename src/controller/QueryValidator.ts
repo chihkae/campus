@@ -3,6 +3,7 @@ import InsightFacade, {IQueryValidator} from "./InsightFacade";
 import {Query} from "./Query";
 import {QueryKeyValidator} from "./QueryKeyValidator";
 import {QueryOrderValidator} from "./QueryOrderValidator";
+import {Formatter} from "./Formatter";
 
 export class QueryValidator implements IQueryValidator {
     private query: Query;
@@ -21,6 +22,10 @@ export class QueryValidator implements IQueryValidator {
 
     public getQueryOrderValidator(): QueryOrderValidator {
         return this.queryOrderValidator;
+    }
+
+    public getQueryKeyValidator(): QueryKeyValidator {
+        return this.queryKeyValidator;
     }
 
     public validateQuery(query: any): boolean {
@@ -141,6 +146,7 @@ export class QueryValidator implements IQueryValidator {
         this.queryKeyValidator.validateApplyKey(apply);
         this.validateColumnsAfterTransformations();
     }
+
 
     private validateColumnsAfterTransformations() {
         let allKeys = this.query.getGroupKeys().concat(this.query.getApplyKeys());

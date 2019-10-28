@@ -2,14 +2,21 @@ import {Decimal} from "decimal.js";
 import deleteProperty = Reflect.deleteProperty;
 import {QueryKeyValidator} from "./QueryKeyValidator";
 import {InsightError} from "./IInsightFacade";
+import {Query} from "./Query";
+import {QueryValidator} from "./QueryValidator";
 
 export default class QueryApplier {
-    private queryKeyValidator = new QueryKeyValidator();
+    private queryKeyValidator: QueryKeyValidator;
+
+    constructor(qval: QueryValidator) {
+        this.queryKeyValidator = qval.getQueryKeyValidator();
+    }
 
     public applytoGroup(groups: any[], keysVals: any[]): any[] {
         keysVals.forEach( (keyVal) => {
             let toName = keyVal["applyKey"];
             let applyToken = keyVal["applyToken"];
+            let originalKey = keyVal["key"];
             let key = keyVal["key"];
             if (key.toString().includes("_")) {
                 key = key.split("_")[1];
@@ -17,23 +24,23 @@ export default class QueryApplier {
             groups.map( (group) => {
                 switch (applyToken) {
                     case "MAX":
-                        let max = this.groupMax(group, key);
+                        let max = this.groupMax(group, key, originalKey);
                         this.addApplyKey(group, toName, max);
                         break;
                     case "MIN":
-                        let min = this.groupMin(group, key);
+                        let min = this.groupMin(group, key, originalKey);
                         this.addApplyKey(group, toName, min);
                         break;
                     case "COUNT":
-                        let count = this.groupCount(group, key);
+                        let count = this.groupCount(group, key, originalKey);
                         group = this.addApplyKey(group, toName, count);
                         break;
                     case "SUM":
-                        let sum = this.groupSum(group, key);
+                        let sum = this.groupSum(group, key, originalKey);
                         this.addApplyKey(group, toName, sum);
                         break;
                     case "AVG":
-                        let avg = this.groupAvg(group, key);
+                        let avg = this.groupAvg(group, key, originalKey);
                         this.addApplyKey(group, toName, avg);
                 }
             });
@@ -54,8 +61,8 @@ export default class QueryApplier {
        return group;
     }
 
-    private groupAvg(group: any[], key: any): number {
-        this.queryKeyValidator.validateKey(key, "mKey");
+    private groupAvg(group: any[], key: any, originalKey: any): number {
+        this.queryKeyValidator.validateKey(originalKey, "mKey");
         let sum = new Decimal(0);
         let rows = Number(0);
         group.forEach( (section) => {
@@ -68,8 +75,8 @@ export default class QueryApplier {
         return final;
     }
 
-    private groupCount(group: any[], key: any): number {
-        if (!this.queryKeyValidator.validateKey(key, "either")) {
+    private groupCount(group: any[], key: any, originalKey: any): number {
+        if (!this.queryKeyValidator.validateKey(originalKey, "either")) {
             throw new InsightError();
         }
         let count = 0;
@@ -83,8 +90,8 @@ export default class QueryApplier {
         return count;
     }
 
-    private groupSum(group: any[], key: any): number {
-        this.queryKeyValidator.validateKey(key, "mKey");
+    private groupSum(group: any[], key: any, originalKey: any): number {
+        this.queryKeyValidator.validateKey(originalKey, "mKey");
         let sum = 0;
         group.forEach(function (section) {
             sum += Number(section[key]);
@@ -93,8 +100,8 @@ export default class QueryApplier {
         return sum;
     }
 
-    private groupMin(group: any[], key: any): number {
-        this.queryKeyValidator.validateKey(key, "mKey");
+    private groupMin(group: any[], key: any, originalKey: any): number {
+        this.queryKeyValidator.validateKey(originalKey, "mKey");
         let min: number;
      /*   let length = group.length;*/
        /* let acc = 1;
@@ -118,8 +125,8 @@ export default class QueryApplier {
         return min;
     }
 
-    private groupMax(group: any[], key: any): number {
-        this.queryKeyValidator.validateKey(key, "mKey");
+    private groupMax(group: any[], key: any, originalKey: any): number {
+        this.queryKeyValidator.validateKey(originalKey, "mKey");
         let max: number;
         group.forEach((section) => {
             if (max === undefined) {

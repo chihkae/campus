@@ -1,8 +1,10 @@
 import {Query} from "./Query";
 import {InsightError} from "./IInsightFacade";
+import {Formatter} from "./Formatter";
 
 export class QueryKeyValidator {
     private query: Query;
+    private kind: any;
 
    public setQuery(q: Query) {
        this.query = q;
@@ -162,6 +164,20 @@ export class QueryKeyValidator {
         }
     }
 
+    private determineKind() {
+        if (typeof this.query.getIdString() !== "undefined") {
+            let kind;
+            if (typeof this.kind === "undefined") {
+                let fs = require("fs");
+                let filetoRead = this.query.getIdString();
+                let data = fs.readFileSync(`./data/${filetoRead}`);
+                let content = JSON.parse(data);
+                let formatter = new Formatter();
+                this.kind = formatter.getKind(content);
+            }
+        }
+    }
+
     public validateKey(key: any, type: string): boolean {
         if (key !== null || key !== undefined || typeof key !== "string") {
             let id = key.substring(0, key.indexOf("_"));
@@ -169,10 +185,23 @@ export class QueryKeyValidator {
                 this.query.setIdString(id);
                 this.isIDinListofIDs(id);
             }
+            this.determineKind();
+            let kind = this.kind;
             let field = key.substring(key.indexOf("_") + 1);
-            let mFields = ["avg", "pass", "fail", "audit", "year", "lat" , "lon", "seats"];
-            let sFields = ["dept", "id", "instructor", "title", "uuid", "fullname", "shortname", "number", "name",
+            let mFields;
+            let sFields;
+            let mFieldsCourses = ["avg", "pass", "fail", "audit", "year"];
+            let mFieldRooms = ["lat" , "lon", "seats"];
+            let sFieldsCourses = ["dept", "id", "instructor", "title", "uuid"];
+            let sFieldRooms = ["fullname", "shortname", "number", "name",
                 "address", "type", "furniture", "href"];
+            if (kind === "courses") {
+                mFields = mFieldsCourses;
+                sFields = sFieldsCourses;
+            } else if (kind === "rooms") {
+                mFields = mFieldRooms;
+                sFields = sFieldRooms;
+            }
             if (type === "mKey") {
                 if (!(mFields.indexOf(field) > -1)) {
                     throw new InsightError();
@@ -197,7 +226,7 @@ export class QueryKeyValidator {
         }
     }
 
-    private isIDinListofIDs(id: any): void {
+    public isIDinListofIDs(id: any): void {
         let fs = require("fs");
         let currentDataFiles: string[] = fs.readdirSync("./data/");
         if (!(currentDataFiles.indexOf(id) > -1)) {

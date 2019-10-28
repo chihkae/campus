@@ -27,7 +27,7 @@ export class ResultHandler {
     constructor(qEval: QueryEvaluator, qVal: QueryValidator) {
         this.QGrouper = new QueryGrouper();
         this.QSorter = new QuerySorter();
-        this.QApplier = new QueryApplier();
+        this.QApplier = new QueryApplier(qVal);
         this.QEvaluator = qEval;
         this.QValidator = qVal;
     }
