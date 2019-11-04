@@ -1,0 +1,36 @@
+{
+    "title": "more than one id",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 98
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_title",
+                "MaxoverallAvg"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "MaxoverallAvg"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_title"
+            ],
+            "APPLY": [
+                {
+                    "MaxoverallAvg": {
+                        "MAX": "rooms_avg"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

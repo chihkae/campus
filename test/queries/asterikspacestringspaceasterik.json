@@ -3,7 +3,7 @@
     "query": {
         "WHERE": {
             "IS": {
-                "courses_instructor": "* dave *"
+                "courses_uuid": "*241*"
             }
         },
         "OPTIONS": {
@@ -16,7 +16,856 @@
         }
     },
     "isQueryValid": true,
-    "result": [
-
+    "result":[
+        {
+            "courses_title":"technical commun",
+            "courses_avg":60.52,
+            "courses_uuid":"82412"
+        },
+        {
+            "courses_title":"matls in design",
+            "courses_avg":61,
+            "courses_uuid":"24199"
+        },
+        {
+            "courses_title":"princpl macrecon",
+            "courses_avg":61.04,
+            "courses_uuid":"52241"
+        },
+        {
+            "courses_title":"met thermodyn i",
+            "courses_avg":63.19,
+            "courses_uuid":"24193"
+        },
+        {
+            "courses_title":"met thermodyn i",
+            "courses_avg":63.19,
+            "courses_uuid":"24194"
+        },
+        {
+            "courses_title":"transport phen i",
+            "courses_avg":63.63,
+            "courses_uuid":"24198"
+        },
+        {
+            "courses_title":"transport phen i",
+            "courses_avg":63.63,
+            "courses_uuid":"24197"
+        },
+        {
+            "courses_title":"int calc ap c&ss",
+            "courses_avg":65.06,
+            "courses_uuid":"27241"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":65.07,
+            "courses_uuid":"82413"
+        },
+        {
+            "courses_title":"pyrometallurgy",
+            "courses_avg":65.24,
+            "courses_uuid":"24196"
+        },
+        {
+            "courses_title":"pyrometallurgy",
+            "courses_avg":65.24,
+            "courses_uuid":"24195"
+        },
+        {
+            "courses_title":"ord diff equtns",
+            "courses_avg":66.05,
+            "courses_uuid":"5241"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":66.28,
+            "courses_uuid":"22413"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":66.57,
+            "courses_uuid":"82416"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":67.27,
+            "courses_uuid":"82414"
+        },
+        {
+            "courses_title":"intro microbiol",
+            "courses_avg":68.24,
+            "courses_uuid":"67241"
+        },
+        {
+            "courses_title":"intr income tax",
+            "courses_avg":68.27,
+            "courses_uuid":"65241"
+        },
+        {
+            "courses_title":"coord chem",
+            "courses_avg":68.36,
+            "courses_uuid":"89241"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":69.75,
+            "courses_uuid":"22415"
+        },
+        {
+            "courses_title":"airc desig: stru",
+            "courses_avg":69.75,
+            "courses_uuid":"84241"
+        },
+        {
+            "courses_title":"adv accounting",
+            "courses_avg":69.95,
+            "courses_uuid":"74241"
+        },
+        {
+            "courses_title":"infancy",
+            "courses_avg":70.2,
+            "courses_uuid":"98241"
+        },
+        {
+            "courses_title":"vis env mod&post",
+            "courses_avg":70.29,
+            "courses_uuid":"24129"
+        },
+        {
+            "courses_title":"vis env mod&post",
+            "courses_avg":70.29,
+            "courses_uuid":"24130"
+        },
+        {
+            "courses_title":"watershed geomor",
+            "courses_avg":70.6,
+            "courses_uuid":"66241"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":70.62,
+            "courses_uuid":"22410"
+        },
+        {
+            "courses_title":"postmodern art",
+            "courses_avg":70.63,
+            "courses_uuid":"24132"
+        },
+        {
+            "courses_title":"postmodern art",
+            "courses_avg":70.63,
+            "courses_uuid":"24131"
+        },
+        {
+            "courses_title":"elem bib hebr ii",
+            "courses_avg":71.5,
+            "courses_uuid":"82419"
+        },
+        {
+            "courses_title":"intro to finance",
+            "courses_avg":71.53,
+            "courses_uuid":"71241"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":71.59,
+            "courses_uuid":"22414"
+        },
+        {
+            "courses_title":"sedimentology",
+            "courses_avg":71.86,
+            "courses_uuid":"2411"
+        },
+        {
+            "courses_title":"sedimentology",
+            "courses_avg":71.86,
+            "courses_uuid":"2412"
+        },
+        {
+            "courses_title":"fam resrc mngmt",
+            "courses_avg":72.05,
+            "courses_uuid":"46241"
+        },
+        {
+            "courses_title":"cel dynam bacter",
+            "courses_avg":72.13,
+            "courses_uuid":"12411"
+        },
+        {
+            "courses_title":"cel dynam bacter",
+            "courses_avg":72.13,
+            "courses_uuid":"12410"
+        },
+        {
+            "courses_title":"intr income tax",
+            "courses_avg":72.14,
+            "courses_uuid":"2241"
+        },
+        {
+            "courses_title":"fr lang&style ii",
+            "courses_avg":72.42,
+            "courses_uuid":"58241"
+        },
+        {
+            "courses_title":"lit brit 18c+",
+            "courses_avg":72.68,
+            "courses_uuid":"95241"
+        },
+        {
+            "courses_title":"soci meth survey",
+            "courses_avg":72.84,
+            "courses_uuid":"80241"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":72.97,
+            "courses_uuid":"82415"
+        },
+        {
+            "courses_title":"org chem lab",
+            "courses_avg":73,
+            "courses_uuid":"31241"
+        },
+        {
+            "courses_title":"intro literature",
+            "courses_avg":73.21,
+            "courses_uuid":"64241"
+        },
+        {
+            "courses_title":"brit lit 18c-21c",
+            "courses_avg":73.21,
+            "courses_uuid":"37241"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":73.45,
+            "courses_uuid":"22412"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":73.5,
+            "courses_uuid":"22411"
+        },
+        {
+            "courses_title":"metmorph petrlgy",
+            "courses_avg":73.5,
+            "courses_uuid":"2416"
+        },
+        {
+            "courses_title":"metmorph petrlgy",
+            "courses_avg":73.5,
+            "courses_uuid":"2415"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":73.68,
+            "courses_uuid":"22418"
+        },
+        {
+            "courses_title":"computer vision",
+            "courses_avg":74.17,
+            "courses_uuid":"72410"
+        },
+        {
+            "courses_title":"computer vision",
+            "courses_avg":74.17,
+            "courses_uuid":"72411"
+        },
+        {
+            "courses_title":"ocean ecosystem",
+            "courses_avg":74.44,
+            "courses_uuid":"2410"
+        },
+        {
+            "courses_title":"eng&sustain dev",
+            "courses_avg":74.61,
+            "courses_uuid":"53241"
+        },
+        {
+            "courses_title":"struc geology i",
+            "courses_avg":74.61,
+            "courses_uuid":"2417"
+        },
+        {
+            "courses_title":"struc geology i",
+            "courses_avg":74.61,
+            "courses_uuid":"2418"
+        },
+        {
+            "courses_title":"hormones&behavor",
+            "courses_avg":74.69,
+            "courses_uuid":"78241"
+        },
+        {
+            "courses_title":"chin poli th&ins",
+            "courses_avg":75.14,
+            "courses_uuid":"40241"
+        },
+        {
+            "courses_title":"clas poet tang",
+            "courses_avg":75.28,
+            "courses_uuid":"83241"
+        },
+        {
+            "courses_title":"igneous petrolgy",
+            "courses_avg":75.5,
+            "courses_uuid":"2414"
+        },
+        {
+            "courses_title":"igneous petrolgy",
+            "courses_avg":75.5,
+            "courses_uuid":"2413"
+        },
+        {
+            "courses_title":"technlgy&soc i",
+            "courses_avg":76.1,
+            "courses_uuid":"4241"
+        },
+        {
+            "courses_title":"arch design ii",
+            "courses_avg":76.2,
+            "courses_uuid":"56241"
+        },
+        {
+            "courses_title":"comp eng design",
+            "courses_avg":76.34,
+            "courses_uuid":"82410"
+        },
+        {
+            "courses_title":"comp eng design",
+            "courses_avg":76.34,
+            "courses_uuid":"82411"
+        },
+        {
+            "courses_title":"financial rept'g",
+            "courses_avg":76.77,
+            "courses_uuid":"14241"
+        },
+        {
+            "courses_title":"costume dsgn i",
+            "courses_avg":77.06,
+            "courses_uuid":"92241"
+        },
+        {
+            "courses_title":"clmt chng sc soc",
+            "courses_avg":77.21,
+            "courses_uuid":"28241"
+        },
+        {
+            "courses_title":"econ anlys proj",
+            "courses_avg":77.24,
+            "courses_uuid":"81241"
+        },
+        {
+            "courses_title":"clascl ch 1 (nh)",
+            "courses_avg":77.43,
+            "courses_uuid":"24190"
+        },
+        {
+            "courses_title":"clascl ch 1 (nh)",
+            "courses_avg":77.43,
+            "courses_uuid":"24189"
+        },
+        {
+            "courses_title":"studio theory i",
+            "courses_avg":77.5,
+            "courses_uuid":"60241"
+        },
+        {
+            "courses_title":"power syst anlys",
+            "courses_avg":77.53,
+            "courses_uuid":"6241"
+        },
+        {
+            "courses_title":"cmty frsts&frsty",
+            "courses_avg":77.67,
+            "courses_uuid":"21241"
+        },
+        {
+            "courses_title":"wood ind manag",
+            "courses_avg":77.92,
+            "courses_uuid":"19241"
+        },
+        {
+            "courses_title":"hum-com interact",
+            "courses_avg":78.28,
+            "courses_uuid":"62412"
+        },
+        {
+            "courses_title":"hum-com interact",
+            "courses_avg":78.28,
+            "courses_uuid":"62413"
+        },
+        {
+            "courses_title":"int chinese ii 2",
+            "courses_avg":78.38,
+            "courses_uuid":"23241"
+        },
+        {
+            "courses_title":"animal physiol",
+            "courses_avg":78.4,
+            "courses_uuid":"48241"
+        },
+        {
+            "courses_title":"therml enrgy sys",
+            "courses_avg":78.42,
+            "courses_uuid":"32411"
+        },
+        {
+            "courses_title":"therml enrgy sys",
+            "courses_avg":78.42,
+            "courses_uuid":"32412"
+        },
+        {
+            "courses_title":"urbn plan cncpts",
+            "courses_avg":78.51,
+            "courses_uuid":"24135"
+        },
+        {
+            "courses_title":"integ mrktg comm",
+            "courses_avg":78.51,
+            "courses_uuid":"44241"
+        },
+        {
+            "courses_title":"erth&life th tme",
+            "courses_avg":78.6,
+            "courses_uuid":"2419"
+        },
+        {
+            "courses_title":"urbn plan cncpts",
+            "courses_avg":78.64,
+            "courses_uuid":"24137"
+        },
+        {
+            "courses_title":"urbn plan cncpts",
+            "courses_avg":78.8,
+            "courses_uuid":"24136"
+        },
+        {
+            "courses_title":"alg in bioin",
+            "courses_avg":78.95,
+            "courses_uuid":"72416"
+        },
+        {
+            "courses_title":"alg in bioin",
+            "courses_avg":78.95,
+            "courses_uuid":"72417"
+        },
+        {
+            "courses_title":"adv software eng",
+            "courses_avg":79,
+            "courses_uuid":"62417"
+        },
+        {
+            "courses_title":"taxn of prtnrshp",
+            "courses_avg":79,
+            "courses_uuid":"36241"
+        },
+        {
+            "courses_title":"adv software eng",
+            "courses_avg":79,
+            "courses_uuid":"62418"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":79.04,
+            "courses_uuid":"22417"
+        },
+        {
+            "courses_title":"comp env physiol",
+            "courses_avg":79.14,
+            "courses_uuid":"18241"
+        },
+        {
+            "courses_title":"arch design 2a",
+            "courses_avg":79.4,
+            "courses_uuid":"11241"
+        },
+        {
+            "courses_title":"comptr & society",
+            "courses_avg":79.43,
+            "courses_uuid":"72413"
+        },
+        {
+            "courses_title":"comptr & society",
+            "courses_avg":79.43,
+            "courses_uuid":"72412"
+        },
+        {
+            "courses_title":"econometric meth",
+            "courses_avg":79.87,
+            "courses_uuid":"52415"
+        },
+        {
+            "courses_title":"econometric meth",
+            "courses_avg":79.87,
+            "courses_uuid":"52414"
+        },
+        {
+            "courses_title":"masc thesis",
+            "courses_avg":80,
+            "courses_uuid":"35241"
+        },
+        {
+            "courses_title":"st 19th cent gen",
+            "courses_avg":80.11,
+            "courses_uuid":"57241"
+        },
+        {
+            "courses_title":"adv quant design",
+            "courses_avg":80.17,
+            "courses_uuid":"96241"
+        },
+        {
+            "courses_title":"machine lrn mine",
+            "courses_avg":80.29,
+            "courses_uuid":"62411"
+        },
+        {
+            "courses_title":"machine lrn mine",
+            "courses_avg":80.29,
+            "courses_uuid":"62410"
+        },
+        {
+            "courses_title":"hmn-cp interactn",
+            "courses_avg":80.62,
+            "courses_uuid":"72414"
+        },
+        {
+            "courses_title":"hmn-cp interactn",
+            "courses_avg":80.62,
+            "courses_uuid":"72415"
+        },
+        {
+            "courses_title":"adv rel databse",
+            "courses_avg":80.77,
+            "courses_uuid":"62415"
+        },
+        {
+            "courses_title":"technical commun",
+            "courses_avg":80.9,
+            "courses_uuid":"22416"
+        },
+        {
+            "courses_title":"int global citiz",
+            "courses_avg":80.95,
+            "courses_uuid":"87241"
+        },
+        {
+            "courses_title":"adv rel databse",
+            "courses_avg":81.16,
+            "courses_uuid":"62416"
+        },
+        {
+            "courses_title":"int danish 1",
+            "courses_avg":81.33,
+            "courses_uuid":"75241"
+        },
+        {
+            "courses_title":"dsg, med&rep",
+            "courses_avg":81.36,
+            "courses_uuid":"30241"
+        },
+        {
+            "courses_title":"exprmtl research",
+            "courses_avg":81.43,
+            "courses_uuid":"17241"
+        },
+        {
+            "courses_title":"intro quant mech",
+            "courses_avg":81.55,
+            "courses_uuid":"50241"
+        },
+        {
+            "courses_title":"zoogeography",
+            "courses_avg":81.67,
+            "courses_uuid":"42241"
+        },
+        {
+            "courses_title":"adv rel databse",
+            "courses_avg":81.82,
+            "courses_uuid":"62414"
+        },
+        {
+            "courses_title":"eng project i",
+            "courses_avg":82.14,
+            "courses_uuid":"24241"
+        },
+        {
+            "courses_title":"hmn-cmpt intract",
+            "courses_avg":82.28,
+            "courses_uuid":"61241"
+        },
+        {
+            "courses_title":"power syst anlys",
+            "courses_avg":82.4,
+            "courses_uuid":"10241"
+        },
+        {
+            "courses_title":"economic devel 1",
+            "courses_avg":82.43,
+            "courses_uuid":"52419"
+        },
+        {
+            "courses_title":"economic devel 1",
+            "courses_avg":82.43,
+            "courses_uuid":"52418"
+        },
+        {
+            "courses_title":"manu pro process",
+            "courses_avg":82.46,
+            "courses_uuid":"45241"
+        },
+        {
+            "courses_title":"elem bib hebr i",
+            "courses_avg":82.58,
+            "courses_uuid":"82417"
+        },
+        {
+            "courses_title":"elem bib hebr i",
+            "courses_avg":82.58,
+            "courses_uuid":"82418"
+        },
+        {
+            "courses_title":"exprmtl research",
+            "courses_avg":82.87,
+            "courses_uuid":"12417"
+        },
+        {
+            "courses_title":"exprmtl research",
+            "courses_avg":82.87,
+            "courses_uuid":"12416"
+        },
+        {
+            "courses_title":"sem mediter stdy",
+            "courses_avg":83,
+            "courses_uuid":"91241"
+        },
+        {
+            "courses_title":"catlg & class",
+            "courses_avg":83.46,
+            "courses_uuid":"77241"
+        },
+        {
+            "courses_title":"intro cln lab ro",
+            "courses_avg":83.71,
+            "courses_uuid":"42419"
+        },
+        {
+            "courses_title":"fam prac ch spec",
+            "courses_avg":83.86,
+            "courses_uuid":"76241"
+        },
+        {
+            "courses_title":"augmt&alt comm",
+            "courses_avg":83.92,
+            "courses_uuid":"29241"
+        },
+        {
+            "courses_title":"mod korean novel",
+            "courses_avg":84,
+            "courses_uuid":"32241"
+        },
+        {
+            "courses_title":"grs&soc str asia",
+            "courses_avg":84.14,
+            "courses_uuid":"73241"
+        },
+        {
+            "courses_title":"germ read know 2",
+            "courses_avg":84.64,
+            "courses_uuid":"42411"
+        },
+        {
+            "courses_title":"germ read know 2",
+            "courses_avg":84.76,
+            "courses_uuid":"42412"
+        },
+        {
+            "courses_title":"germ read know 2",
+            "courses_avg":84.94,
+            "courses_uuid":"42410"
+        },
+        {
+            "courses_title":"piano pd ii: app",
+            "courses_avg":85.31,
+            "courses_uuid":"7241"
+        },
+        {
+            "courses_title":"energy&envirnmnt",
+            "courses_avg":85.52,
+            "courses_uuid":"62241"
+        },
+        {
+            "courses_title":"energy&envirnmnt",
+            "courses_avg":85.69,
+            "courses_uuid":"32415"
+        },
+        {
+            "courses_title":"energy&envirnmnt",
+            "courses_avg":85.69,
+            "courses_uuid":"32416"
+        },
+        {
+            "courses_title":"cty plan craft",
+            "courses_avg":85.83,
+            "courses_uuid":"24156"
+        },
+        {
+            "courses_title":"cty plan craft",
+            "courses_avg":85.83,
+            "courses_uuid":"24155"
+        },
+        {
+            "courses_title":"plan thy adv sem",
+            "courses_avg":86,
+            "courses_uuid":"24185"
+        },
+        {
+            "courses_title":"plan thy adv sem",
+            "courses_avg":86,
+            "courses_uuid":"24186"
+        },
+        {
+            "courses_title":"compiler constrc",
+            "courses_avg":86,
+            "courses_uuid":"62419"
+        },
+        {
+            "courses_title":"seminar & thesis",
+            "courses_avg":86.15,
+            "courses_uuid":"82241"
+        },
+        {
+            "courses_title":"micb eco genomic",
+            "courses_avg":87.14,
+            "courses_uuid":"12413"
+        },
+        {
+            "courses_title":"micb eco genomic",
+            "courses_avg":87.14,
+            "courses_uuid":"12412"
+        },
+        {
+            "courses_title":"thry&prc prg evl",
+            "courses_avg":87.8,
+            "courses_uuid":"38241"
+        },
+        {
+            "courses_title":"tnl&undergrd eng",
+            "courses_avg":88,
+            "courses_uuid":"79241"
+        },
+        {
+            "courses_title":"complex analy",
+            "courses_avg":88,
+            "courses_uuid":"47241"
+        },
+        {
+            "courses_title":"ecolg plant bioc",
+            "courses_avg":88.09,
+            "courses_uuid":"72241"
+        },
+        {
+            "courses_title":"physical organic",
+            "courses_avg":88.17,
+            "courses_uuid":"70241"
+        },
+        {
+            "courses_title":"phd colloquium",
+            "courses_avg":89.25,
+            "courses_uuid":"24187"
+        },
+        {
+            "courses_title":"phd colloquium",
+            "courses_avg":89.29,
+            "courses_uuid":"24188"
+        },
+        {
+            "courses_title":"urban transport",
+            "courses_avg":89.29,
+            "courses_uuid":"24176"
+        },
+        {
+            "courses_title":"urban transport",
+            "courses_avg":89.29,
+            "courses_uuid":"24175"
+        },
+        {
+            "courses_title":"tpc int-cel traf",
+            "courses_avg":89.56,
+            "courses_uuid":"22241"
+        },
+        {
+            "courses_title":"hist mod europe",
+            "courses_avg":90,
+            "courses_uuid":"52416"
+        },
+        {
+            "courses_title":"hist mod europe",
+            "courses_avg":90,
+            "courses_uuid":"52417"
+        },
+        {
+            "courses_title":"sem r prpty dv&p",
+            "courses_avg":90.35,
+            "courses_uuid":"24172"
+        },
+        {
+            "courses_title":"sem r prpty dv&p",
+            "courses_avg":90.35,
+            "courses_uuid":"24171"
+        },
+        {
+            "courses_title":"urb dsgn thr&met",
+            "courses_avg":91.36,
+            "courses_uuid":"24147"
+        },
+        {
+            "courses_title":"urb dsgn thr&met",
+            "courses_avg":91.36,
+            "courses_uuid":"24146"
+        },
+        {
+            "courses_title":"spc tpcs macroec",
+            "courses_avg":91.75,
+            "courses_uuid":"52410"
+        },
+        {
+            "courses_title":"spc tpcs macroec",
+            "courses_avg":91.75,
+            "courses_uuid":"52411"
+        },
+        {
+            "courses_title":"cultural studies",
+            "courses_avg":92.25,
+            "courses_uuid":"42417"
+        },
+        {
+            "courses_title":"cultural studies",
+            "courses_avg":92.25,
+            "courses_uuid":"42418"
+        },
+        {
+            "courses_title":"sem medical anth",
+            "courses_avg":92.29,
+            "courses_uuid":"13241"
+        },
+        {
+            "courses_title":"problty & stat",
+            "courses_avg":93.52,
+            "courses_uuid":"52412"
+        },
+        {
+            "courses_title":"problty & stat",
+            "courses_avg":93.52,
+            "courses_uuid":"52413"
+        },
+        {
+            "courses_title":"ecolg plant bioc",
+            "courses_avg":94.33,
+            "courses_uuid":"55241"
+        }
     ]
 }

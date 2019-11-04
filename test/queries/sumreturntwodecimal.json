@@ -1,0 +1,74 @@
+
+{
+    "title": "sum should return two decimal places",
+    "query":{
+        "WHERE": {
+            "GT": {
+                "courses_avg": 98
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "overallAvg"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "overallAvg"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title"
+            ],
+            "APPLY": [
+                {
+                    "overallAvg": {
+                        "SUM": "courses_avg"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_title":"educ stds autism",
+            "overallAvg":493.48
+        },
+        {
+            "courses_title":"fam nrs pract",
+            "overallAvg":394.16
+        },
+        {
+            "courses_title":"cl pro prim care",
+            "overallAvg":393.84
+        },
+        {
+            "courses_title":"assess lrn diffi",
+            "overallAvg":295.14
+        },
+        {
+            "courses_title":"algb topology i",
+            "overallAvg":199.56
+        },
+        {
+            "courses_title":"work int health",
+            "overallAvg":197.96
+        },
+        {
+            "courses_title":"multimedia sys",
+            "overallAvg":197.5
+        },
+        {
+            "courses_title":"dev el sk df&hrd",
+            "overallAvg":196.9
+        },
+        {
+            "courses_title":"career planning",
+            "overallAvg":99.19
+        }
+    ]
+}

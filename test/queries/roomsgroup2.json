@@ -1,0 +1,66 @@
+{
+    "title": "sort courses with down direction",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "rooms_furniture": "*Tables*"
+                    }
+                },
+                {
+                    "GT": {
+                        "rooms_seats": 300
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_href",
+                "maxSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "maxSeats"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_furniture",
+                "rooms_href",
+                "rooms_type",
+                "rooms_seats",
+                "rooms_number"
+            ],
+            "APPLY": [
+                {
+                    "maxSeats": {
+                        "MAX": "rooms_seats"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/OSBO-A",
+            "maxSeats":442
+        },
+        {
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/HEBB-100",
+            "maxSeats":375
+        },
+        {
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1001",
+            "maxSeats":350
+        },
+        {
+            "rooms_href":"http://students.ubc.ca/campus/discover/buildings-and-classrooms/room/LSC-1002",
+            "maxSeats":350
+        }
+    ]
+}

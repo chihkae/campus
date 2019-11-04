@@ -1,0 +1,214 @@
+{
+    "title": "sort courses with down direction",
+    "query": {
+        "WHERE": {
+            "GT": { "courses_avg": 96 }
+        },
+        "OPTIONS": {
+            "COLUMNS": ["courses_title", "overallAvg"]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": ["courses_title"],
+            "APPLY": [{
+                "overallAvg": {
+                    "SUM": "courses_avg"
+                }
+            }]
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_title":"dev wkshp/sem",
+            "overallAvg":96.11
+        },
+        {
+            "courses_title":"aud&non-txt arch",
+            "overallAvg":193.88
+        },
+        {
+            "courses_title":"audi prctcm iv",
+            "overallAvg":193.8
+        },
+        {
+            "courses_title":"dynam struct 2",
+            "overallAvg":192.54
+        },
+        {
+            "courses_title":"career planning",
+            "overallAvg":294.13
+        },
+        {
+            "courses_title":"prgm devl cnsl",
+            "overallAvg":192.49
+        },
+        {
+            "courses_title":"thesis",
+            "overallAvg":293
+        },
+        {
+            "courses_title":"adlt edu pract",
+            "overallAvg":192.92
+        },
+        {
+            "courses_title":"res mthd in educ",
+            "overallAvg":97.5
+        },
+        {
+            "courses_title":"multimedia sys",
+            "overallAvg":197.5
+        },
+        {
+            "courses_title":"intro excp child",
+            "overallAvg":385.86
+        },
+        {
+            "courses_title":"assess lrn diffi",
+            "overallAvg":585.93
+        },
+        {
+            "courses_title":"classroom mgmt",
+            "overallAvg":192.42
+        },
+        {
+            "courses_title":"educ stds autism",
+            "overallAvg":687.13
+        },
+        {
+            "courses_title":"hn dev: inf-adlt",
+            "overallAvg":96.23
+        },
+        {
+            "courses_title":"dev el sk df&hrd",
+            "overallAvg":196.9
+        },
+        {
+            "courses_title":"specific lrn dis",
+            "overallAvg":192.66
+        },
+        {
+            "courses_title":"acad assess schl",
+            "overallAvg":292.19
+        },
+        {
+            "courses_title":"sem in autism",
+            "overallAvg":97.69
+        },
+        {
+            "courses_title":"cor des ed res",
+            "overallAvg":194.18
+        },
+        {
+            "courses_title":"coll&uni teachng",
+            "overallAvg":97.67
+        },
+        {
+            "courses_title":"indig, tech&ed",
+            "overallAvg":192.94
+        },
+        {
+            "courses_title":"mo pict prod i",
+            "overallAvg":192.8
+        },
+        {
+            "courses_title":"ds intl forstry",
+            "overallAvg":192.72
+        },
+        {
+            "courses_title":"phyl asp phy act",
+            "overallAvg":192.12
+        },
+        {
+            "courses_title":"acad libraries",
+            "overallAvg":192.2
+        },
+        {
+            "courses_title":"algebra ii",
+            "overallAvg":192.88
+        },
+        {
+            "courses_title":"prt diff equa i",
+            "overallAvg":192.5
+        },
+        {
+            "courses_title":"diff geometry i",
+            "overallAvg":194.5
+        },
+        {
+            "courses_title":"algb topology i",
+            "overallAvg":199.56
+        },
+        {
+            "courses_title":"algb geometry i",
+            "overallAvg":194.96
+        },
+        {
+            "courses_title":"harmonic anal i",
+            "overallAvg":194.18
+        },
+        {
+            "courses_title":"probability ii",
+            "overallAvg":193.66
+        },
+        {
+            "courses_title":"msc major essay",
+            "overallAvg":96.33
+        },
+        {
+            "courses_title":"cnsl mat cr prov",
+            "overallAvg":193
+        },
+        {
+            "courses_title":"seminar",
+            "overallAvg":96.59
+        },
+        {
+            "courses_title":"hydrmtllgcl rctr",
+            "overallAvg":192.5
+        },
+        {
+            "courses_title":"ubc chamb string",
+            "overallAvg":193
+        },
+        {
+            "courses_title":"cl pro prim care",
+            "overallAvg":393.84
+        },
+        {
+            "courses_title":"fam nrs pract",
+            "overallAvg":782.5
+        },
+        {
+            "courses_title":"eth&profl issues",
+            "overallAvg":388.12
+        },
+        {
+            "courses_title":"nat resrce mngmt",
+            "overallAvg":192.94
+        },
+        {
+            "courses_title":"masters thesis",
+            "overallAvg":97
+        },
+        {
+            "courses_title":"social analysis",
+            "overallAvg":192.3
+        },
+        {
+            "courses_title":"hlth & soc care",
+            "overallAvg":96.09
+        },
+        {
+            "courses_title":"sociocult determ",
+            "overallAvg":96.96
+        },
+        {
+            "courses_title":"work int health",
+            "overallAvg":197.96
+        },
+        {
+            "courses_title":"survlnc&monitrng",
+            "overallAvg":193.6
+        }
+    ]
+}

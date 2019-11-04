@@ -1,0 +1,142 @@
+{
+    "title": "Select course title, avg where Steven Wolfman is the instructor",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "schmidt, *"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_avg",
+                "courses_uuid",
+                "courses_id"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":73.86,
+            "courses_uuid":"44859",
+            "courses_id":"399"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":76.32,
+            "courses_uuid":"83243",
+            "courses_id":"473"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":77.22,
+            "courses_uuid":"83240",
+            "courses_id":"471"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":77.52,
+            "courses_uuid":"30817",
+            "courses_id":"473"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":77.73,
+            "courses_uuid":"23301",
+            "courses_id":"473"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":77.8,
+            "courses_uuid":"66373",
+            "courses_id":"473"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":77.88,
+            "courses_uuid":"23298",
+            "courses_id":"471"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":77.89,
+            "courses_uuid":"73437",
+            "courses_id":"471"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":78.25,
+            "courses_uuid":"73439",
+            "courses_id":"473"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":78.33,
+            "courses_uuid":"74129",
+            "courses_id":"399"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":78.51,
+            "courses_uuid":"30815",
+            "courses_id":"471"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":78.52,
+            "courses_uuid":"9503",
+            "courses_id":"471"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":78.73,
+            "courses_uuid":"9505",
+            "courses_id":"473"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":79,
+            "courses_uuid":"74127",
+            "courses_id":"389"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":79.16,
+            "courses_uuid":"66370",
+            "courses_id":"471"
+        },
+        {
+            "courses_instructor":"schmidt, jerry dean",
+            "courses_avg":79.5,
+            "courses_uuid":"44857",
+            "courses_id":"389"
+        },
+        {
+            "courses_instructor":"schmidt, mark",
+            "courses_avg":80.29,
+            "courses_uuid":"62410",
+            "courses_id":"340"
+        },
+        {
+            "courses_instructor":"schmidt, mark",
+            "courses_avg":82.66,
+            "courses_uuid":"3397",
+            "courses_id":"340"
+        },
+        {
+            "courses_instructor":"schmidt, mark",
+            "courses_avg":90.53,
+            "courses_uuid":"62474",
+            "courses_id":"540"
+        },
+        {
+            "courses_instructor":"schmidt, mark",
+            "courses_avg":91.22,
+            "courses_uuid":"1376",
+            "courses_id":"540"
+        }
+    ]
+}
