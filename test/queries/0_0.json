@@ -1,0 +1,24 @@
+{
+    "title": "Select course title, avg where Steven Wolfman is the instructor",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_seats": 70
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_seats"
+            ]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_seats"
+            ],
+            "APPLY": [
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

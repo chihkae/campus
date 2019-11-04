@@ -4,6 +4,7 @@ import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from ".
 import InsightFacade from "../src/controller/InsightFacade";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
+import {getGeoLocation, getGeoResponse} from "../src/controller/DomTraverser";
 
 // This should match the schema given to TestUtil.validate(..) in TestUtil.readTestQueries(..)
 // except 'filename' which is injected when the file is read.
@@ -26,7 +27,9 @@ describe("InsightFacade Add/Remove Dataset", function () {
         oneCourse: "./test/data/oneCourse.zip",
         resultsNull: "./test/data/resultsNull.zip",
         under_score: "./test/data/under_score.zip",
-        jpg: "./test/data/RBC Cheque Image.jpg"
+        jpg: "./test/data/RBC Cheque Image.jpg",
+        rooms: "./test/data/rooms.zip",
+        lalala: "./test/data/lalala.zip"
     };
     let datasets: { [id: string]: string } = {};
     let insightFacade: InsightFacade;
@@ -62,19 +65,29 @@ describe("InsightFacade Add/Remove Dataset", function () {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
 
-    // This is a unit test. You should create more like this!
-    it("Should add a valid dataset", function () {
-        const id: string = "courses";
-        const expected: string[] = [id];
-        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
-            expect(result).to.deep.equal(expected);
-        }).catch((err: any) => {
-            expect.fail(err, expected, "Should not have rejected");
-        });
-    });
+   // This is a unit test. You should create more like this!//
+   //  it("Should add a valid dataset", function () {
+   //      const id: string = "courses";
+   //      const expected: string[] = [id];
+   //      return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+   //          expect(result).to.deep.equal(expected);
+   //      }).catch((err: any) => {
+   //          expect.fail(err, expected, "Should not have rejected");
+   //      });
+   //  });
+   //
+   //  it("test adding one course", function () {
+   //      const id: string = "oneCourse";
+   //      const expected: string[] = [id];
+   //      return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+   //          expect(result).to.deep.equal(expected);
+   //      }).catch((err: any) => {
+   //          expect.fail(err, expected, "Should not have rejected");
+   //      });
+   //  });
 
-    it("test adding one course", function () {
-        const id: string = "oneCourse";
+    it("test adding lalala course", function () {
+        const id: string = "lalala";
         const expected: string[] = [id];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
             expect(result).to.deep.equal(expected);
@@ -185,6 +198,28 @@ describe("InsightFacade Add/Remove Dataset", function () {
         });
     });
 
+    it("test adding a valid rooms dataset", function () {
+        const id: string = "rooms";
+        const expected: string[] = [id];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms).then((result: string[]) => {
+            expect(result).to.deep.equal(expected);
+        }).catch((err: any) => {
+            expect.fail(err, expected, "Should not have rejected");
+        });
+    });
+
+    it ("test getting lat and lon", function () {
+        let address = "1866 Main Mall";
+        return getGeoLocation(address).then((result: any) => {
+            Log.info(result);
+            expect(result.lat).to.equal(49.26826);
+            expect(result.lon).to.equal(-123.25468);
+            expect(result.error).to.equal(undefined);
+        }).catch((err: any) => {
+            Log.error(err);
+        });
+    });
+
     it("test removing a dataset when there are no datasets added", function () {
         return insightFacade.removeDataset("doesn't matter").then((result: string) => {
             expect.fail();
@@ -269,14 +304,18 @@ describe("InsightFacade Add/Remove Dataset", function () {
     });
 
 });
+
 /*
  * This test suite dynamically generates tests from the JSON files in test/queries.
  * You should not need to modify it; instead, add additional files to the queries directory.
  * You can still make tests the normal way, this is just a convenient tool for a majority of queries.
  */
+
 describe("InsightFacade PerformQuery", () => {
     const datasetsToQuery: { [id: string]: any } = {
         courses: {id: "courses", path: "./test/data/courses.zip", kind: InsightDatasetKind.Courses},
+        lalala: {id: "lalala", path: "./test/data/lalala.zip", kind: InsightDatasetKind.Courses},
+        rooms: {id: "rooms", path: "./test/data/rooms.zip", kind: InsightDatasetKind.Rooms}
     };
     let insightFacade: InsightFacade;
     let testQueries: ITestQuery[] = [];
@@ -303,10 +342,6 @@ describe("InsightFacade PerformQuery", () => {
             loadDatasetPromises.push(insightFacade.addDataset(ds.id, data, ds.kind));
         }
         return Promise.all(loadDatasetPromises).catch((err) => {
-            /* *IMPORTANT NOTE: This catch is to let this run even without the implemented addDataset,
-             * for the purposes of seeing all your tests run.
-             * For D1, remove this catch block (but keep the Promise.all)
-             */
             return Promise.resolve("HACK TO LET QUERIES RUN");
         });
     });
@@ -322,6 +357,22 @@ describe("InsightFacade PerformQuery", () => {
     afterEach(function () {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
+
+    //  it("Should run test queries", function () {
+    //     describe("Dynamic InsightFacade PerformQuery tests", function () {
+    //         for (const test of testQueries) {
+    //             if (test.filename === "test/queries/sortingEmptyArray.json") {
+    //                 it("dfdfd", function (done) {
+    //                         insightFacade.performQuery(test.query).then((result) => {
+    //                             TestUtil.checkQueryResult(test, result, done);
+    //                         }).catch((err) => {
+    //                             TestUtil.checkQueryResult(test, err, done);
+    //                         });
+    //                 });
+    //             }
+    //         }
+    //     });
+    // });
 
     // Dynamically create and run a test for each query in testQueries
     // Creates an extra "test" called "Should run test queries" as a byproduct. Don't worry about it

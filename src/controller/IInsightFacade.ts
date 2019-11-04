@@ -4,7 +4,7 @@
  * You should not change this interface at all or the test suite will not work.
  */
 
-import {Course, Dataset, Section} from "./Dataset";
+import Dataset, {Course, Section} from "./Dataset";
 
 export enum InsightDatasetKind {
     Courses = "courses",

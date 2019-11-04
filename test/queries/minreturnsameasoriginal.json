@@ -1,0 +1,74 @@
+
+{
+    "title": "min should return same as original dataset",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 98
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "MinoverallAvg"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "MinoverallAvg"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title"
+            ],
+            "APPLY": [
+                {
+                    "MinoverallAvg": {
+                        "MIN": "courses_avg"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_title":"algb topology i",
+            "MinoverallAvg":99.78
+        },
+        {
+            "courses_title":"career planning",
+            "MinoverallAvg":99.19
+        },
+        {
+            "courses_title":"work int health",
+            "MinoverallAvg":98.98
+        },
+        {
+            "courses_title":"multimedia sys",
+            "MinoverallAvg":98.75
+        },
+        {
+            "courses_title":"educ stds autism",
+            "MinoverallAvg":98.58
+        },
+        {
+            "courses_title":"fam nrs pract",
+            "MinoverallAvg":98.5
+        },
+        {
+            "courses_title":"dev el sk df&hrd",
+            "MinoverallAvg":98.45
+        },
+        {
+            "courses_title":"cl pro prim care",
+            "MinoverallAvg":98.21
+        },
+        {
+            "courses_title":"assess lrn diffi",
+            "MinoverallAvg":98.08
+        }
+    ]
+}

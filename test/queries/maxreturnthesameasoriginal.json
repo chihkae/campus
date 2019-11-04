@@ -1,0 +1,74 @@
+
+{
+    "title": "max should return same as original dataset",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 98
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "MaxoverallAvg"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "MaxoverallAvg"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title"
+            ],
+            "APPLY": [
+                {
+                    "MaxoverallAvg": {
+                        "MAX": "courses_avg"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {
+            "courses_title":"algb topology i",
+            "MaxoverallAvg":99.78
+        },
+        {
+            "courses_title":"career planning",
+            "MaxoverallAvg":99.19
+        },
+        {
+            "courses_title":"work int health",
+            "MaxoverallAvg":98.98
+        },
+        {
+            "courses_title":"educ stds autism",
+            "MaxoverallAvg":98.8
+        },
+        {
+            "courses_title":"multimedia sys",
+            "MaxoverallAvg":98.75
+        },
+        {
+            "courses_title":"cl pro prim care",
+            "MaxoverallAvg":98.71
+        },
+        {
+            "courses_title":"assess lrn diffi",
+            "MaxoverallAvg":98.7
+        },
+        {
+            "courses_title":"fam nrs pract",
+            "MaxoverallAvg":98.58
+        },
+        {
+            "courses_title":"dev el sk df&hrd",
+            "MaxoverallAvg":98.45
+        }
+    ]
+}

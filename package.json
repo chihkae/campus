@@ -9,7 +9,6 @@
         "node": ">= 10 < 11"
     },
     "devDependencies": {
-
         "@types/chai": "4.0.8",
         "@types/chai-http": "3.0.3",
         "@types/decimal.js": "7.4.0",
@@ -50,8 +49,5 @@
         "pretty": "prettier --config ./.prettierrc.json --write \"./**/*.ts\" && yarn fix",
         "lint": "eslint . --ext .ts",
         "fix": "eslint . --ext .ts --fix"
-    },
-    "dependencies": {
-        "uri-js": "^4.2.2"
     }
 }

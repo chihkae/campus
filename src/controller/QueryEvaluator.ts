@@ -15,30 +15,31 @@ export default class QueryEvaluator {
         this.data = data;
         this.result = [];
     }
-    private getQuery(): string {
+
+    /*private getQuery(): string {
         if (this.query !== undefined) {
             return this.query;
         }
         return null;
-    }
+    }*/
+
     private getData(): any {
         if (this.data !== undefined) {
             return this.data;
         }
         return null;
     }
+
+    private whereWithNoFilter(query: any, key: any): any[] {
+            let totalData =  this.getData();
+            return totalData;
+    }
+
     public evaluateResult(query: any): any[] {
         for (const key of Object.keys(query)) {
             if (key === "WHERE") {
                 if (Object.keys(query[key]).length === 0) {
-                    let totalData =  this.getData();
-                    let onlyCourses = [];
-                    for (const courses of Object.values(totalData.courses)) {
-                        for (const section of Object.values(Object(courses).sections)) {
-                                onlyCourses.push(section);
-                        }
-                    }
-                    return onlyCourses;
+                   return this.whereWithNoFilter(query, key);
                 } else {
                     return this.evaluateResult(query[key]);
                 }
@@ -67,6 +68,7 @@ export default class QueryEvaluator {
             }
         }
     }
+
     private evaluateORArray(query: any): any {
         if (Array.isArray(query)) {
             if (query != null && typeof query === "object") {
@@ -81,6 +83,7 @@ export default class QueryEvaluator {
             throw new InsightError("OR object is not an array");
         }
     }
+
     private evaluateANDArray(query: any): any {
         if (Array.isArray(query)) {
             if (query != null && typeof query === "object") {
@@ -103,13 +106,13 @@ export default class QueryEvaluator {
             throw new InsightError("And object is not an array");
         }
     }
+
     private evaluateIS(key: any, value: any): any[] {
         let content = this.getData();
         let countNumberofAsterisks = value.toString().split("*").length - 1;
 
         let result: any[] = [];
-        content.courses.forEach(function (course: any) {
-            course.sections.forEach(function (section: any) {
+        content.forEach(function (section: any) {
                 if (countNumberofAsterisks > 0) {
                     if (countNumberofAsterisks === 1) {
                         if (value.toString().indexOf("*") > 0) {
@@ -135,28 +138,40 @@ export default class QueryEvaluator {
                     }
                 }
             });
-        });
         return result;
     }
+
     private evaluateAnd(result1: any, result2: any): any {
         return result1.filter(function (e1: string) {
             return result2.indexOf(e1) > -1;
         });
     }
 
-    public addID(result: any[], id: string, keys: string[]): any[] {
+    public addID(result: any[], id: string, keys: string[], nonGroupKeys: string[]): any[] {
         let list = [];
         for (const val of result) {
             let obj: any = {};
+            let newKey;
             for (const key of Object.keys(val)) {
-                let newKey = id.concat("_", key.toString());
-                obj[newKey] = val[key];
+                if (nonGroupKeys !== undefined) {
+                    if (nonGroupKeys.indexOf(key) === -1) {
+                        newKey = id.concat("_", key.toString());
+                    } else {
+                        newKey = key;
+                    }
+                    obj[newKey] = val[key];
+                } else {
+                    newKey = id.concat("_", key.toString());
+                    obj[newKey] = val[key];
+                }
             }
             list.push(obj);
         }
         return list;
     }
-    public sort(result: any, keyToSort: string): any[] {
+
+    /*public sort(result: any, keyToSort: any[]): any[] {
+        if()
         let sortedResult = [];
         if (keyToSort === "instructor" || keyToSort === "title" || keyToSort === "dept" || keyToSort === "id" ||
 keyToSort === "uuid") {
@@ -169,7 +184,8 @@ keyToSort === "uuid") {
                 });
             }
         return sortedResult;
-    }
+    }*/
+
     private evaluateOR(result1: any, result2: any): any {
         let merged = result1.concat(result2);
         let removedDuplicateofMerged = merged.filter(function (item: any, pos: any) {
@@ -177,24 +193,18 @@ keyToSort === "uuid") {
         });
         return removedDuplicateofMerged;
     }
+
     private evaluateNot(result: any): any {
         let content = this.getData();
         let notResult = [];
-        for (const section of Object.values(content.courses)) {
-            for (const courseSection of Object.values(Object(section).sections)) {
-                if (!result.includes(courseSection)) {
-                    notResult.push(courseSection);
-                }
+        for (const val of Object.values(content)) {
+            if (!result.includes(val)) {
+                notResult.push(val);
             }
         }
         return notResult;
-        /*let arrayAfterRemove = content.courses.filter(function (el: any) {
-            for(const coursSection of Object.values(el.sections)) {
-                return !result.includes(el);
-            }
-        });
-        return arrayAfterRemove;*/
     }
+
     public selectColumns(result: any, keys: any): any {
             for (let i = 0 ; i < Object(result).length ; i++) {
                 for (const key of Object.keys(result[i])) {
@@ -205,30 +215,37 @@ keyToSort === "uuid") {
             }
             return result;
     }
-    private evaluateComparator(key: any, value: any, comparator: any): any {
-        let mapper = new Map();
-        mapper.set("GT", ">");
-        mapper.set("LT", "<");
-        mapper.set("EQ", "=");
-        let sign = mapper.get(comparator);
-        let content = this.getData();
-        let result: any[] = [];
-        content.courses.forEach(function (course: any) {
-            course.sections.forEach(function (section: any) {
-                if (sign === ">") {
-                    if (section[key] > Number(value)) {
-                        result.push(section);
-                    }
-                } else if (sign === "<") {
-                    if (section[key] < Number(value)) {
-                        result.push(section);
-                    }
-                } else if (sign === "=") {
-                    if (section[key] === Number(value)) {
-                        result.push(section);
+
+    public selectColumnsApplied(result: any, keys: any): any {
+        for (const group of Object.values(result)) {
+            for (const section of Object.values(group)) {
+                for (const key of Object.keys(section)) {
+                    if (keys.indexOf(key) === -1) {
+                        delete section[key];
                     }
                 }
-            });
+            }
+        }
+        return result;
+    }
+
+    private evaluateComparator(key: any, value: any, comparator: any): any {
+        let content = this.getData();
+        let result: any[] = [];
+        content.forEach(function (section: any) {
+            if (comparator === "GT") {
+                if (section[key] > Number(value)) {
+                    result.push(section);
+                }
+            } else if (comparator === "LT") {
+                if (section[key] < Number(value)) {
+                    result.push(section);
+                }
+            } else if (comparator === "EQ") {
+                if (section[key] === Number(value)) {
+                    result.push(section);
+                }
+            }
         });
         return result;
     }

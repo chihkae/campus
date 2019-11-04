@@ -1,0 +1,25 @@
+
+{
+    "title": "doesn't have transformations but has applykey in columns",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 98
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "overAllAvg"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "courses_title"
+                ]
+            }
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
