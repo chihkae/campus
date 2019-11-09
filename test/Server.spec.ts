@@ -5,10 +5,11 @@ import chai = require("chai");
 import chaiHttp = require("chai-http");
 import Response = ChaiHttp.Response;
 import {expect} from "chai";
-import {error} from "util";
 import Log from "../src/Util";
 import {InsightDataset, InsightDatasetKind} from "../src/controller/IInsightFacade";
 import * as fs from "fs-extra";
+import TestUtil from "./TestUtil";
+import {ITestQuery} from "./InsightFacade.spec";
 
 
 describe("Facade D3", function () {
@@ -21,10 +22,9 @@ describe("Facade D3", function () {
     chai.use(chaiHttp);
 
     before(function () {
-        facade = new InsightFacade();
         server = new Server(4321);
         server.start().catch((reason: any) => {
-            alert(reason);
+            Log.info("didn''t start server properly" + reason);
         });
         // TODO: start server here once and handle errors properly
     });
@@ -50,6 +50,7 @@ describe("Facade D3", function () {
     });
 
     afterEach(function () {
+        Log.test(`AfterTest: ${this.currentTest.title}`);
         // might want to add some process logging here to keep track of what"s going on
     });
 
@@ -60,7 +61,7 @@ describe("Facade D3", function () {
         try {
             return chai.request("http://localhost:4321")
                 .put("/dataset/courses/" + InsightDatasetKind.Courses)
-                .send(fs.readFileSync(`./data/courses.zip`))
+                .send(fs.readFileSync(`./test/data/courses.zip`))
                 .set("Content-Type", "application/x-zip-compressed")
                 .then(function (res: Response) {
                     // some logging here please!
@@ -75,6 +76,7 @@ describe("Facade D3", function () {
                 });
         } catch (err) {
             // and some more logging here!
+            Log.error(err);
         }
     });
 
@@ -83,10 +85,11 @@ describe("Facade D3", function () {
         try {
             return chai.request("http://localhost:4321")
                 .put("/dataset/under_score/" + InsightDatasetKind.Courses)
-                .send(fs.readFileSync(`./data/under_score.zip`))
+                .send(fs.readFileSync(`./test/data/under_score.zip`))
                 .set("Content-Type", "application/x-zip-compressed")
                 .then(function (res: Response) {
                     // some logging here please!
+                    Log.error("failed to add");
                     expect.fail("shouldn't be allowed to add dataset with underscore in id");
                 })
                 .catch(function (err) {
@@ -95,6 +98,7 @@ describe("Facade D3", function () {
                     expect(err.status).to.be.equal(400);
                 });
         } catch (err) {
+            Log.error("couldn't read");
             // and some more logging here!
         }
     });
@@ -103,7 +107,7 @@ describe("Facade D3", function () {
         try {
             return chai.request("http://localhost:4321")
                 .put("/dataset/courses/" + InsightDatasetKind.Courses)
-                .send(fs.readFileSync(`./data/courses.zip`).toString("base64"))
+                .send(fs.readFileSync(`./test/data/courses.zip`))
                 .set("Content-Type", "application/x-zip-compressed")
                 .then(function (res: Response) {
                     // some logging here please!
@@ -120,7 +124,10 @@ describe("Facade D3", function () {
                     coursesDataset.kind = InsightDatasetKind.Courses;
                     coursesDataset.numRows = 64612;
                     expected.push(coursesDataset);
-                    expect(res.body).to.be.equal(expected);
+                    expect(res.body.result).to.have.length(1);
+                    expect(res.body.result[0].id).to.equal("courses");
+                    expect(res.body.result[0].kind).to.equal(InsightDatasetKind.Courses);
+                    expect(res.body.result[0].numRows).to.equal(coursesDataset.numRows);
                 })
                 .catch(function (err) {
                     // some logging here please!
@@ -136,21 +143,20 @@ describe("Facade D3", function () {
     it("Delete test for courses dataset", function () {
         try {
             return chai.request("http://localhost:4321")
-                .put("/dataset/courses/" + InsightDatasetKind.Courses)
-                .send(fs.readFileSync(`./data/courses.zip`))
+                .put("/dataset/courses/courses")
+                .send(fs.readFileSync(`./test/data/courses.zip`))
                 .set("Content-Type", "application/x-zip-compressed")
                 .then(function (res: Response) {
                 // some logging here please!
                     Log.info("succesfully added dataset and now getting it");
-                    return chai.request("http://localhost:4321")
-                        .del("/datasets/courses");
+                    return chai.request("http://localhost:4321").del("/dataset/courses");
                 })
                 .catch(function (err) {
                     Log.info("didn't succesfully delete dataset");
                 }).
                 then(function (res: Response) {
                     expect(res.status).to.be.equal(200);
-                    expect(res.body).to.deep.equal("courses");
+                    expect(res.body.result).to.deep.equal("courses");
                 });
         } catch (err) {
             // and some more logging here!
@@ -176,8 +182,7 @@ describe("Facade D3", function () {
     it("Delete test for dataset id with underscore", function () {
         try {
             return chai.request("http://localhost:4321")
-                .del("/dataset/")
-                .query({id: "courses"})
+                .del("/dataset/_courses")
                 .then(function (res: Response) {
                     // some logging here please!
                     expect.fail("shouldn't be allowed to delete dataset with underscore in id");
@@ -288,13 +293,39 @@ describe("Facade D3", function () {
                             ],
                             ORDER: "courses_avg"
                         }
-                    }).catch(function (err) {
+                    })
+                .then( function (result) {
+                    expect.fail();
+                })
+                .catch(function (err) {
                         expect(err.status).to.be.equal(400);
-                    }).then( function (result) {
-                        expect.fail("shouldnt be allowed to perform query on a dataset that hasn't been added");
-                    });
+                });
+        } catch (err) {
+            Log.info("couldnt send");
+            // and some more logging here!
+        }
+    });
+
+    it("PUT test for courses dataset2", function () {
+        try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/courses/" + InsightDatasetKind.Courses)
+                .send(fs.readFileSync(`./test/data/courses.zip`))
+                .set("Content-Type", "application/x-zip-compressed")
+                .then(function (res: Response) {
+                    // some logging here please!
+                    Log.info("succesfully added dataset");
+                    expect(res.status).to.be.equal(200);
+                })
+                .catch(function (err) {
+                    // some logging here please!
+                    Log.info("couldn't add dataset");
+                    expect(err.status).to.be.equal(400);
+                    expect.fail();
+                });
         } catch (err) {
             // and some more logging here!
+            Log.error(err);
         }
     });
 

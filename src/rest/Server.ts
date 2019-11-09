@@ -20,6 +20,7 @@ export default class Server {
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
         this.port = port;
+        Server.InsightFacade = new InsightFacade();
     }
 
     /**
@@ -96,21 +97,28 @@ export default class Server {
     private static getDatasetsAdded(req: restify.Request, res: restify.Response, next: restify.Next) {
         return Server.InsightFacade.listDatasets().then((result: InsightDataset[]) => {
             res.json(200, {result: result});
+            res.end();
             return next();
         }).catch((err: any) => {
             res.write("dfdfdfdsfdf");
+            res.end();
+            return next();
         });
     }
 
     private static deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
         return Server.InsightFacade.removeDataset(req.params.id).then((result: string) => {
            res.json(200, {result: result});
+           res.end();
+           return next();
         }).catch((err: any) => {
             if (err instanceof InsightError) {
-                res.status(400).send({error: "InsightError" });
+                res.json(400, {error: "InsightError"});
+                res.end();
                 return next();
             } else if (err instanceof NotFoundError) {
-                res.status(404).send({error: "NotFoundError"});
+                res.json(404, {error: "NotFoundError"});
+                res.end();
                 return next();
             }
         });
@@ -119,25 +127,28 @@ export default class Server {
     private static performQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
         return Server.InsightFacade.performQuery(req.body).then((result: any[]) => {
             res.json(200, {result: result});
+            res.end();
             return next();
         }).catch((error: any) => {
             if (error instanceof InsightError) {
-                res.json(400, error);
+                res.json(400, {error: "InsightError"});
+                res.end();
             }
-            return next();
         });
     }
 
     private static addDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
-            return Server.InsightFacade.addDataset(req.params.id, req.body, req.params.kind)
-                .then((result: string[]) => {
-                    res.json(200, {result: result});
-                    res.end();
-                    return next();
-                }).catch((err: any) => {
-                    res.status(400);
-                    return next();
-                });
+        return Server.InsightFacade.addDataset(req.params.id, req.body, req.params.kind)
+            .then((result: string[]) => {
+                res.json(200, {result: result});
+                res.end();
+                return next();
+            }).catch((err: any) => {
+                Log.info("couldn't add dataset");
+                res.status(400);
+                res.end();
+                return next();
+            });
     }
 
     // The next two methods handle the echo service.
