@@ -35,14 +35,13 @@ export default class Scheduler implements IScheduler {
         let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
 
         sectionSorted.forEach( function (section: SchedSection) {
-             roomsSorted.forEach( function (room: SchedRoom) {
-                 let toAdd: [SchedRoom, SchedSection, TimeSlot]  = [undefined, undefined, undefined];
-                 toAdd.push(room);
-                 toAdd.push(section);
-                 toAdd.push(timeSlotsAvailable[0]);
-                 timeSlotsAvailable.pop();
-                 result.push(toAdd);
-             });
+            let toAdd: [SchedRoom, SchedSection, TimeSlot]  = [undefined, undefined, undefined];
+            toAdd.push(roomsSorted[0]);
+            toAdd.push(section);
+            toAdd.push(timeSlotsAvailable[0]);
+            timeSlotsAvailable.pop();
+            roomsSorted.pop();
+            result.push(toAdd);
         });
         return result;
     }
