@@ -36,6 +36,7 @@ export default class Scheduler implements IScheduler {
     private makeSchedule(sectionSorted: SchedSection[], roomsSorted: SchedRoom[],
                          timeSlotsAvailable: TimeSlot[]): Array<[SchedRoom, SchedSection, TimeSlot]> {
         let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
+        let coursesAddedSoFarAndTime: Array<[SchedSection, TimeSlot]> = [];
         let count = 0;
         for (const section of sectionSorted) {
             if (roomsSorted.length === 0) {
@@ -48,9 +49,26 @@ export default class Scheduler implements IScheduler {
                     count = 0;
                 }
                 let toAdd: [SchedRoom, SchedSection, TimeSlot]  = [undefined, undefined, undefined];
+                let coursesAndTime: [SchedSection, TimeSlot] = [undefined, undefined];
                 toAdd.push(roomsSorted[0]);
                 toAdd.push(section);
-                toAdd.push(timeSlotsAvailable[count]);
+                coursesAndTime.push(section);
+                let timeTopick  = timeSlotsAvailable[count];
+                let next = 0;
+                if (count === 14) {
+                    next = 0;
+                } else {
+                    next = count++;
+                }
+                for (const courseAndTime of coursesAddedSoFarAndTime) {
+                    if ((timeTopick === coursesAndTime[1]) &&
+                        (section.courses_title === coursesAndTime[0].courses_title)) {
+                        timeTopick = timeSlotsAvailable[next];
+                    }
+                }
+                toAdd.push(timeTopick);
+                coursesAndTime.push(timeTopick);
+                coursesAddedSoFarAndTime.push(coursesAndTime);
                 roomsSorted.pop();
                 count++;
                 result.push(toAdd);
