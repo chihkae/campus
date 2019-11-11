@@ -7,9 +7,9 @@ export default class Scheduler implements IScheduler {
             let numStudentsB = b.courses_audit + b.courses_pass + b.courses_fail;
 
             if (numStudentsA > numStudentsB) {
-                return 1;
-            } else if (numStudentsB < numStudentsB) {
                 return -1;
+            } else if (numStudentsA < numStudentsB) {
+                return 1;
             } else {
                 return 0;
             }
@@ -19,9 +19,9 @@ export default class Scheduler implements IScheduler {
             let numSeatsB = b.rooms_seats;
 
             if (numSeatsA > numSeatsB) {
-                return 1;
-            } else if (numSeatsA < numSeatsB) {
                 return -1;
+            } else if (numSeatsA < numSeatsB) {
+                return 1;
             } else {
                 return 0;
             }
@@ -50,9 +50,9 @@ export default class Scheduler implements IScheduler {
                 }
                 let toAdd: [SchedRoom, SchedSection, TimeSlot]  = [undefined, undefined, undefined];
                 let coursesAndTime: [SchedSection, TimeSlot] = [undefined, undefined];
-                toAdd.push(roomsSorted[0]);
-                toAdd.push(section);
-                coursesAndTime.push(section);
+                toAdd[0] = roomsSorted[0];
+                toAdd[1] = section;
+                coursesAndTime[0] = section;
                 let timeTopick  = timeSlotsAvailable[count];
                 let next = 0;
                 if (count === 14) {
@@ -66,10 +66,10 @@ export default class Scheduler implements IScheduler {
                         timeTopick = timeSlotsAvailable[next];
                     }
                 }
-                toAdd.push(timeTopick);
-                coursesAndTime.push(timeTopick);
+                toAdd[2] = timeTopick;
+                coursesAndTime[1] = timeTopick;
                 coursesAddedSoFarAndTime.push(coursesAndTime);
-                roomsSorted.pop();
+                roomsSorted.shift();
                 count++;
                 result.push(toAdd);
             }
