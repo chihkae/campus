@@ -86,16 +86,17 @@ export default class Scheduler implements IScheduler {
                 }
                 if (roomsAndTimeToPick !== undefined && this.isNewBuilding(roomsAndTimeToPick[0])) {
                     let totalstudents = section.courses_audit + section.courses_pass + section.courses_fail;
-                    if (this.isWorthit(roomsAndTimeToPick[0].rooms_lat, roomsAndTimeToPick[0].rooms_lon, totalstudents)) {
+                    if (this.isWorthit(roomsAndTimeToPick[0].rooms_lat,
+                        roomsAndTimeToPick[0].rooms_lon, totalstudents)) {
                         this.setFirstRoom(roomsAndTimeToPick[0]);
-                        roomsAndTimeSlot.splice(count,1);
+                        roomsAndTimeSlot.splice(count, 1);
                         toAdd[0] = roomsAndTimeToPick[0];
                         toAdd[1] = section;
                         toAdd[2] = roomsAndTimeToPick[1];
                         result.push(toAdd);
                     }
                 } else if (roomsAndTimeToPick !== undefined && !this.isNewBuilding(roomsAndTimeToPick[0])) {
-                    roomsAndTimeSlot.splice(count,1);
+                    roomsAndTimeSlot.splice(count, 1 );
                     toAdd[0] = roomsAndTimeToPick[0];
                     toAdd[1] = section;
                     toAdd[2] = roomsAndTimeToPick[1];
@@ -114,10 +115,10 @@ export default class Scheduler implements IScheduler {
     }
 
     private conflictInSectionTime(section: SchedSection, time: TimeSlot,
-                                  result: Array<[SchedRoom, SchedSection, TimeSlot]> ){
+                                  result: Array<[SchedRoom, SchedSection, TimeSlot]> ) {
         for (const scheduled of result) {
             if (scheduled[2] === time && scheduled[1].courses_id === section.courses_id &&
-            scheduled[1].courses_title === section.courses_title){
+            scheduled[1].courses_title === section.courses_title) {
                 return true;
             }
         }
