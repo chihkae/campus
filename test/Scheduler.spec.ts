@@ -2,7 +2,7 @@ import {expect} from "chai";
 import * as fs from "fs-extra";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
-import Scheduler from "../src/scheduler/Scheduler"
+import Scheduler from "../src/scheduler/Scheduler";
 import InsightFacade from "../src/controller/InsightFacade";
 import Server from "../src/rest/Server";
 
@@ -77,7 +77,7 @@ describe("Facade D3", function () {
 
     // Sample on how to format PUT requests
     it("Scheduler test", function () {
-            let S= new Scheduler();
+            let S = new Scheduler();
             let result = S.schedule(sections, rooms);
             expect(result).to.have.length(4);
     });
