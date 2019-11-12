@@ -57,54 +57,36 @@ export default class Scheduler implements IScheduler {
         return result;
     }
 
-    private calculateTotalStudents(sections: SchedSection[]) {
-        for (const section of sections) {
-            this.totalStudents += section.courses_fail + section.courses_pass + section.courses_audit;
-        }
-    }
+
 
     private makeSchedule(sectionSorted: SchedSection[], roomsSorted: SchedRoom[]):
         Array<[SchedRoom, SchedSection, TimeSlot]> {
-        let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
-        let count = 0;
+        let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
         let roomsAndTimeSlot = this.insertTimetoRooms(roomsSorted);
-        for (const section of sectionSorted) {
-            if (roomsAndTimeSlot.length === 0) {
-                break;
-            } else {
-                count = 0;
-                let toAdd: [SchedRoom, SchedSection, TimeSlot]  = [undefined, undefined, undefined];
-                let roomsAndTimeToPick;
-                for (const roomsandTime of roomsAndTimeSlot) {
-                    if (roomsandTime[0].rooms_seats >= section.courses_audit + section.courses_pass +
-                        section.courses_fail && !this.conflictInSectionTime(section, roomsandTime[1], result)) {
-                        roomsAndTimeToPick = roomsandTime;
-                        break;
-                    } else {
-                        count++;
-                    }
+        let i = 0;
+        let j = 0;
+        let score = -1;
+        for (i = 0; i < roomsAndTimeSlot.length; i++) {
+            let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
+            for (j = 0; j < sectionSorted.length; j++) {
+                if ((j < roomsAndTimeSlot.length) &&
+                    roomsAndTimeSlot[j][0].rooms_seats > (sectionSorted[j].courses_audit +
+                        sectionSorted[j].courses_pass + sectionSorted[j].courses_fail)) {
+                    let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
+                    toAdd[0] = roomsAndTimeSlot[j][0];
+                    toAdd[1] = sectionSorted[j];
+                    toAdd[2] = roomsAndTimeSlot[j][1];
+                    result.push(toAdd);
                 }
-                if (roomsAndTimeToPick !== undefined) {
-                    // let totalstudents = section.courses_audit + section.courses_pass + section.courses_fail;
-                    // if (this.isWorthit(roomsAndTimeToPick[0].rooms_lat,
-                    //     roomsAndTimeToPick[0].rooms_lon, totalstudents)) {
-                    //     this.setFirstRoom(roomsAndTimeToPick[0]);
-                        roomsAndTimeSlot.splice(count, 1);
-                        toAdd[0] = roomsAndTimeToPick[0];
-                        toAdd[1] = section;
-                        toAdd[2] = roomsAndTimeToPick[1];
-                        result.push(toAdd);
-                    }
-                // } else if (roomsAndTimeToPick !== undefined && !this.isNewBuilding(roomsAndTimeToPick[0])) {
-                //     roomsAndTimeSlot.splice(count, 1 );
-                //     toAdd[0] = roomsAndTimeToPick[0];
-                //     toAdd[1] = section;
-                //     toAdd[2] = roomsAndTimeToPick[1];
-                //     result.push(toAdd);
-                // }
+                if (result.length > 0 && (this.calculateScore(result, sectionSorted) > score)) {
+                    score = this.calculateScore(result, sectionSorted);
+                    finalResult = result;
+                } else if (result.length > 0) {
+                    result.splice(-1, 1 );
+                }
             }
         }
-        return result;
+        return finalResult;
     }
 
     private setFirstRoom(room: SchedRoom) {
@@ -137,28 +119,28 @@ export default class Scheduler implements IScheduler {
         }
     }
 
-    private isWorthit(lat: number, lon: number, students: number): boolean {
-        if (this.firstRoomLat === undefined && this.firstRoomLon === undefined) {
-            let D = 0;
-            let E = students / this.totalStudents;
-            this.enrolled += students;
-            this.score = D + (0.7 * E);
-            return true;
-        } else {
-            let D = this.calcCrow(lat, lon);
-            let E = ((this.enrolled + students) / this.totalStudents);
-            if ((0.3 * (1 - D) + 0.7 * E) > this.score ) {
-                if ( D > this.D ) {
-                    this.D = D;
-                }
-                this.score = (1 - this.D) + 0.7 * E;
-                this.enrolled += students;
-                return  true;
-            } else {
-                return false;
-            }
-        }
-    }
+    // private isWorthit(lat: number, lon: number, students: number): boolean {
+    //     if (this.firstRoomLat === undefined && this.firstRoomLon === undefined) {
+    //         let D = 0;
+    //         let E = students / this.totalStudents;
+    //         this.enrolled += students;
+    //         this.score = D + (0.7 * E);
+    //         return true;
+    //     } else {
+    //         let D = this.calcCrow(lat, lon);
+    //         let E = ((this.enrolled + students) / this.totalStudents);
+    //         if ((0.3 * (1 - D) + 0.7 * E) > this.score ) {
+    //             if ( D > this.D ) {
+    //                 this.D = D;
+    //             }
+    //             this.score = (1 - this.D) + 0.7 * E;
+    //             this.enrolled += students;
+    //             return  true;
+    //         } else {
+    //             return false;
+    //         }
+    //     }
+    // }
 
     private insertTimetoRooms(rooms: SchedRoom[]): Array<[SchedRoom, TimeSlot]> {
         let timeSlotsAvailable: TimeSlot[] = ["MWF 0800-0900" , "MWF 0900-1000", "MWF 1000-1100", "MWF 1100-1200",
@@ -176,35 +158,75 @@ export default class Scheduler implements IScheduler {
         return result;
     }
 
-    private closestFit(students: number, rooms: SchedRoom[] ) {
-        let min = students;
-        let count = 0;
-        for (const room of Object.values(rooms)) {
-            if (room.rooms_seats < min && room.rooms_seats > students) {
-                min = room.rooms_seats;
-            } else {
-                delete rooms[count];
+    // private closestFit(students: number, rooms: SchedRoom[] ) {
+    //     let min = students;
+    //     let count = 0;
+    //     for (const room of Object.values(rooms)) {
+    //         if (room.rooms_seats < min && room.rooms_seats > students) {
+    //             min = room.rooms_seats;
+    //         } else {
+    //             delete rooms[count];
+    //         }
+    //         count++;
+    //     }
+    // }
+
+    private getGreatestDistance(result: Array<[SchedRoom, SchedSection, TimeSlot]>): number {
+        let greatestDistance = 0;
+        let i = 0;
+        let j;
+        for ( i = 0; i < result.length ; i++) {
+            for (j = i + 1 ; j < result.length ; j++) {
+                if (this.getDistanceFromLatLonInKm(result[i][0].rooms_lat, result[i][0].rooms_lat,
+                    result[j][0].rooms_lat , result[j][0].rooms_lon) > greatestDistance) {
+                    greatestDistance = this.getDistanceFromLatLonInKm(result[i][0].rooms_lat, result[i][0].rooms_lat,
+                        result[j][0].rooms_lat , result[j][0].rooms_lon);
+                }
             }
-            count++;
         }
+        return greatestDistance;
     }
 
-    private calcCrow(lat2: number, lon2: number): number {
-        let R = 6371; // km
-        let dLat = this.toRad(lat2 - this.firstRoomLat);
-        let dLon = this.toRad(lon2 - this.firstRoomLon);
-        let lat1 = this.toRad(this.firstRoomLat);
-        lat2 = this.toRad(lat2);
+    private calculateScore(results: Array<[SchedRoom, SchedSection, TimeSlot]>, sections: SchedSection[]): number {
+        let D = this.getGreatestDistance(results) / 1372;
+        let E = this.calculateEnrolled(results);
+        let totalEnrolled = this.calculateTotalStudents(sections);
+        E = E / totalEnrolled;
+        let score = (0.7 * E) + (0.3 * ( D - 1));
+        return score;
+    }
 
-        let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        let d = R * c;
+    private calculateEnrolled(results: Array<[SchedRoom, SchedSection, TimeSlot]>): number {
+        let totalEnrolled = 0;
+        for (const result of results) {
+            totalEnrolled += (result[1].courses_fail + result[1].courses_pass + result[1].courses_audit);
+        }
+        return totalEnrolled;
+    }
+
+    private calculateTotalStudents(sections: SchedSection[]) {
+        let totalStudents = 0;
+        for (const section of sections) {
+            totalStudents += section.courses_fail + section.courses_pass + section.courses_audit;
+        }
+        return totalStudents;
+    }
+
+    private getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+        let R = 6371; // Radius of the earth in km
+        let dLat = this.deg2rad(lat2 - lat1);  // deg2rad below
+        let dLon = this.deg2rad(lon2 - lon1);
+        let a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2 ) +
+            Math.cos( this.deg2rad(lat1)) * Math.cos( this.deg2rad(lat2)) *
+            Math.sin(dLon / 2 ) * Math.sin(dLon / 2 )
+        ;
+        let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a ));
+        let d = R * c; // Distance in km
         return d;
     }
 
-    // Converts numeric degrees to radians
-    private toRad(value: number): number {
-        return value * Math.PI / 180;
+    private deg2rad(deg: number) {
+        return deg * (Math.PI / 180);
     }
 }
