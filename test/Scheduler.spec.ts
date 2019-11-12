@@ -181,7 +181,39 @@ describe("Facade D3", function () {
             courses_dept: "cpsc",
             courses_id: "345",
             courses_uuid: "72385",
-            courses_pass: 130,
+            courses_pass: 1,
+            courses_fail: 0,
+            courses_audit: 0
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "345",
+            courses_uuid: "72385",
+            courses_pass: 1,
+            courses_fail: 0,
+            courses_audit: 0
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "345",
+            courses_uuid: "72385",
+            courses_pass: 1,
+            courses_fail: 0,
+            courses_audit: 0
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "345",
+            courses_uuid: "72385",
+            courses_pass: 0,
+            courses_fail: 0,
+            courses_audit: 0
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "345",
+            courses_uuid: "72385",
+            courses_pass: 0,
             courses_fail: 0,
             courses_audit: 0
         },
@@ -197,7 +229,7 @@ describe("Facade D3", function () {
             courses_dept: "cpsc",
             courses_id: "345",
             courses_uuid: "72385",
-            courses_pass: 133,
+            courses_pass: 1,
             courses_fail: 0,
             courses_audit: 0
         },
@@ -205,7 +237,7 @@ describe("Facade D3", function () {
             courses_dept: "cpsc",
             courses_id: "345",
             courses_uuid: "72385",
-            courses_pass: 133,
+            courses_pass: 1,
             courses_fail: 0,
             courses_audit: 0
         }
@@ -217,16 +249,17 @@ describe("Facade D3", function () {
             rooms_shortname: "AERL",
             rooms_number: "120",
             rooms_seats: 144,
-            rooms_lat: 49.26372,
-            rooms_lon: -123.25099
+            rooms_lat: 2.26372,
+            rooms_lon: -50.25099
         },
         {
             rooms_shortname: "BUCH",
             rooms_number: "A101",
             rooms_seats: 275,
-            rooms_lat: 49.26826,
+            rooms_lat: 90.26826,
             rooms_lon: -123.25468
-        }
+        },
+
     ];
 
 

@@ -177,7 +177,7 @@ export default class Scheduler implements IScheduler {
             for (j = i + 1 ; j < result.length ; j++) {
                 if (this.getDistanceFromLatLonInKm(result[i][0].rooms_lat, result[i][0].rooms_lat,
                     result[j][0].rooms_lat , result[j][0].rooms_lon) > greatestDistance) {
-                    greatestDistance = this.getDistanceFromLatLonInKm(result[i][0].rooms_lat, result[i][0].rooms_lat,
+                    greatestDistance = this.getDistanceFromLatLonInKm(result[i][0].rooms_lat, result[i][0].rooms_lon,
                         result[j][0].rooms_lat , result[j][0].rooms_lon);
                 }
             }
@@ -190,7 +190,7 @@ export default class Scheduler implements IScheduler {
         let E = this.calculateEnrolled(results);
         let totalEnrolled = this.calculateTotalStudents(sections);
         E = E / totalEnrolled;
-        let score = (0.7 * E) + (0.3 * ( D - 1));
+        let score = (0.7 * E) + (0.3 * ( 1 - D));
         return score;
     }
 
