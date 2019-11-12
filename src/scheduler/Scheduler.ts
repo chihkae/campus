@@ -57,8 +57,6 @@ export default class Scheduler implements IScheduler {
         return result;
     }
 
-
-
     private makeSchedule(sectionSorted: SchedSection[], roomsSorted: SchedRoom[]):
         Array<[SchedRoom, SchedSection, TimeSlot]> {
         let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
