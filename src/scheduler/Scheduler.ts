@@ -84,24 +84,24 @@ export default class Scheduler implements IScheduler {
                         count++;
                     }
                 }
-                if (roomsAndTimeToPick !== undefined && this.isNewBuilding(roomsAndTimeToPick[0])) {
-                    let totalstudents = section.courses_audit + section.courses_pass + section.courses_fail;
-                    if (this.isWorthit(roomsAndTimeToPick[0].rooms_lat,
-                        roomsAndTimeToPick[0].rooms_lon, totalstudents)) {
-                        this.setFirstRoom(roomsAndTimeToPick[0]);
+                if (roomsAndTimeToPick !== undefined) {
+                    // let totalstudents = section.courses_audit + section.courses_pass + section.courses_fail;
+                    // if (this.isWorthit(roomsAndTimeToPick[0].rooms_lat,
+                    //     roomsAndTimeToPick[0].rooms_lon, totalstudents)) {
+                    //     this.setFirstRoom(roomsAndTimeToPick[0]);
                         roomsAndTimeSlot.splice(count, 1);
                         toAdd[0] = roomsAndTimeToPick[0];
                         toAdd[1] = section;
                         toAdd[2] = roomsAndTimeToPick[1];
                         result.push(toAdd);
                     }
-                } else if (roomsAndTimeToPick !== undefined && !this.isNewBuilding(roomsAndTimeToPick[0])) {
-                    roomsAndTimeSlot.splice(count, 1 );
-                    toAdd[0] = roomsAndTimeToPick[0];
-                    toAdd[1] = section;
-                    toAdd[2] = roomsAndTimeToPick[1];
-                    result.push(toAdd);
-                }
+                // } else if (roomsAndTimeToPick !== undefined && !this.isNewBuilding(roomsAndTimeToPick[0])) {
+                //     roomsAndTimeSlot.splice(count, 1 );
+                //     toAdd[0] = roomsAndTimeToPick[0];
+                //     toAdd[1] = section;
+                //     toAdd[2] = roomsAndTimeToPick[1];
+                //     result.push(toAdd);
+                // }
             }
         }
         return result;

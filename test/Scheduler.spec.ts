@@ -8,12 +8,55 @@ import Server from "../src/rest/Server";
 
 describe("Facade D3", function () {
 
-    let sections = [
+    let sections1 = [
         {
             courses_dept: "cpsc",
             courses_id: "340",
             courses_uuid: "1319",
             courses_pass: 101,
+            courses_fail: 7,
+            courses_audit: 2
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "340",
+            courses_uuid: "3397",
+            courses_pass: 171,
+            courses_fail: 3,
+            courses_audit: 1
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "344",
+            courses_uuid: "62413",
+            courses_pass: 93,
+            courses_fail: 2,
+            courses_audit: 0
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "344",
+            courses_uuid: "72385",
+            courses_pass: 43,
+            courses_fail: 1,
+            courses_audit: 0
+        }
+    ];
+
+    let sections2 = [
+        {
+            courses_dept: "cpsc",
+            courses_id: "340",
+            courses_uuid: "1319",
+            courses_pass: 101,
+            courses_fail: 7,
+            courses_audit: 2
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "340",
+            courses_uuid: "1319",
+            courses_pass: 500,
             courses_fail: 7,
             courses_audit: 2
         },
@@ -78,7 +121,14 @@ describe("Facade D3", function () {
     // Sample on how to format PUT requests
     it("Scheduler test", function () {
             let S = new Scheduler();
-            let result = S.schedule(sections, rooms);
+            let result = S.schedule(sections1, rooms);
             expect(result).to.have.length(4);
+    });
+
+    // Sample on how to format PUT requests
+    it("Scheduler test", function () {
+        let S = new Scheduler();
+        let result = S.schedule(sections2, rooms);
+        expect(result).to.have.length(4);
     });
 });
