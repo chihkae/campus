@@ -6,7 +6,7 @@ import fs = require("fs");
 import restify = require("restify");
 import Log from "../Util";
 import InsightFacade from "../controller/InsightFacade";
-import {InsightDataset, InsightError, NotFoundError} from "../controller/IInsightFacade";
+import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "../controller/IInsightFacade";
 
 /**
  * This configures the REST endpoints for the server.
@@ -138,17 +138,24 @@ export default class Server {
     }
 
     private static addDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
-        return Server.InsightFacade.addDataset(req.params.id, req.body, req.params.kind)
-            .then((result: string[]) => {
-                res.json(200, {result: result});
-                res.end();
-                return next();
-            }).catch((err: any) => {
+        if (req.params.kind === InsightDatasetKind.Rooms || req.params.kind === InsightDatasetKind.Courses) {
+            return Server.InsightFacade.addDataset(req.params.id, req.body, req.params.kind)
+                .then((result: string[]) => {
+                    res.json(200, {result: result});
+                    res.end();
+                    return next();
+                }).catch((err: any) => {
+                    Log.info("couldn't add dataset");
+                    res.status(400);
+                    res.end();
+                    return next();
+                });
+        } else {
                 Log.info("couldn't add dataset");
                 res.status(400);
                 res.end();
                 return next();
-            });
+        }
     }
 
     // The next two methods handle the echo service.

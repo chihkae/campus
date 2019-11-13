@@ -63,25 +63,27 @@ export default class Scheduler implements IScheduler {
         let roomsAndTimeSlot = this.insertTimetoRooms(roomsSorted);
         let i = 0;
         let j = 0;
-        let score = -1;
-        for (i = 0; i < roomsAndTimeSlot.length; i++) {
-            let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
-            for (j = 0; j < sectionSorted.length; j++) {
-                if ((j < roomsAndTimeSlot.length) &&
-                    roomsAndTimeSlot[j][0].rooms_seats > (sectionSorted[j].courses_audit +
+        let score = 0;
+        for (j = 0; j < sectionSorted.length; j++) {
+            let count = 0;
+            while (roomsAndTimeSlot.length !== 0 && count < roomsAndTimeSlot.length) {
+                let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
+                if (roomsAndTimeSlot[count][0].rooms_seats > (sectionSorted[j].courses_audit +
                         sectionSorted[j].courses_pass + sectionSorted[j].courses_fail)) {
                     let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
-                    toAdd[0] = roomsAndTimeSlot[j][0];
+                    toAdd[0] = roomsAndTimeSlot[count][0];
                     toAdd[1] = sectionSorted[j];
-                    toAdd[2] = roomsAndTimeSlot[j][1];
-                    result.push(toAdd);
+                    toAdd[2] = roomsAndTimeSlot[count][1];
+                    finalResult.push(toAdd);
                 }
-                if (result.length > 0 && (this.calculateScore(result, sectionSorted) > score)) {
-                    score = this.calculateScore(result, sectionSorted);
-                    finalResult = result;
-                } else if (result.length > 0) {
-                    result.splice(-1, 1 );
+                if (this.calculateScore(finalResult, sectionSorted) > score ) {
+                    score = this.calculateScore(finalResult, sectionSorted);
+                    roomsAndTimeSlot.splice(count, 1);
+                    break;
+                } else {
+                        finalResult.pop();
                 }
+                count++;
             }
         }
         return finalResult;
@@ -94,16 +96,16 @@ export default class Scheduler implements IScheduler {
         }
     }
 
-    private conflictInSectionTime(section: SchedSection, time: TimeSlot,
-                                  result: Array<[SchedRoom, SchedSection, TimeSlot]> ) {
-        for (const scheduled of result) {
-            if (scheduled[2] === time && scheduled[1].courses_id === section.courses_id &&
-            scheduled[1].courses_title === section.courses_title) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // private conflictInSectionTime(section: SchedSection,
+    //                               result: Array<[SchedRoom, SchedSection, TimeSlot]> ) {
+    //     for (const scheduled of result) {
+    //         if (section scheduled[1].courses_id === section.courses_id &&
+    //         scheduled[1].courses_title === section.courses_title) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
     private isNewBuilding(roomB: SchedRoom): boolean {
         if (this.firstRoomLat === undefined && this.firstRoomLon === undefined) {

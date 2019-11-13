@@ -240,6 +240,46 @@ describe("Facade D3", function () {
             courses_pass: 1,
             courses_fail: 0,
             courses_audit: 0
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "345",
+            courses_uuid: "72385",
+            courses_pass: 100,
+            courses_fail: 0,
+            courses_audit: 0
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "345",
+            courses_uuid: "72385",
+            courses_pass: 100,
+            courses_fail: 0,
+            courses_audit: 0
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "345",
+            courses_uuid: "72385",
+            courses_pass: 100,
+            courses_fail: 0,
+            courses_audit: 0
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "345",
+            courses_uuid: "72385",
+            courses_pass: 100,
+            courses_fail: 0,
+            courses_audit: 0
+        },
+        {
+            courses_dept: "cpsc",
+            courses_id: "345",
+            courses_uuid: "72385",
+            courses_pass: 100,
+            courses_fail: 0,
+            courses_audit: 0
         }
     ];
 
@@ -248,7 +288,7 @@ describe("Facade D3", function () {
         {
             rooms_shortname: "AERL",
             rooms_number: "120",
-            rooms_seats: 144,
+            rooms_seats: 240,
             rooms_lat: 2.26372,
             rooms_lon: -50.25099
         },
@@ -259,7 +299,20 @@ describe("Facade D3", function () {
             rooms_lat: 90.26826,
             rooms_lon: -123.25468
         },
-
+        {
+            rooms_shortname: "BUCH",
+            rooms_number: "A102",
+            rooms_seats: 120,
+            rooms_lat: 90.26826,
+            rooms_lon: -124.25468
+        },
+        {
+            rooms_shortname: "BUCH",
+            rooms_number: "A103",
+            rooms_seats: 200,
+            rooms_lat: 90.26825,
+            rooms_lon: -123.25467
+        }
     ];
 
 
