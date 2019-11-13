@@ -138,23 +138,36 @@ export default class Server {
     }
 
     private static addDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
-        if (req.params.kind === InsightDatasetKind.Rooms || req.params.kind === InsightDatasetKind.Courses) {
-            return Server.InsightFacade.addDataset(req.params.id, req.body, req.params.kind)
-                .then((result: string[]) => {
-                    res.json(200, {result: result});
-                    res.end();
-                    return next();
-                }).catch((err: any) => {
-                    Log.info("couldn't add dataset");
-                    res.status(400);
-                    res.end();
-                    return next();
-                });
-        } else {
+        let content;
+        try {
+            content = Buffer.from(req.body).toString("base64");
+            if (req.params.kind === InsightDatasetKind.Rooms || req.params.kind === InsightDatasetKind.Courses) {
+                return Server.InsightFacade.addDataset(req.params.id, content , req.params.kind)
+                    .then((result: string[]) => {
+                        // let addedIDs = [];
+                        // for (const value of Object.values(result)) {
+                        //     addedIDs.push(value);
+                        // }
+                        res.json(200, {result: result});
+                        res.end();
+                        return next();
+                    }).catch((err: any) => {
+                        Log.info("couldn't add dataset");
+                        res.json(400, {error: "dfdfdf"});
+                        res.end();
+                        return next();
+                    });
+            } else {
                 Log.info("couldn't add dataset");
                 res.status(400);
                 res.end();
                 return next();
+            }
+        } catch {
+            Log.info("buffer error");
+            res.json(400, {err: "dfdfd" });
+            res.end();
+            return next();
         }
     }
 

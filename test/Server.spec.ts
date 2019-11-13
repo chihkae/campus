@@ -103,6 +103,82 @@ describe("Facade D3", function () {
         }
     });
 
+    it("PUT test for dataset that has been added already", function () {
+        try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/rooms/" + InsightDatasetKind.Rooms)
+                .send(fs.readFileSync(`./test/data/rooms.zip`))
+                .set("Content-Type", "application/x-zip-compressed")
+                .then(function (res: Response) {
+                    // some logging here please!
+                    Log.info("succesfully added dataset");
+                    expect(res.status).to.be.equal(200);
+                    return chai.request("http://localhost:4321")
+                        .put("/dataset/rooms/" + InsightDatasetKind.Rooms)
+                        .send(fs.readFileSync(`./test/data/rooms.zip`))
+                        .set("Content-Type", "application/x-zip-compressed");
+                }).then(function (res: Response) {
+                        expect.fail("shouldn't be able to add another dataset with same id");
+                }).catch(function (err) {
+                    // some logging here please!
+                    Log.info("couldn't add dataset");
+                    expect(err.status).to.be.equal(400);
+                });
+        } catch (err) {
+            // and some more logging here!
+            Log.error(err);
+        }
+    });
+
+    it("PUT test for addign two different datasets", function () {
+        try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/rooms/" + InsightDatasetKind.Rooms)
+                .send(fs.readFileSync(`./test/data/rooms.zip`))
+                .set("Content-Type", "application/x-zip-compressed")
+                .then(function (res: Response) {
+                    // some logging here please!
+                    Log.info("succesfully added dataset");
+                    expect(res.status).to.be.equal(200);
+                    return chai.request("http://localhost:4321")
+                        .put("/dataset/courses/" + InsightDatasetKind.Courses)
+                        .send(fs.readFileSync(`./test/data/courses.zip`))
+                        .set("Content-Type", "application/x-zip-compressed");
+                }).then(function (res: Response) {
+                    expect(res.status).to.be.equal(200);
+                    expect(res.body).to.have.length(2);
+                }).catch(function (err) {
+                    // some logging here please!
+                    Log.info("couldn't add dataset");
+                    expect(err.status).to.be.equal(400);
+                });
+        } catch (err) {
+            // and some more logging here!
+            Log.error(err);
+        }
+    });
+
+    it("PUT test for adding non zip file", function () {
+        try {
+            return chai.request("http://localhost:4321")
+                .put("/dataset/rooms/" + InsightDatasetKind.Rooms)
+                .send(undefined)
+                .set("Content-Type", "application/x-zip-compressed")
+                .then(function (res: Response) {
+                    // some logging here please!
+                    Log.info("succesfully added dataset");
+                    expect.fail("should fail, not a zip ");
+                }).catch(function (err) {
+                    // some logging here please!
+                    Log.info("couldn't add dataset");
+                    expect(err.status).to.be.equal(400);
+                });
+        } catch (err) {
+            // and some more logging here!
+            Log.error(err);
+        }
+    });
+
 
     it("PUT test for dataset with underscore id", function () {
         try {
