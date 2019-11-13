@@ -51,7 +51,7 @@ export default class Scheduler implements IScheduler {
                     rooms[i].rooms_number
                     !== rooms[j].rooms_number ) {
                     result.push(rooms[j]);
-                    delete rooms[j];
+                    rooms.splice(j, 1 );
                 }
             }
         }
@@ -62,14 +62,27 @@ export default class Scheduler implements IScheduler {
         Array<[SchedRoom, SchedSection, TimeSlot]> {
         let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
         let roomsAndTimeSlot = this.insertTimetoRooms(roomsSorted);
-        let i = 0;
-        let j = 0;
-        let score = 0;
+        let algo1 = this.algo1(roomsAndTimeSlot, sectionSorted);
+        let algo2 = this.algo2(roomsAndTimeSlot, sectionSorted);
+        if (this.calculateScore(algo1, sectionSorted) > this.calculateScore(algo2, sectionSorted)) {
+            finalResult = algo1;
+        } else {
+            finalResult = algo2;
+        }
+        return finalResult;
+    }
+
+
+    private algo2(roomsAndTimeSlot: Array<[SchedRoom, TimeSlot]>, sectionSorted: SchedSection[]):
+        Array<[SchedRoom, SchedSection, TimeSlot]> {
+        let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
+        let score1 = 0;
+        let j;
         for (j = 0; j < sectionSorted.length; j++) {
             let count = 0;
             while (roomsAndTimeSlot.length !== 0 && count < roomsAndTimeSlot.length) {
                 if (roomsAndTimeSlot[count][0].rooms_seats > (sectionSorted[j].courses_audit +
-                        sectionSorted[j].courses_pass + sectionSorted[j].courses_fail)) {
+                    sectionSorted[j].courses_pass + sectionSorted[j].courses_fail)) {
                     let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
                     toAdd[0] = roomsAndTimeSlot[count][0];
                     toAdd[1] = sectionSorted[j];
@@ -77,8 +90,72 @@ export default class Scheduler implements IScheduler {
                     const temp = Object.assign([], finalResult);
                     finalResult.push(toAdd);
                     let hasConflict = this.conflictInSectionTime(toAdd, temp);
-                    if (hasConflict === false && this.calculateScore(finalResult, sectionSorted) > score) {
-                        score = this.calculateScore(finalResult, sectionSorted);
+                    if (hasConflict === false && this.calculateScore(finalResult, sectionSorted) > score1) {
+                        score1 = this.calculateScore(finalResult, sectionSorted);
+                        roomsAndTimeSlot.splice(count, 1);
+                        break;
+                    } else {
+                        finalResult.pop();
+                    }
+                }
+                count++;
+            }
+        }
+        return finalResult;
+    }
+
+    private algo1(roomsAndTimeSlot: Array<[SchedRoom, TimeSlot]>, sectionSorted: SchedSection[]):
+        Array<[SchedRoom, SchedSection, TimeSlot]> {
+        let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
+        let score1 = 0;
+        let j;
+        for (j = 0; j < sectionSorted.length; j += 2) {
+            let count = 0;
+            while (roomsAndTimeSlot.length !== 0 && count < roomsAndTimeSlot.length) {
+                if (roomsAndTimeSlot[count][0].rooms_seats > (sectionSorted[j].courses_audit +
+                    sectionSorted[j].courses_pass + sectionSorted[j].courses_fail)) {
+                    let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
+                    toAdd[0] = roomsAndTimeSlot[count][0];
+                    toAdd[1] = sectionSorted[j];
+                    toAdd[2] = roomsAndTimeSlot[count][1];
+                    const temp = Object.assign([], finalResult);
+                    finalResult.push(toAdd);
+                    let hasConflict = this.conflictInSectionTime(toAdd, temp);
+                    if (hasConflict === false && this.calculateScore(finalResult, sectionSorted) > score1) {
+                        score1 = this.calculateScore(finalResult, sectionSorted);
+                        roomsAndTimeSlot.splice(count, 1);
+                        break;
+                    } else {
+                        finalResult.pop();
+                    }
+                }
+                count++;
+            }
+        }
+        let second = this.algo1helper(roomsAndTimeSlot, sectionSorted);
+        finalResult.concat(second);
+        return finalResult;
+    }
+
+    private algo1helper(roomsAndTimeSlot: Array<[SchedRoom, TimeSlot]>, sectionSorted: SchedSection[]):
+        Array<[SchedRoom, SchedSection, TimeSlot]> {
+        let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
+        let score1 = 0;
+        let j;
+        for (j = 0; j < sectionSorted.length; j++) {
+            let count = 0;
+            while (roomsAndTimeSlot.length !== 0 && count < roomsAndTimeSlot.length) {
+                if (roomsAndTimeSlot[count][0].rooms_seats > (sectionSorted[j].courses_audit +
+                    sectionSorted[j].courses_pass + sectionSorted[j].courses_fail)) {
+                    let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
+                    toAdd[0] = roomsAndTimeSlot[count][0];
+                    toAdd[1] = sectionSorted[j];
+                    toAdd[2] = roomsAndTimeSlot[count][1];
+                    const temp = Object.assign([], finalResult);
+                    finalResult.push(toAdd);
+                    let hasConflict = this.conflictInSectionTime(toAdd, temp);
+                    if (hasConflict === false && this.calculateScore(finalResult, sectionSorted) > score1) {
+                        score1 = this.calculateScore(finalResult, sectionSorted);
                         roomsAndTimeSlot.splice(count, 1);
                         break;
                     } else {
@@ -122,29 +199,6 @@ export default class Scheduler implements IScheduler {
         }
     }
 
-    // private isWorthit(lat: number, lon: number, students: number): boolean {
-    //     if (this.firstRoomLat === undefined && this.firstRoomLon === undefined) {
-    //         let D = 0;
-    //         let E = students / this.totalStudents;
-    //         this.enrolled += students;
-    //         this.score = D + (0.7 * E);
-    //         return true;
-    //     } else {
-    //         let D = this.calcCrow(lat, lon);
-    //         let E = ((this.enrolled + students) / this.totalStudents);
-    //         if ((0.3 * (1 - D) + 0.7 * E) > this.score ) {
-    //             if ( D > this.D ) {
-    //                 this.D = D;
-    //             }
-    //             this.score = (1 - this.D) + 0.7 * E;
-    //             this.enrolled += students;
-    //             return  true;
-    //         } else {
-    //             return false;
-    //         }
-    //     }
-    // }
-
     private insertTimetoRooms(rooms: SchedRoom[]): Array<[SchedRoom, TimeSlot]> {
         let timeSlotsAvailable: TimeSlot[] = ["MWF 0800-0900" , "MWF 0900-1000", "MWF 1000-1100", "MWF 1100-1200",
             "MWF 1200-1300" , "MWF 1300-1400" , "MWF 1400-1500" , "MWF 1500-1600" , "MWF 1600-1700" , "TR  0800-0930",
@@ -160,19 +214,6 @@ export default class Scheduler implements IScheduler {
         }
         return result;
     }
-
-    // private closestFit(students: number, rooms: SchedRoom[] ) {
-    //     let min = students;
-    //     let count = 0;
-    //     for (const room of Object.values(rooms)) {
-    //         if (room.rooms_seats < min && room.rooms_seats > students) {
-    //             min = room.rooms_seats;
-    //         } else {
-    //             delete rooms[count];
-    //         }
-    //         count++;
-    //     }
-    // }
 
     private getGreatestDistance(result: Array<[SchedRoom, SchedSection, TimeSlot]>): number {
         let greatestDistance = 0;
@@ -190,7 +231,8 @@ export default class Scheduler implements IScheduler {
         return greatestDistance;
     }
 
-    private calculateScore(results: Array<[SchedRoom, SchedSection, TimeSlot]>, sections: SchedSection[]): number {
+    private calculateScore(results: Array<[SchedRoom, SchedSection, TimeSlot]>, sections: SchedSection[]):
+        number {
         let D = this.getGreatestDistance(results) / 1372;
         let E = this.calculateEnrolled(results);
         let totalEnrolled = this.calculateTotalStudents(sections);
@@ -207,7 +249,7 @@ export default class Scheduler implements IScheduler {
         return totalEnrolled;
     }
 
-    private calculateTotalStudents(sections: SchedSection[]) {
+    private  calculateTotalStudents(sections: SchedSection[]) {
         let totalStudents = 0;
         for (const section of sections) {
             totalStudents += section.courses_fail + section.courses_pass + section.courses_audit;
