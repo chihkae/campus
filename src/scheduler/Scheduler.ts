@@ -47,9 +47,7 @@ export default class Scheduler implements IScheduler {
         for (i = 0; i < rooms.length ; i++) {
             result.push(rooms[i]);
             for (j = i + 1; j < rooms.length ; j++) {
-                if (rooms[i].rooms_lat === rooms[j].rooms_lat && rooms[i].rooms_lon === rooms[j].rooms_lon &&
-                    rooms[i].rooms_number
-                    !== rooms[j].rooms_number ) {
+                if (rooms[i].rooms_lat === rooms[j].rooms_lat && rooms[i].rooms_lon === rooms[j].rooms_lon) {
                     result.push(rooms[j]);
                     rooms.splice(j, 1 );
                 }
