@@ -7,24 +7,84 @@
  */
 
 CampusExplorer.buildQuery = function () {
-    let conditions = getConditions();
-    let checkedColumns = getCheckedColumns();
-    let order = getOrder();
-    let checkedGroups = getCheckedGroups();
-    let transformations = getTransformations();
+    // TODO: get data from courses panel
+    let coursesPanel = document.getElementById("tab-courses");
+    let coursesConditions = getConditions(coursesPanel);
+    let coursesColumns = getCheckedColumnsOrGroupsCourses("courses", "columns");
+    let coursesOrder = getOrder(coursesPanel, "courses");
+    let coursesGroups = getCheckedColumnsOrGroupsCourses("courses", "groups");
+    let coursesTransformations = getTransformations(coursesPanel);
+    // TODO: get data from rooms panel
+    let roomsPanel = document.getElementById("tab-rooms");
+    let roomsConditions = getConditions(roomsPanel);
+    let roomsColumns = getCheckedColumnsOrGroupsRooms("rooms", "columns");
+    let roomsOrder = getOrder(roomsPanel, "rooms");
+    let roomsGroups = getCheckedColumnsOrGroupsRooms("rooms", "groups");
+    let roomsTransformations = getTransformations(roomsPanel);
 
-    let query = `{"WHERE":${conditions},"OPTIONS":{"COLUMNS":[${checkedColumns.toString()}],"ORDER":${order}}}`;
-
+    let query = formatQuery(coursesConditions, coursesColumns, coursesOrder, coursesGroups, coursesTransformations, roomsConditions, roomsColumns, roomsOrder, roomsGroups, roomsTransformations);
     return JSON.parse(query);
 };
 
-function getTransformations() {
-    let transformations = document.getElementsByClassName("control-group transformation");
-
+function formatQuery(coursesConditions, coursesColumns, coursesOrder, coursesGroups, coursesTransformations, roomsConditions, roomsColumns, roomsOrder, roomsGroups, roomsTransformations) {
+    // TODO
+    let query = `{"WHERE":${coursesConditions},"OPTIONS":{"COLUMNS":[${coursesColumns.toString()}],"ORDER":${coursesOrder}}}`;
+    // let x = `{"WHERE":MacWuzHere69420,"OPTIONS":{"COLUMNS":[MacWuzHere69420],"ORDER":MacWuzHere69420}}`;
+    // let y =
+    // {
+    //     "WHERE":{
+    //         "MacWuzHere69420"
+    //     },
+    //     "OPTIONS":{
+    //         "COLUMNS": [
+    //
+    //         ],
+    //         "ORDER": ""
+    //     },
+    //     "TRANSFORMATIONS":{
+    //         "GROUP": [
+    //
+    //         ],
+    //         "APPLY": [
+    //
+    //         ]
+    //     }
+    // }
+    return query;
 }
 
-function getOrder() {
-    let coursesOrder = document.getElementsByClassName("control order fields")[0].getElementsByTagName("option");
+function getTransformations(panel) {
+    let transformations = panel.getElementsByClassName("control-group transformation");
+    if (transformations.length === 0) {
+        return null;
+    }
+    let controlGroupTransformations = [];
+    for (let transformation of transformations) {
+        let transformationCondition = getControlTransformation(transformation, panel);
+        controlGroupTransformations.push(transformationCondition);
+    }
+    return controlGroupTransformations;
+}
+
+function getControlTransformation(condition, panel) {
+    let comparisonFields = panel.getElementsByClassName("control fields")[0].getElementsByTagName("option");
+    let selectedCompField = Array.from(comparisonFields).filter(function (field) {
+        return field.hasAttribute("selected");
+    });
+    let operators = panel.getElementsByClassName("control operators")[0].getElementsByTagName("option");
+    let selectedOperator = Array.from(operators).filter(function (operator) {
+        return operator.hasAttribute("selected");
+    });
+    let controlTerm = panel.getElementsByClassName("control term")[0].getElementsByTagName("input")[0].getAttribute("value");
+
+    let operator = selectedOperator[0].getAttribute("value");
+    let compField = selectedCompField[0].getAttribute("value");
+    let toReturn = `{"${operator}":{"courses_${compField}": "${controlTerm}"}}`;
+    return toReturn;
+}
+
+function getOrder(panel, datasetType) {
+    let coursesOrder = panel.getElementsByClassName("control order fields")[0].getElementsByTagName("option");
     let selectedOrders = Array.from(coursesOrder).filter(function (order) {
         return order.hasAttribute("selected");
     });
@@ -35,16 +95,16 @@ function getOrder() {
         selectedOrders.forEach(function (order) {
             toReturn += `${order.getAttribute("value")}`;
         });
-        return `"courses_${toReturn}"`;
+        return `"${datasetType}_${toReturn}"`;
     }
-    //let descending = document.getElementsByClassName("control descending")[0].getElementsByTagName("input").hasAttribute("checked");
+    //TODO: let descending = document.getElementsByClassName("control descending")[0].getElementsByTagName("input").hasAttribute("checked");
 }
 
-function getConditions() {
-    let overallLogic = getOverallLogicCondition();
-    let controlGroupConditions = getControlGroupConditions();
+function getConditions(panel) {
+    let overallLogic = getOverallLogicCondition(panel);
+    let controlGroupConditions = getControlGroupConditions(panel);
     if (controlGroupConditions === null) {
-        // TODO;
+        return null;
     }
     //let toReturn = `${controlGroupConditions}`;
     let toReturn = "";
@@ -60,9 +120,23 @@ function getConditions() {
     return toReturn;
 }
 
-function getControlGroupConditions() {
-    if (document.getElementsByClassName("control-group condition").length > 0) {
-        let conditions = document.getElementsByClassName("control-group condition");
+function getOverallLogicCondition(panel) {
+    let overallLogic = "";
+    if (panel.getElementsByClassName("control conditions-all-radio")[0].getElementsByTagName("input")[0].hasAttribute("checked")) {
+        overallLogic = "AND";
+    }
+    if (panel.getElementsByClassName("control conditions-any-radio")[0].getElementsByTagName("input")[0].hasAttribute("checked")) {
+        overallLogic = "OR";
+    }
+    if (panel.getElementsByClassName("control conditions-none-radio")[0].getElementsByTagName("input")[0].hasAttribute("checked")) {
+        overallLogic = "NOT";
+    }
+    return overallLogic;
+}
+
+function getControlGroupConditions(panel) {
+    if (panel.getElementsByClassName("control-group condition").length > 0) {
+        let conditions = panel.getElementsByClassName("control-group condition");
         let length = conditions.length;
         if (length === 0) {
             return null;
@@ -70,27 +144,29 @@ function getControlGroupConditions() {
         let controlGroupConditions = [];
         for (let i = 0; i < length; i++) {
             let condition = conditions[i];
-            let controlCondition = getControlCondition(condition);
+            let controlCondition = getControlCondition(condition, panel);
             controlGroupConditions.push(controlCondition);
         }
         return controlGroupConditions;
+    } else {
+        return null;
     }
 }
 
-function getControlCondition(condition) {
+function getControlCondition(condition, panel) {
     let logic = "";
     if (condition.getElementsByClassName("control not")[0].getElementsByTagName("input")[0].hasAttribute("checked")) {
         logic = "NOT";
     }
-    let comparisonFields = document.getElementsByClassName("control fields")[0].getElementsByTagName("option");
+    let comparisonFields = panel.getElementsByClassName("control fields")[0].getElementsByTagName("option");
     let selectedCompField = Array.from(comparisonFields).filter(function (field) {
         return field.hasAttribute("selected");
     });
-    let operators = document.getElementsByClassName("control operators")[0].getElementsByTagName("option");
+    let operators = panel.getElementsByClassName("control operators")[0].getElementsByTagName("option");
     let selectedOperator = Array.from(operators).filter(function (operator) {
         return operator.hasAttribute("selected");
     });
-    let controlTerm = document.getElementsByClassName("control term")[0].getElementsByTagName("input")[0].getAttribute("value");
+    let controlTerm = panel.getElementsByClassName("control term")[0].getElementsByTagName("input")[0].getAttribute("value");
 
     let operator = selectedOperator[0].getAttribute("value");
     let compField = selectedCompField[0].getAttribute("value");
@@ -101,87 +177,85 @@ function getControlCondition(condition) {
     return toReturn;
 }
 
-function getOverallLogicCondition() {
-    let overallLogic = "";
-    if (document.getElementById("courses-conditiontype-all").hasAttribute("checked")) {
-        overallLogic = "AND";
-    }
-    if (document.getElementById("courses-conditiontype-any").hasAttribute("checked")) {
-        overallLogic = "OR";
-    }
-    if (document.getElementById("courses-conditiontype-none").hasAttribute("checked")) {
-        overallLogic = "NOT";
-    }
-    return overallLogic;
-}
-
-function getCheckedGroups(datasetType) {
+function getCheckedColumnsOrGroupsRooms(datasetType, columnsOrGroups) {
     let checkedGroups = [];
-    if (document.getElementById("courses-groups-field-audit").hasAttribute("checked")) {
-        checkedGroups.push("AUDIT");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-address`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_address"`);
     }
-    if (document.getElementById("courses-groups-field-avg").hasAttribute("checked")) {
-        checkedGroups.push("AVG");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-fullname`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_fullname"`);
     }
-    if (document.getElementById("courses-groups-field-dept").hasAttribute("checked")) {
-        checkedGroups.push(`"courses_dept"`);
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-furniture`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_furniture"`);
     }
-    if (document.getElementById("courses-groups-field-fail").hasAttribute("checked")) {
-        checkedGroups.push("FAIL");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-href`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_href"`);
     }
-    if (document.getElementById("courses-groups-field-id").hasAttribute("checked")) {
-        checkedGroups.push(`"courses_id"`);
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-address`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_address"`);
     }
-    if (document.getElementById("courses-groups-field-instructor").hasAttribute("checked")) {
-        checkedGroups.push("INSTRUCTOR");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-lat`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_lat"`);
     }
-    if (document.getElementById("courses-groups-field-pass").hasAttribute("checked")) {
-        checkedGroups.push("PASS");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-lon`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_lon"`);
     }
-    if (document.getElementById("courses-groups-field-title").hasAttribute("checked")) {
-        checkedGroups.push("TITLE");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-name`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_name"`);
     }
-    if (document.getElementById("courses-groups-field-uuid").hasAttribute("checked")) {
-        checkedGroups.push("UUID");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-number`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_number"`);
     }
-    if (document.getElementById("courses-groups-field-year").hasAttribute("checked")) {
-        checkedGroups.push("YEAR");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-seats`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_seats"`);
+    }
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-shortname`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_shortname"`);
+    }
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-type`).hasAttribute("checked")) {
+        checkedGroups.push(`"${datasetType}_type"`);
+    }
+    if (checkedGroups.length === 0) {
+        return null;
     }
     return checkedGroups;
 }
 
 
-function getCheckedColumns(datasetType) {
+function getCheckedColumnsOrGroupsCourses(datasetType, columnsOrGroups) {
     let checkedColumns = [];
-    if (document.getElementById("courses-columns-field-audit").hasAttribute("checked")) {
-        checkedColumns.push("AUDIT");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-audit`).hasAttribute("checked")) {
+        checkedColumns.push(`"${datasetType}_audit"`);
     }
-    if (document.getElementById("courses-columns-field-avg").hasAttribute("checked")) {
-        checkedColumns.push("AVG");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-avg`).hasAttribute("checked")) {
+        checkedColumns.push(`"${datasetType}_avg"`);
     }
-    if (document.getElementById("courses-columns-field-dept").hasAttribute("checked")) {
-        checkedColumns.push(`"courses_dept"`);
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-dept`).hasAttribute("checked")) {
+        checkedColumns.push(`"${datasetType}_dept"`);
     }
-    if (document.getElementById("courses-columns-field-fail").hasAttribute("checked")) {
-        checkedColumns.push("FAIL");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-fail`).hasAttribute("checked")) {
+        checkedColumns.push(`"${datasetType}_fail"`);
     }
-    if (document.getElementById("courses-columns-field-id").hasAttribute("checked")) {
-        checkedColumns.push(`"courses_id"`);
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-id`).hasAttribute("checked")) {
+        checkedColumns.push(`"${datasetType}_id"`);
     }
-    if (document.getElementById("courses-columns-field-instructor").hasAttribute("checked")) {
-        checkedColumns.push("INSTRUCTOR");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-instructor`).hasAttribute("checked")) {
+        checkedColumns.push(`"${datasetType}_instructor"`);
     }
-    if (document.getElementById("courses-columns-field-pass").hasAttribute("checked")) {
-        checkedColumns.push("PASS");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-pass`).hasAttribute("checked")) {
+        checkedColumns.push(`"${datasetType}_pass"`);
     }
-    if (document.getElementById("courses-columns-field-title").hasAttribute("checked")) {
-        checkedColumns.push("TITLE");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-title`).hasAttribute("checked")) {
+        checkedColumns.push(`"${datasetType}_title"`);
     }
-    if (document.getElementById("courses-columns-field-uuid").hasAttribute("checked")) {
-        checkedColumns.push("UUID");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-uuid`).hasAttribute("checked")) {
+        checkedColumns.push(`"${datasetType}_uuid"`);
     }
-    if (document.getElementById("courses-columns-field-year").hasAttribute("checked")) {
-        checkedColumns.push("YEAR");
+    if (document.getElementById(`${datasetType}-${columnsOrGroups}-field-year`).hasAttribute("checked")) {
+        checkedColumns.push(`"${datasetType}_year"`);
+    }
+    if (checkedColumns.length === 0) {
+        return null;
     }
     return checkedColumns;
 }
