@@ -28,7 +28,17 @@ CampusExplorer.buildQuery = function () {
 
 function formatQuery(coursesConditions, coursesColumns, coursesOrder, coursesGroups, coursesTransformations, roomsConditions, roomsColumns, roomsOrder, roomsGroups, roomsTransformations) {
     // TODO
-    let query = `{"WHERE":${coursesConditions},"OPTIONS":{"COLUMNS":[${coursesColumns.toString()}],"ORDER":${coursesOrder}}}`;
+    let query = `{"WHERE":${coursesConditions},` +
+                `"OPTIONS":{"COLUMNS":[${validate(coursesColumns).toString()}],` +
+                `"ORDER":${coursesOrder}}}`;
+
+    function validate(input) {
+        if (input === null) {
+            return "";
+        } else {
+            return input;
+        }
+    }
     // let x = `{"WHERE":MacWuzHere69420,"OPTIONS":{"COLUMNS":[MacWuzHere69420],"ORDER":MacWuzHere69420}}`;
     // let y =
     // {
@@ -104,7 +114,7 @@ function getConditions(panel) {
     let overallLogic = getOverallLogicCondition(panel);
     let controlGroupConditions = getControlGroupConditions(panel);
     if (controlGroupConditions === null) {
-        return null;
+        return "{}";
     }
     //let toReturn = `${controlGroupConditions}`;
     let toReturn = "";
