@@ -83,9 +83,7 @@ export default class Scheduler implements IScheduler {
                         distanceArray[z] += distance;
                     }
                 }
-                let tries = 0;
-                while (distanceArray.length !== 0 && tries < 20) {
-                    tries++;
+                while (distanceArray.length !== 0) {
                     let smallestIndex = this.findMinIndex(distanceArray);
                     let added = false;
                     if (smallestIndex !== undefined &&
@@ -97,18 +95,19 @@ export default class Scheduler implements IScheduler {
                         toAdd[2] = roomsAndTimeSlot[smallestIndex][1];
                         finalResult.push(toAdd);
                         added = true;
+                        break;
                     } else {
                         distanceArray.splice(smallestIndex, 1);
                     }
-                    if (added === true && this.calculateScore(finalResult, sectionSorted) > score1) {
-                        score1 = this.calculateScore(finalResult, sectionSorted);
-                        roomsAndTimeSlot.splice(smallestIndex, 1);
-                        distanceArray.splice(smallestIndex, 1);
-                        break;
-                    } else if (added === true) {
-                        distanceArray.splice(smallestIndex, 1);
-                        finalResult.pop();
-                    }
+                    // if (added === true && this.calculateScore(finalResult, sectionSorted) > score1) {
+                    //     score1 = this.calculateScore(finalResult, sectionSorted);
+                    //     roomsAndTimeSlot.splice(smallestIndex, 1);
+                    //     distanceArray.splice(smallestIndex, 1);
+                    //     break;
+                    // } else if (added === true) {
+                    //     distanceArray.splice(smallestIndex, 1);
+                    //     finalResult.pop();
+                    // }
                 }
             }
         }
