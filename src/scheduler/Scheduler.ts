@@ -21,7 +21,7 @@ export default class Scheduler implements IScheduler {
                 return 0;
             }
         });
-        this.calculateTotalStudents(sectionSorted);
+        this.setTotalStudents(sectionSorted);
         let roomsSorted: SchedRoom[] = rooms.sort( function (a, b) {
             let numSeatsA = a.rooms_seats;
             let numSeatsB = b.rooms_seats;
@@ -57,7 +57,6 @@ export default class Scheduler implements IScheduler {
     private makeSchedule(sectionSorted: SchedSection[], roomsSorted: SchedRoom[]):
         Array<[SchedRoom, SchedSection, TimeSlot]> {
         let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
-        roomsSorted = this.groupByBuilding(roomsSorted);
         let roomsAndTimeSlot = this.insertTimetoRooms(roomsSorted);
         let roomsToPass2 = JSON.parse(JSON.stringify(roomsAndTimeSlot));
         finalResult = this.algo2(roomsToPass2, sectionSorted);
@@ -183,11 +182,15 @@ export default class Scheduler implements IScheduler {
         let totalDistance = 0;
         let i;
         let j;
-        for ( i = 0; i < result.length ; i++) {
-            for (j = i + 1 ; j < result.length ; j++) {
-                totalDistance += this.getDistanceFromLatLonInKm(result[i][0].rooms_lat, result[i][0].rooms_lon,
-                        result[j][0].rooms_lat , result[j][0].rooms_lon);
-                }
+        // for ( i = 0; i < result.length ; i++) {
+        //     for (j = i + 1 ; j < result.length ; j++) {
+        //         totalDistance += this.getDistanceFromLatLonInKm(result[i][0].rooms_lat, result[i][0].rooms_lon,
+        //                 result[j][0].rooms_lat , result[j][0].rooms_lon);
+        //         }
+        // }
+        for ( i = 1; i < result.length ; i++) {
+            totalDistance += this.getDistanceFromLatLonInKm(result[0][0].rooms_lat, result[0][0].rooms_lon,
+                result[i][0].rooms_lat , result[i][0].rooms_lon);
         }
         return totalDistance;
     }
@@ -195,10 +198,7 @@ export default class Scheduler implements IScheduler {
     private calculateScore(results: Array<[SchedRoom, SchedSection, TimeSlot]>, sections: SchedSection[]):
         number {
         let D = this.getTotalDistance(results);
-        let E = this.calculateEnrolled(results);
-        let totalEnrolled = this.calculateTotalStudents(sections);
-        E = E / totalEnrolled;
-        let score = E + ( 1 - D);
+        let score = ( 1 - D);
         return score;
     }
 
@@ -210,12 +210,12 @@ export default class Scheduler implements IScheduler {
         return totalEnrolled;
     }
 
-    private  calculateTotalStudents(sections: SchedSection[]) {
+    private setTotalStudents(sections: SchedSection[]) {
         let totalStudents = 0;
         for (const section of sections) {
             totalStudents += section.courses_fail + section.courses_pass + section.courses_audit;
         }
-        return totalStudents;
+        this.totalStudents = totalStudents;
     }
 
     private getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number): any {
