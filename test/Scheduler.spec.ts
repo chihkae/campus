@@ -295,22 +295,22 @@ describe("Facade D3", function () {
         {
             rooms_shortname: "BUCH",
             rooms_number: "A101",
-            rooms_seats: 275,
+            rooms_seats: 300,
             rooms_lat: 90.26826,
             rooms_lon: -123.25468
         },
         {
             rooms_shortname: "BUCH",
             rooms_number: "A102",
-            rooms_seats: 120,
+            rooms_seats: 1,
             rooms_lat: 90.26826,
-            rooms_lon: -124.25468
+            rooms_lon: -123.25489
         },
         {
             rooms_shortname: "BUCH",
             rooms_number: "A103",
-            rooms_seats: 200,
-            rooms_lat: 90.26825,
+            rooms_seats: 102,
+            rooms_lat: 88.26825,
             rooms_lon: -123.25467
         }
     ];
