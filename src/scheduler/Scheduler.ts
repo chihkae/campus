@@ -84,7 +84,7 @@ export default class Scheduler implements IScheduler {
                     }
                 }
                 let tries = 0;
-                while (distanceArray.length !== 0 && tries < 3) {
+                while (distanceArray.length !== 0 && tries < 20) {
                     tries++;
                     let smallestIndex = this.findMinIndex(distanceArray);
                     let added = false;
