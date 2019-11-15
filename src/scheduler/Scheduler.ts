@@ -58,15 +58,8 @@ export default class Scheduler implements IScheduler {
         Array<[SchedRoom, SchedSection, TimeSlot]> {
         let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
         let roomsAndTimeSlot = this.insertTimetoRooms(roomsSorted);
-        let roomsToPass = JSON.parse(JSON.stringify(roomsAndTimeSlot));
         let roomsToPass2 = JSON.parse(JSON.stringify(roomsAndTimeSlot));
-        let algo1 = this.algo1(roomsToPass, sectionSorted);
-        let algo2 = this.algo2(roomsToPass2, sectionSorted);
-        if (this.calculateScore(algo1, sectionSorted) > this.calculateScore(algo2, sectionSorted)) {
-            finalResult = algo1;
-        } else {
-            finalResult = algo2;
-        }
+        finalResult = this.algo2(roomsToPass2, sectionSorted);
         return finalResult;
     }
 
