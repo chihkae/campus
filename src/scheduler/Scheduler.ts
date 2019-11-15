@@ -67,7 +67,6 @@ export default class Scheduler implements IScheduler {
     private algo2(roomsAndTimeSlot: any, sectionSorted: SchedSection[]):
         Array<[SchedRoom, SchedSection, TimeSlot]> {
         let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
-        let score1 = -1;
         let j;
         for (j = 0; j < sectionSorted.length; j++) {
             let count = 0;
@@ -97,6 +96,7 @@ export default class Scheduler implements IScheduler {
                     roomsAndTimeSlot.splice(count, 1 );
                     break;
                 }
+                count++;
             }
                     // } else {
                     //     distanceArray.splice(smallestIndex, 1);
