@@ -39,27 +39,6 @@ function formatQuery(coursesConditions, coursesColumns, coursesOrder, coursesGro
             return input;
         }
     }
-    // let x = `{"WHERE":MacWuzHere69420,"OPTIONS":{"COLUMNS":[MacWuzHere69420],"ORDER":MacWuzHere69420}}`;
-    // let y =
-    // {
-    //     "WHERE":{
-    //         "MacWuzHere69420"
-    //     },
-    //     "OPTIONS":{
-    //         "COLUMNS": [
-    //
-    //         ],
-    //         "ORDER": ""
-    //     },
-    //     "TRANSFORMATIONS":{
-    //         "GROUP": [
-    //
-    //         ],
-    //         "APPLY": [
-    //
-    //         ]
-    //     }
-    // }
     return query;
 }
 
@@ -118,12 +97,24 @@ function getConditions(panel) {
     }
     //let toReturn = `${controlGroupConditions}`;
     let toReturn = "";
-    controlGroupConditions.forEach((cond) => {
+    controlGroupConditions.forEach((cond, index) => {
         let condAsString = cond;
-        toReturn += condAsString;
+        if (controlGroupConditions.length > 1) {
+            if (index !== controlGroupConditions.length - 1) {
+                toReturn += condAsString + ",";
+            } else if (index === controlGroupConditions.length - 1) {
+                toReturn += condAsString;
+            }
+        } else {
+            toReturn += condAsString;
+        }
     });
     if (controlGroupConditions.length > 1 && overallLogic !== "") {
-        toReturn = `{"${overallLogic}":${toReturn}}`;
+        if (overallLogic === "AND" || overallLogic === "OR") {
+            toReturn = `{"${overallLogic}":[${toReturn}]}`
+        } else if (overallLogic === "NOT") {
+            toReturn = `{"${overallLogic}":${toReturn}}`;
+        }
     } else {
         toReturn = `${toReturn}`;
     }
@@ -154,7 +145,7 @@ function getControlGroupConditions(panel) {
         let controlGroupConditions = [];
         for (let i = 0; i < length; i++) {
             let condition = conditions[i];
-            let controlCondition = getControlCondition(condition, panel);
+            let controlCondition = getControlCondition(condition);
             controlGroupConditions.push(controlCondition);
         }
         return controlGroupConditions;
@@ -163,24 +154,30 @@ function getControlGroupConditions(panel) {
     }
 }
 
-function getControlCondition(condition, panel) {
+function getControlCondition(condition) {
     let logic = "";
     if (condition.getElementsByClassName("control not")[0].getElementsByTagName("input")[0].hasAttribute("checked")) {
         logic = "NOT";
     }
-    let comparisonFields = panel.getElementsByClassName("control fields")[0].getElementsByTagName("option");
+    let comparisonFields = condition.getElementsByClassName("control fields")[0].getElementsByTagName("option");
     let selectedCompField = Array.from(comparisonFields).filter(function (field) {
         return field.hasAttribute("selected");
     });
-    let operators = panel.getElementsByClassName("control operators")[0].getElementsByTagName("option");
+    let operators = condition.getElementsByClassName("control operators")[0].getElementsByTagName("option");
     let selectedOperator = Array.from(operators).filter(function (operator) {
         return operator.hasAttribute("selected");
     });
-    let controlTerm = panel.getElementsByClassName("control term")[0].getElementsByTagName("input")[0].getAttribute("value");
+    let controlTerm = condition.getElementsByClassName("control term")[0].getElementsByTagName("input")[0].getAttribute("value");
 
     let operator = selectedOperator[0].getAttribute("value");
     let compField = selectedCompField[0].getAttribute("value");
-    let toReturn = `{"${operator}":{"courses_${compField}": "${controlTerm}"}}`;
+    let toReturn = "";
+    if (compField === "avg" || compField === "pass" || compField === "fail" || compField === "audit" || compField === "year") {
+        controlTerm = Number(controlTerm);
+        toReturn = `{"${operator}":{"courses_${compField}": ${controlTerm}}}`;
+    } else {
+        toReturn = `{"${operator}":{"courses_${compField}": "${controlTerm}"}}`;
+    }
     if (logic === "NOT") {
         toReturn = `{"${logic}":${toReturn}}`;
     }
