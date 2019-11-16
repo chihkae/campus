@@ -57,6 +57,7 @@ export default class Scheduler implements IScheduler {
     private makeSchedule(sectionSorted: SchedSection[], roomsSorted: SchedRoom[]):
         Array<[SchedRoom, SchedSection, TimeSlot]> {
         let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
+        roomsSorted = this.groupByBuilding(roomsSorted);
         let roomsAndTimeSlot = this.insertTimetoRooms(roomsSorted);
         let roomsToPass2 = JSON.parse(JSON.stringify(roomsAndTimeSlot));
         finalResult = this.algo2(roomsToPass2, sectionSorted);

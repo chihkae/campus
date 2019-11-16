@@ -310,8 +310,50 @@ describe("Facade D3", function () {
             rooms_shortname: "BUCH",
             rooms_number: "A103",
             rooms_seats: 102,
+            rooms_lat: 812.26825,
+            rooms_lon: -1242.25467
+        },
+        {
+            rooms_shortname: "BUCH",
+            rooms_number: "A103",
+            rooms_seats: 102,
             rooms_lat: 88.26825,
             rooms_lon: -123.25467
+        },
+        {
+            rooms_shortname: "AERL",
+            rooms_number: "120",
+            rooms_seats: 240,
+            rooms_lat: 2.26372,
+            rooms_lon: -50.25099
+        },
+        {
+            rooms_shortname: "CPSC",
+            rooms_number: "A102",
+            rooms_seats: 3,
+            rooms_lat: 90.234,
+            rooms_lon: -123.253
+        },
+        {
+            rooms_shortname: "CPSC",
+            rooms_number: "A102",
+            rooms_seats: 3,
+            rooms_lat: 90.234,
+            rooms_lon: -123.253
+        },
+        {
+            rooms_shortname: "CPSC",
+            rooms_number: "A102",
+            rooms_seats: 3,
+            rooms_lat: 90.234,
+            rooms_lon: -123.253
+        },
+        {
+            rooms_shortname: "12",
+            rooms_number: "A1343",
+            rooms_seats: 102,
+            rooms_lat: 812.26825,
+            rooms_lon: -1242.25467
         }
     ];
 
