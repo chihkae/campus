@@ -71,7 +71,7 @@ export default class Scheduler implements IScheduler {
         let j;
         for (j = 0; j < sectionSorted.length; j++) {
             let count = 0;
-            while (roomsAndTimeSlot.length !== 0) {
+            while (roomsAndTimeSlot.length !== 0 && count !== roomsAndTimeSlot.length) {
                 // let distanceArray: number[] = Array(roomsAndTimeSlot.length).fill(0);
                 // let k;
                 // let z;
