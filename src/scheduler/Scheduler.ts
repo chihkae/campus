@@ -60,8 +60,7 @@ export default class Scheduler implements IScheduler {
     }
 
 
-    private algo2(roomsAndTimeSlot: any, sectionSorted: SchedSection[]):
-        Array<[SchedRoom, SchedSection, TimeSlot]> {
+    private algo2(roomsAndTimeSlot: any, sectionSorted: SchedSection[]): Array<[SchedRoom, SchedSection, TimeSlot]> {
         let finalResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
         let j;
         for (j = 0; j < sectionSorted.length; j++) {
@@ -82,28 +81,41 @@ export default class Scheduler implements IScheduler {
                 count++;
             }
         }
+        finalResult = this.optimize(finalResult, sectionSorted, roomsAndTimeSlot);
+        return finalResult;
+    }
+
+    private optimize(finalResult: Array<[SchedRoom, SchedSection, TimeSlot]>,
+                     sectionSorted: SchedSection[], roomsAndTimeSlot: any): Array<[SchedRoom, SchedSection, TimeSlot]> {
         let score = this.calculateScore(finalResult, sectionSorted);
         let c;
-        let y;
         for (c = 0; c < finalResult.length ; c++) {
-            let original = JSON.parse(JSON.stringify(finalResult[c][0]));
             let originalStudens = finalResult[c][1].courses_pass + finalResult[c][1].courses_fail
                 + finalResult[c][1].courses_audit;
-            for (y = 0 ; y < roomsAndTimeSlot.length; y++) {
-                let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
-                toAdd[0] = roomsAndTimeSlot[y][0];
-                toAdd[1] = finalResult[c][1];
-                toAdd[2] = roomsAndTimeSlot[y][1];
-                finalResult[c][0] = JSON.parse(JSON.stringify(roomsAndTimeSlot[y][0]));
-                if (this.calculateScore(finalResult, sectionSorted) > score &&
-                    roomsAndTimeSlot[y][0].rooms_seats >= originalStudens &&
-                    !this.conflictInSectionTime(toAdd, finalResult)) {
-                    score = this.calculateScore(finalResult, sectionSorted);
-                    roomsAndTimeSlot.slice(y, 1);
-                    break;
-                } else {
-                    finalResult[c][0] = original;
+            let count = 0;
+            let bestIndex;
+            while (roomsAndTimeSlot.length !== 0 && count !== roomsAndTimeSlot.length) {
+                if (roomsAndTimeSlot[count][0].rooms_seats >= originalStudens) {
+                    let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
+                    toAdd[0] = roomsAndTimeSlot[count][0];
+                    toAdd[1] = finalResult[c][1];
+                    toAdd[2] = roomsAndTimeSlot[count][1];
+                    let temp = JSON.parse(JSON.stringify(finalResult));
+                    temp[c][0] = JSON.parse(JSON.stringify(roomsAndTimeSlot[count][0]));
+                    if (this.calculateScore(temp, sectionSorted) > score &&
+                        !this.conflictInSectionTime(toAdd, temp)) {
+                        bestIndex = count;
+                        score = this.calculateScore(temp, sectionSorted);
+                    }
                 }
+                count++;
+            }
+            if (bestIndex !== undefined) {
+                finalResult[c][0] = roomsAndTimeSlot[bestIndex][0];
+                roomsAndTimeSlot.splice(bestIndex, 1);
+                score = this.calculateScore(finalResult, sectionSorted);
+            } else {
+                score = this.calculateScore(finalResult, sectionSorted);
             }
         }
         return finalResult;
