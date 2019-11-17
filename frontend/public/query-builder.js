@@ -74,19 +74,38 @@ function getControlTransformation(condition, panel) {
 
 function getOrder(panel, datasetType) {
     let coursesOrder = panel.getElementsByClassName("control order fields")[0].getElementsByTagName("option");
+    let toReturn = "";
     let selectedOrders = Array.from(coursesOrder).filter(function (order) {
         return order.hasAttribute("selected");
     });
     if (selectedOrders.length === 0) {
         return null;
+    } else if (selectedOrders.length === 1) {
+        toReturn = `"${datasetType}_${selectedOrders[0].getAttribute("value")}"`;
+        return toReturn;
     } else {
-        let toReturn = "";
-        selectedOrders.forEach(function (order) {
-            toReturn += `${order.getAttribute("value")}`;
+        let descending = "";
+        if (panel.getElementsByClassName("control descending")[0].getElementsByTagName("input")[0].hasAttribute("checked")) {
+            descending = `"DOWN"`;
+        } else {
+            descending = `"UP"`;
+        }
+        toReturn = `{"dir":${descending},"keys":[`;
+        selectedOrders.forEach(function (order, index) {
+            if (selectedOrders.length > 1) {
+                if (index !== selectedOrders.length - 1) {
+                    toReturn += `"${datasetType}_${order.getAttribute("value")}"` + ",";
+                } else if (index === selectedOrders.length - 1) {
+                    toReturn += `"${datasetType}_${order.getAttribute("value")}"`
+                }
+            } else {
+                toReturn += `"${datasetType}_${order.getAttribute("value")}"`;
+            }
+            // toReturn += `${order.getAttribute("value")}`;
         });
-        return `"${datasetType}_${toReturn}"`;
+        // return `"${datasetType}_${toReturn}"`;
+        return toReturn + "]}";
     }
-    //TODO: let descending = document.getElementsByClassName("control descending")[0].getElementsByTagName("input").hasAttribute("checked");
 }
 
 function getConditions(panel) {
@@ -113,7 +132,7 @@ function getConditions(panel) {
         if (overallLogic === "AND" || overallLogic === "OR") {
             toReturn = `{"${overallLogic}":[${toReturn}]}`
         } else if (overallLogic === "NOT") {
-            toReturn = `{"${overallLogic}":${toReturn}}`;
+            toReturn = `{"${overallLogic}":{${toReturn}}}`;
         }
     } else {
         toReturn = `${toReturn}`;
