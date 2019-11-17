@@ -94,7 +94,8 @@ export default class Scheduler implements IScheduler {
                 + finalResult[c][1].courses_audit;
             let count = 0;
             let bestIndex;
-            while (roomsAndTimeSlot.length !== 0 && count !== roomsAndTimeSlot.length) {
+            let tries = 0;
+            while (roomsAndTimeSlot.length !== 0 && count !== roomsAndTimeSlot.length && tries < 10) {
                 if (roomsAndTimeSlot[count][0].rooms_seats >= originalStudens) {
                     let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
                     toAdd[0] = roomsAndTimeSlot[count][0];
@@ -109,6 +110,7 @@ export default class Scheduler implements IScheduler {
                     }
                 }
                 count++;
+                tries++;
             }
             if (bestIndex !== undefined) {
                 finalResult[c][0] = roomsAndTimeSlot[bestIndex][0];
