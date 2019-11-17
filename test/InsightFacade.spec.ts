@@ -4,7 +4,7 @@ import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from ".
 import InsightFacade from "../src/controller/InsightFacade";
 import Log from "../src/Util";
 import TestUtil from "./TestUtil";
-import {getGeoLocation, getGeoResponse} from "../src/controller/DomTraverser";
+import {getGeoLocation} from "../src/controller/DomTraverser";
 
 // This should match the schema given to TestUtil.validate(..) in TestUtil.readTestQueries(..)
 // except 'filename' which is injected when the file is read.
@@ -357,12 +357,11 @@ describe("InsightFacade PerformQuery", () => {
     afterEach(function () {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
-
-    //  it("Should run test queries", function () {
+    // it ("Should run test queries", function () {
     //     describe("Dynamic InsightFacade PerformQuery tests", function () {
     //         for (const test of testQueries) {
-    //             if (test.filename === "test/queries/sortingEmptyArray.json") {
-    //                 it("dfdfd", function (done) {
+    //             if (test.filename === "test/queries/nottransformationopeartor2.json") {
+    //                 it(`[${test.filename}] ${test.title}`, function (done) {
     //                         insightFacade.performQuery(test.query).then((result) => {
     //                             TestUtil.checkQueryResult(test, result, done);
     //                         }).catch((err) => {

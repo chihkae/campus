@@ -21,15 +21,7 @@ describe("Facade D3", function () {
             courses_dept: "cpsc",
             courses_id: "388",
             courses_uuid: "1319",
-            courses_pass: 101,
-            courses_fail: 7,
-            courses_audit: 2
-        },
-        {
-            courses_dept: "cpsc",
-            courses_id: "323",
-            courses_uuid: "1319",
-            courses_pass: 101,
+            courses_pass: 103,
             courses_fail: 7,
             courses_audit: 2
         },
@@ -37,7 +29,7 @@ describe("Facade D3", function () {
             courses_dept: "cpsc",
             courses_id: "375",
             courses_uuid: "1319",
-            courses_pass: 101,
+            courses_pass: 1,
             courses_fail: 7,
             courses_audit: 2
         }
@@ -48,21 +40,28 @@ describe("Facade D3", function () {
         {
             rooms_shortname: "CPSC",
             rooms_number: "A102",
-            rooms_seats: 3,
+            rooms_seats: 500,
             rooms_lat: 90.234,
             rooms_lon: -123.253
         },
         {
             rooms_shortname: "CPSC",
             rooms_number: "A102",
-            rooms_seats: 3,
+            rooms_seats: 1,
             rooms_lat: 90.234,
             rooms_lon: -123.253
         },
         {
             rooms_shortname: "12",
             rooms_number: "A1343",
-            rooms_seats: 102,
+            rooms_seats: 150,
+            rooms_lat: 812.26825,
+            rooms_lon: -1242.25467
+        },
+        {
+            rooms_shortname: "12",
+            rooms_number: "A1343",
+            rooms_seats: 30,
             rooms_lat: 812.26825,
             rooms_lon: -1242.25467
         }

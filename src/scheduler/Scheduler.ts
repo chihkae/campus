@@ -1,12 +1,7 @@
 import {IScheduler, SchedRoom, SchedSection, TimeSlot} from "./IScheduler";
 import has = Reflect.has;
 export default class Scheduler implements IScheduler {
-    private firstRoomLat: number = undefined;
-    private firstRoomLon: number = undefined;
-    private score: number = 0;
     private totalStudents: number = 0;
-    private enrolled: number = 0;
-    private D: number = 0;
 
     public schedule(sections: SchedSection[], rooms: SchedRoom[]): Array<[SchedRoom, SchedSection, TimeSlot]> {
         let sectionSorted: SchedSection[] = sections.sort(function (a, b) {
@@ -72,45 +67,20 @@ export default class Scheduler implements IScheduler {
         for (j = 0; j < sectionSorted.length; j++) {
             let count = 0;
             while (roomsAndTimeSlot.length !== 0 && count !== roomsAndTimeSlot.length) {
-                // let distanceArray: number[] = Array(roomsAndTimeSlot.length).fill(0);
-                // let k;
-                // let z;
-                // for (k = 0; k < roomsAndTimeSlot.length - 2; k++) {
-                //     for (z = k + 1; z <= roomsAndTimeSlot.length - 1; z++) {
-                //         let distance: any = this.getDistanceFromLatLonInKm(roomsAndTimeSlot[k][0].rooms_lat,
-                //             roomsAndTimeSlot[k][0].rooms_lon, roomsAndTimeSlot[z][0].rooms_lat,
-                //             roomsAndTimeSlot[z][0].rooms_lon);
-                //         distanceArray[k] += distance;
-                //         distanceArray[z] += distance;
-                //     }
-                // }
-                // while (distanceArray.length !== 0) {
-                //     let smallestIndex = this.findMinIndex(distanceArray);
-                //     let added = false;
                 if (roomsAndTimeSlot[count][0].rooms_seats >= (sectionSorted[j].courses_audit +
                     sectionSorted[j].courses_pass + sectionSorted[j].courses_fail)) {
                     let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
                     toAdd[0] = roomsAndTimeSlot[count][0];
                     toAdd[1] = sectionSorted[j];
                     toAdd[2] = roomsAndTimeSlot[count][1];
-                    finalResult.push(toAdd);
-                    roomsAndTimeSlot.splice(count, 1 );
-                    break;
+                    if (!this.conflictInSectionTime(toAdd, finalResult)) {
+                        finalResult.push(toAdd);
+                        roomsAndTimeSlot.splice(count, 1 );
+                        break;
+                    }
                 }
                 count++;
             }
-                    // } else {
-                    //     distanceArray.splice(smallestIndex, 1);
-                    // }
-                    // if (added === true && this.calculateScore(finalResult, sectionSorted) > score1) {
-                    //     score1 = this.calculateScore(finalResult, sectionSorted);
-                    //     roomsAndTimeSlot.splice(smallestIndex, 1);
-                    //     distanceArray.splice(smallestIndex, 1);
-                    //     break;
-                    // } else if (added === true) {
-                    //     distanceArray.splice(smallestIndex, 1);
-                    //     finalResult.pop();
-                    // }
         }
         let score = this.calculateScore(finalResult, sectionSorted);
         let c;
@@ -120,9 +90,14 @@ export default class Scheduler implements IScheduler {
             let originalStudens = finalResult[c][1].courses_pass + finalResult[c][1].courses_fail
                 + finalResult[c][1].courses_audit;
             for (y = 0 ; y < roomsAndTimeSlot.length; y++) {
+                let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
+                toAdd[0] = roomsAndTimeSlot[y][0];
+                toAdd[1] = finalResult[c][1];
+                toAdd[2] = roomsAndTimeSlot[y][1];
                 finalResult[c][0] = JSON.parse(JSON.stringify(roomsAndTimeSlot[y][0]));
                 if (this.calculateScore(finalResult, sectionSorted) > score &&
-                    roomsAndTimeSlot[y][0].rooms_seats >= originalStudens) {
+                    roomsAndTimeSlot[y][0].rooms_seats >= originalStudens &&
+                    !this.conflictInSectionTime(toAdd, finalResult)) {
                     score = this.calculateScore(finalResult, sectionSorted);
                     roomsAndTimeSlot.slice(y, 1);
                     break;
@@ -132,22 +107,6 @@ export default class Scheduler implements IScheduler {
             }
         }
         return finalResult;
-    }
-
-    private findMinIndex(distanceArray: any[]): number {
-        let index;
-        let i;
-        let shortest;
-        for (i = 0; i < distanceArray.length ; i++) {
-            if (shortest === undefined) {
-                shortest = distanceArray[i];
-                index = i.valueOf();
-            } else if (distanceArray[i] < shortest) {
-                shortest = distanceArray[i];
-                index = i.valueOf();
-            }
-        }
-        return index;
     }
 
     private conflictInSectionTime(section: [SchedRoom, SchedSection , TimeSlot],
@@ -182,13 +141,6 @@ export default class Scheduler implements IScheduler {
     private getTotalDistance(result: Array<[SchedRoom, SchedSection, TimeSlot]>): number {
         let totalDistance = 0;
         let i;
-        let j;
-        // for ( i = 0; i < result.length ; i++) {
-        //     for (j = i + 1 ; j < result.length ; j++) {
-        //         totalDistance += this.getDistanceFromLatLonInKm(result[i][0].rooms_lat, result[i][0].rooms_lon,
-        //                 result[j][0].rooms_lat , result[j][0].rooms_lon);
-        //         }
-        // }
         for ( i = 1; i < result.length ; i++) {
             totalDistance += this.getDistanceFromLatLonInKm(result[0][0].rooms_lat, result[0][0].rooms_lon,
                 result[i][0].rooms_lat , result[i][0].rooms_lon);
@@ -201,14 +153,6 @@ export default class Scheduler implements IScheduler {
         let D = this.getTotalDistance(results);
         let score = ( 1 - D);
         return score;
-    }
-
-    private calculateEnrolled(results: Array<[SchedRoom, SchedSection, TimeSlot]>): number {
-        let totalEnrolled = 0;
-        for (const result of results) {
-            totalEnrolled += (result[1].courses_fail + result[1].courses_pass + result[1].courses_audit);
-        }
-        return totalEnrolled;
     }
 
     private setTotalStudents(sections: SchedSection[]) {

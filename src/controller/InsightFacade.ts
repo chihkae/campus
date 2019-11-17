@@ -41,7 +41,6 @@ export interface IQuery {
     getOrderKey(): string[];
     setIdString(s: string): void;
     getIdString(): string;
-    setGroup(s: string[]): void;
     setTransformations(s: string): void;
 }
 
@@ -71,6 +70,8 @@ export default class InsightFacade implements IInsightFacade {
             return addCoursesDataset(id, content, kind);
         } else if (kind === InsightDatasetKind.Rooms) {
             return addRoomsDataset(id, content, kind);
+        } else {
+            return Promise.reject((new InsightError("Dataset must be of course or rooms kind")));
         }
     }
 
