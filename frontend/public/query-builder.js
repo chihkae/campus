@@ -31,6 +31,14 @@ function formatQuery(coursesConditions, coursesColumns, coursesOrder, coursesGro
     let query = `{"WHERE":${coursesConditions},` +
                 `"OPTIONS":{"COLUMNS":[${validate(coursesColumns).toString()}],` +
                 `"ORDER":${coursesOrder}}}`;
+    let transformationPart = "";
+    if (coursesGroups != null || coursesTransformations != null) {
+        transformationPart = `"TRANSFORMATIONS":{"GROUP":[${coursesGroups}],"APPLY":[${coursesTransformations}]}`;
+        let queryPart1 = query.substring(0, query.length-1);
+        let queryPart2 = query.substring(query.length - 1);
+        let wholeQuery = queryPart1 + "," + transformationPart + queryPart2;
+        query = wholeQuery;
+    }
 
     function validate(input) {
         if (input === null) {
@@ -43,7 +51,7 @@ function formatQuery(coursesConditions, coursesColumns, coursesOrder, coursesGro
 }
 
 function getTransformations(panel) {
-    let transformations = panel.getElementsByClassName("control-group transformation");
+    let transformations = panel.getElementsByClassName("transformations-container")[0].getElementsByClassName("control-group transformation");
     if (transformations.length === 0) {
         return null;
     }
@@ -56,19 +64,20 @@ function getTransformations(panel) {
 }
 
 function getControlTransformation(condition, panel) {
-    let comparisonFields = panel.getElementsByClassName("control fields")[0].getElementsByTagName("option");
+    let comparisonFields = condition.getElementsByClassName("control fields")[0].getElementsByTagName("option");
     let selectedCompField = Array.from(comparisonFields).filter(function (field) {
         return field.hasAttribute("selected");
     });
-    let operators = panel.getElementsByClassName("control operators")[0].getElementsByTagName("option");
+    let operators = condition.getElementsByClassName("control operators")[0].getElementsByTagName("option");
     let selectedOperator = Array.from(operators).filter(function (operator) {
         return operator.hasAttribute("selected");
     });
-    let controlTerm = panel.getElementsByClassName("control term")[0].getElementsByTagName("input")[0].getAttribute("value");
+    let controlTerm = condition.getElementsByClassName("control term")[0].getElementsByTagName("input")[0].getAttribute("value");
 
     let operator = selectedOperator[0].getAttribute("value");
     let compField = selectedCompField[0].getAttribute("value");
-    let toReturn = `{"${operator}":{"courses_${compField}": "${controlTerm}"}}`;
+    //let toReturn = `{"${operator}":{"courses_${compField}": "${controlTerm}"}}`;
+    let toReturn = `{"${controlTerm}":{"${operator}":"courses_${compField}"}}`;
     return toReturn;
 }
 
