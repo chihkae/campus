@@ -95,7 +95,8 @@ export default class Scheduler implements IScheduler {
             let count = 0;
             let bestIndex;
             let tries = 0;
-            while (roomsAndTimeSlot.length !== 0 && count !== roomsAndTimeSlot.length && tries < 10) {
+            while (roomsAndTimeSlot.length !== 0 && count !== roomsAndTimeSlot.length &&
+            (tries < (roomsAndTimeSlot.length / 2))) {
                 if (roomsAndTimeSlot[count][0].rooms_seats >= originalStudens) {
                     let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
                     toAdd[0] = roomsAndTimeSlot[count][0];
