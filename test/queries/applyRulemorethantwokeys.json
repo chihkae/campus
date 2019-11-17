@@ -1,0 +1,36 @@
+{
+    "title": "sort courses with down direction",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 96
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "avgCount",
+                "overallAvg"
+            ]
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title"
+            ],
+            "APPLY": [
+                {
+                    "overallAvg": {
+                        "MAX": ["courses_avg","courses_id"]
+                    }
+                },
+                {
+                    "avgCount":{
+                        "COUNT": "courses_avg"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result":"InsightError"
+}

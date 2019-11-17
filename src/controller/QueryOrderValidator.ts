@@ -10,9 +10,9 @@ export class QueryOrderValidator {
         this.query = q;
     }
 
-    public getQuery(): Query {
-        return this.query;
-    }
+    // public getQuery(): Query {
+    //     return this.query;
+    // }
 
     public checkBeforeAnything(): void {
          if (typeof this.query.getWhere() !== "undefined" || typeof this.query.getOrderKey() !== "undefined" ||

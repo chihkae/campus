@@ -31,15 +31,6 @@ export class Query implements IQuery {
         return this.dir;
     }
 
-    public setGroup(s: any[]): void {
-        if (this.group === undefined) {
-            let values = Object.values(s);
-            this.group = new Array(values[0]);
-            return;
-        }
-        throw new InsightError();
-    }
-
     public setApplyKeys(s: any): void {
         if (this.applyKeys === undefined) {
             this.applyKeys = [];

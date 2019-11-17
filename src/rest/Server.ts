@@ -5,6 +5,8 @@
 import fs = require("fs");
 import restify = require("restify");
 import Log from "../Util";
+import InsightFacade from "../controller/InsightFacade";
+import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "../controller/IInsightFacade";
 
 /**
  * This configures the REST endpoints for the server.
@@ -13,10 +15,12 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
+    private static InsightFacade: InsightFacade;
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
         this.port = port;
+        Server.InsightFacade = new InsightFacade();
     }
 
     /**
@@ -62,9 +66,12 @@ export default class Server {
                 // This is an example endpoint that you can invoke by accessing this URL in your browser:
                 // http://localhost:4321/echo/hello
                 that.rest.get("/echo/:msg", Server.echo);
+                that.rest.put("/dataset/:id/:kind", Server.addDataset);
+                that.rest.del("/dataset/:id", Server.deleteDataset);
+                that.rest.post("/query", Server.performQuery);
+                that.rest.get("/datasets", Server.getDatasetsAdded);
 
                 // NOTE: your endpoints should go here
-
                 // This must be the last endpoint!
                 that.rest.get("/.*", Server.getStatic);
 
@@ -85,6 +92,83 @@ export default class Server {
                 reject(err);
             }
         });
+    }
+
+    private static getDatasetsAdded(req: restify.Request, res: restify.Response, next: restify.Next) {
+        return Server.InsightFacade.listDatasets().then((result: InsightDataset[]) => {
+            res.json(200, {result: result});
+            res.end();
+            return next();
+        }).catch((err: any) => {
+            res.write("dfdfdfdsfdf");
+            res.end();
+            return next();
+        });
+    }
+
+    private static deleteDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        return Server.InsightFacade.removeDataset(req.params.id).then((result: string) => {
+           res.json(200, {result: result});
+           res.end();
+           return next();
+        }).catch((err: any) => {
+            if (err instanceof InsightError) {
+                res.json(400, {error: "InsightError"});
+                res.end();
+                return next();
+            } else if (err instanceof NotFoundError) {
+                res.json(404, {error: "NotFoundError"});
+                res.end();
+                return next();
+            }
+        });
+    }
+
+    private static performQuery(req: restify.Request, res: restify.Response, next: restify.Next) {
+        return Server.InsightFacade.performQuery(req.body).then((result: any[]) => {
+            res.json(200, {result: result});
+            res.end();
+            return next();
+        }).catch((error: any) => {
+            if (error instanceof InsightError) {
+                res.json(400, {error: "InsightError"});
+                res.end();
+            }
+        });
+    }
+
+    private static addDataset(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let content;
+        try {
+            content = Buffer.from(req.body).toString("base64");
+            if (req.params.kind === InsightDatasetKind.Rooms || req.params.kind === InsightDatasetKind.Courses) {
+                return Server.InsightFacade.addDataset(req.params.id, content , req.params.kind)
+                    .then((result: string[]) => {
+                        // let addedIDs = [];
+                        // for (const value of Object.values(result)) {
+                        //     addedIDs.push(value);
+                        // }
+                        res.json(200, {result: result});
+                        res.end();
+                        return next();
+                    }).catch((err: any) => {
+                        Log.info("couldn't add dataset");
+                        res.json(400, {error: "dfdfdf"});
+                        res.end();
+                        return next();
+                    });
+            } else {
+                Log.info("couldn't add dataset");
+                res.status(400);
+                res.end();
+                return next();
+            }
+        } catch {
+            Log.info("buffer error");
+            res.json(400, {err: "dfdfd" });
+            res.end();
+            return next();
+        }
     }
 
     // The next two methods handle the echo service.

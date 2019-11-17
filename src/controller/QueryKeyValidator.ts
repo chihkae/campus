@@ -84,26 +84,26 @@ export class QueryKeyValidator {
         }
     }
 
-    public validateOrderKey(orderKey: any) {
-        let columnsKey: string[] = this.query.getColumnsKey();
-
-        if (typeof orderKey === "object") {
-            this.validateOrderWithDirAndMultipleKeys(orderKey);
-        } else if (typeof orderKey === "string") {
-            if (orderKey === "" || Object.entries(orderKey).length === 0) {
-                throw new InsightError("No order key");
-            }
-            if (columnsKey !== undefined) {
-                if (columnsKey.indexOf(orderKey) === -1) {
-                    throw new InsightError();
-                } else {
-                    this.query.setOrderKey(orderKey);
-                }
-            } else {
-                throw new InsightError("No column strings exist");
-            }
-        }
-    }
+    // public validateOrderKey(orderKey: any) {
+    //     let columnsKey: string[] = this.query.getColumnsKey();
+    //
+    //     if (typeof orderKey === "object") {
+    //         this.validateOrderWithDirAndMultipleKeys(orderKey);
+    //     } else if (typeof orderKey === "string") {
+    //         if (orderKey === "" || Object.entries(orderKey).length === 0) {
+    //             throw new InsightError("No order key");
+    //         }
+    //         if (columnsKey !== undefined) {
+    //             if (columnsKey.indexOf(orderKey) === -1) {
+    //                 throw new InsightError();
+    //             } else {
+    //                 this.query.setOrderKey(orderKey);
+    //             }
+    //         } else {
+    //             throw new InsightError("No column strings exist");
+    //         }
+    //     }
+    // }
 
     public validateApplyKey(applyArray: any[]) {
         if (!Array.isArray(applyArray)) {

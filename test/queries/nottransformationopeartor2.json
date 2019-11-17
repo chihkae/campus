@@ -1,0 +1,45 @@
+{
+    "title": "sort courses with down direction",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_avg": 90
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 90
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_avg",
+                "maxSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "maxSeats"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "APPLY": [
+                {
+                    "maxSeats": {
+                        "DIV": "courses_avg"
+                    }
+                }
+            ],
+            "GROUP": [
+                "courses_avg"
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
