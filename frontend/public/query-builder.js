@@ -7,33 +7,39 @@
  */
 
 CampusExplorer.buildQuery = function () {
-    // TODO: get data from courses panel
-    let coursesPanel = document.getElementById("tab-courses");
-    let coursesConditions = getConditions(coursesPanel);
-    let coursesColumns = getCheckedColumnsOrGroupsCourses("courses", "columns");
-    let coursesOrder = getOrder(coursesPanel, "courses");
-    let coursesGroups = getCheckedColumnsOrGroupsCourses("courses", "groups");
-    let coursesTransformations = getTransformations(coursesPanel);
-    // TODO: get data from rooms panel
-    let roomsPanel = document.getElementById("tab-rooms");
-    let roomsConditions = getConditions(roomsPanel);
-    let roomsColumns = getCheckedColumnsOrGroupsRooms("rooms", "columns");
-    let roomsOrder = getOrder(roomsPanel, "rooms");
-    let roomsGroups = getCheckedColumnsOrGroupsRooms("rooms", "groups");
-    let roomsTransformations = getTransformations(roomsPanel);
+    let activePanel = document.getElementsByClassName("nav-item tab active")[0].getAttribute("data-type");
+    let conditions;
+    let columns;
+    let order;
+    let groups;
+    let transformations;
+    if (activePanel === "courses") {
+        let coursesPanel = document.getElementById("tab-courses");
+        conditions = getConditions(coursesPanel, "courses");
+        columns = getCheckedColumnsOrGroupsCourses("courses", "columns");
+        order = getOrder(coursesPanel, "courses");
+        groups = getCheckedColumnsOrGroupsCourses("courses", "groups");
+        transformations = getTransformations(coursesPanel, "courses");
+    } else {
+        let roomsPanel = document.getElementById("tab-rooms");
+        conditions = getConditions(roomsPanel, "rooms");
+        columns = getCheckedColumnsOrGroupsRooms("rooms", "columns");
+        order = getOrder(roomsPanel, "rooms");
+        groups = getCheckedColumnsOrGroupsRooms("rooms", "groups");
+        transformations = getTransformations(roomsPanel, "rooms");
+    }
 
-    let query = formatQuery(coursesConditions, coursesColumns, coursesOrder, coursesGroups, coursesTransformations, roomsConditions, roomsColumns, roomsOrder, roomsGroups, roomsTransformations);
+    let query = formatQuery(conditions, columns, order, groups, transformations);
     return JSON.parse(query);
 };
 
-function formatQuery(coursesConditions, coursesColumns, coursesOrder, coursesGroups, coursesTransformations, roomsConditions, roomsColumns, roomsOrder, roomsGroups, roomsTransformations) {
-    // TODO
-    let query = `{"WHERE":${coursesConditions},` +
-                `"OPTIONS":{"COLUMNS":[${validate(coursesColumns).toString()}],` +
-                `"ORDER":${coursesOrder}}}`;
+function formatQuery(conditions, columns, order, groups, transformations) {
+    let query = `{"WHERE":${conditions},` +
+                `"OPTIONS":{"COLUMNS":[${validate(columns).toString()}],` +
+                `"ORDER":${order}}}`;
     let transformationPart = "";
-    if (coursesGroups != null || coursesTransformations != null) {
-        transformationPart = `"TRANSFORMATIONS":{"GROUP":[${coursesGroups}],"APPLY":[${coursesTransformations}]}`;
+    if (groups != null || transformations != null) {
+        transformationPart = `"TRANSFORMATIONS":{"GROUP":[${groups}],"APPLY":[${transformations}]}`;
         let queryPart1 = query.substring(0, query.length-1);
         let queryPart2 = query.substring(query.length - 1);
         let wholeQuery = queryPart1 + "," + transformationPart + queryPart2;
@@ -50,20 +56,20 @@ function formatQuery(coursesConditions, coursesColumns, coursesOrder, coursesGro
     return query;
 }
 
-function getTransformations(panel) {
+function getTransformations(panel, dataType) {
     let transformations = panel.getElementsByClassName("transformations-container")[0].getElementsByClassName("control-group transformation");
     if (transformations.length === 0) {
         return null;
     }
     let controlGroupTransformations = [];
     for (let transformation of transformations) {
-        let transformationCondition = getControlTransformation(transformation, panel);
+        let transformationCondition = getControlTransformation(transformation, dataType);
         controlGroupTransformations.push(transformationCondition);
     }
     return controlGroupTransformations;
 }
 
-function getControlTransformation(condition, panel) {
+function getControlTransformation(condition, dataType) {
     let comparisonFields = condition.getElementsByClassName("control fields")[0].getElementsByTagName("option");
     let selectedCompField = Array.from(comparisonFields).filter(function (field) {
         return field.hasAttribute("selected");
@@ -76,8 +82,7 @@ function getControlTransformation(condition, panel) {
 
     let operator = selectedOperator[0].getAttribute("value");
     let compField = selectedCompField[0].getAttribute("value");
-    //let toReturn = `{"${operator}":{"courses_${compField}": "${controlTerm}"}}`;
-    let toReturn = `{"${controlTerm}":{"${operator}":"courses_${compField}"}}`;
+    let toReturn = `{"${controlTerm}":{"${operator}":"${dataType}_${compField}"}}`;
     return toReturn;
 }
 
@@ -110,16 +115,14 @@ function getOrder(panel, datasetType) {
             } else {
                 toReturn += `"${datasetType}_${order.getAttribute("value")}"`;
             }
-            // toReturn += `${order.getAttribute("value")}`;
         });
-        // return `"${datasetType}_${toReturn}"`;
         return toReturn + "]}";
     }
 }
 
-function getConditions(panel) {
+function getConditions(panel, dataType) {
     let overallLogic = getOverallLogicCondition(panel);
-    let controlGroupConditions = getControlGroupConditions(panel);
+    let controlGroupConditions = getControlGroupConditions(panel, dataType);
     if (controlGroupConditions === null) {
         return "{}";
     }
@@ -163,7 +166,7 @@ function getOverallLogicCondition(panel) {
     return overallLogic;
 }
 
-function getControlGroupConditions(panel) {
+function getControlGroupConditions(panel, dataType) {
     if (panel.getElementsByClassName("control-group condition").length > 0) {
         let conditions = panel.getElementsByClassName("control-group condition");
         let length = conditions.length;
@@ -173,7 +176,7 @@ function getControlGroupConditions(panel) {
         let controlGroupConditions = [];
         for (let i = 0; i < length; i++) {
             let condition = conditions[i];
-            let controlCondition = getControlCondition(condition);
+            let controlCondition = getControlCondition(condition, dataType);
             controlGroupConditions.push(controlCondition);
         }
         return controlGroupConditions;
@@ -182,7 +185,7 @@ function getControlGroupConditions(panel) {
     }
 }
 
-function getControlCondition(condition) {
+function getControlCondition(condition, dataType) {
     let logic = "";
     if (condition.getElementsByClassName("control not")[0].getElementsByTagName("input")[0].hasAttribute("checked")) {
         logic = "NOT";
@@ -200,11 +203,11 @@ function getControlCondition(condition) {
     let operator = selectedOperator[0].getAttribute("value");
     let compField = selectedCompField[0].getAttribute("value");
     let toReturn = "";
-    if (compField === "avg" || compField === "pass" || compField === "fail" || compField === "audit" || compField === "year") {
+    if (compField === "avg" || compField === "pass" || compField === "fail" || compField === "audit" || compField === "year" || compField === "lat" || compField === "lon" || compField === "seats") {
         controlTerm = Number(controlTerm);
-        toReturn = `{"${operator}":{"courses_${compField}": ${controlTerm}}}`;
+        toReturn = `{"${operator}":{"${dataType}_${compField}": ${controlTerm}}}`;
     } else {
-        toReturn = `{"${operator}":{"courses_${compField}": "${controlTerm}"}}`;
+        toReturn = `{"${operator}":{"${dataType}_${compField}": "${controlTerm}"}}`;
     }
     if (logic === "NOT") {
         toReturn = `{"${logic}":${toReturn}}`;
