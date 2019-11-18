@@ -3,7 +3,7 @@ import InsightFacade, {IQueryValidator} from "./InsightFacade";
 import {Query} from "./Query";
 import {QueryKeyValidator} from "./QueryKeyValidator";
 import {QueryOrderValidator} from "./QueryOrderValidator";
-import {Formatter} from "./Formatter";
+
 
 export class QueryValidator implements IQueryValidator {
     private query: Query;
