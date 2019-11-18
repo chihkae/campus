@@ -3,7 +3,7 @@ import InsightFacade, {IQueryValidator} from "./InsightFacade";
 import {Query} from "./Query";
 import {QueryKeyValidator} from "./QueryKeyValidator";
 import {QueryOrderValidator} from "./QueryOrderValidator";
-import {Formatter} from "./Formatter";
+
 
 export class QueryValidator implements IQueryValidator {
     private query: Query;
@@ -173,10 +173,18 @@ export class QueryValidator implements IQueryValidator {
             if (query != null && typeof query === "object") {
                 let columnsKey: string[] = [];
                 for (const value of Object.values(query)) {
-                    if (value.indexOf("_") > -1) {
+                    let count = 0;
+                    let position = value.indexOf("_");
+                    while (position !== -1) {
+                        count++;
+                        position = value.indexOf("_", position + 1);
+                    }
+                    if (count === 1) {
                         this.queryKeyValidator.validateKeyColumnsWithTransformation(value);
-                    } else {
-                        this.queryKeyValidator.validateKey(value, "applyKey" );
+                    } else if (count === 0) {
+                        this.queryKeyValidator.validateKey(value, "applyKey");
+                    } else if (count !== 0 && count !== 1) {
+                        throw new InsightError();
                     }
                     columnsKey.push(value.toString());
                 }
