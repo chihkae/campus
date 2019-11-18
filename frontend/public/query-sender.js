@@ -10,13 +10,14 @@ CampusExplorer.sendQuery = function (query) {
         xhr.open("POST","http://localhost:4321/query", true);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = function () {
-            if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){
-                fulfill(xhr.responseText);
-            }else if(xhr.readyState === XMLHttpRequest.DONE && xhr.status >= 400) {
-                reject(xhr.response);
+            if(xhr.readyState === XMLHttpRequest.DONE){
+                if(xhr.status === 200) {
+                    fulfill(xhr.responseText);
+                }else {
+                    reject(xhr.responseText);
+                }
             }
         }
         xhr.send(JSON.stringify(query));
-
     });
 };
