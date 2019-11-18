@@ -4,6 +4,7 @@ export default class Scheduler implements IScheduler {
     private totalStudents: number = 0;
 
     public schedule(sections: SchedSection[], rooms: SchedRoom[]): Array<[SchedRoom, SchedSection, TimeSlot]> {
+        return [];
         // let sectionSorted: SchedSection[] = sections.sort(function (a, b) {
         //     let numStudentsA = a.courses_audit + a.courses_pass + a.courses_fail;
         //     let numStudentsB = b.courses_audit + b.courses_pass + b.courses_fail;
@@ -30,7 +31,6 @@ export default class Scheduler implements IScheduler {
         //     }
         // });
         // let result = this.makeSchedule(sectionSorted, roomsSorted);
-        return [];
     }
 
     private groupByBuilding(rooms: SchedRoom[]): SchedRoom[] {
