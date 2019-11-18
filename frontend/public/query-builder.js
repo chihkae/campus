@@ -55,7 +55,7 @@ function formatQuery(conditions, columns, order, groups, transformations) {
     return query;
 }
 
-function getTransformations(panel, dataType) {
+function getTransformations(panel, dataType)  {
     let transformations = panel.getElementsByClassName("transformations-container")[0].getElementsByClassName("control-group transformation");
     if (transformations.length === 0) {
         return null;
