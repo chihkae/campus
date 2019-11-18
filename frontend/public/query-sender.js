@@ -11,9 +11,9 @@ CampusExplorer.sendQuery = function (query) {
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = function () {
             if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){
-                CampusExplorer.renderResult(xhr.responseText);
+                fulfill(xhr.responseText);
             }else if(xhr.readyState === XMLHttpRequest.DONE && xhr.status >= 400) {
-                CampusExplorer.renderResult(xhr.response);
+                reject(xhr.response);
             }
         }
         xhr.send(JSON.stringify(query));
