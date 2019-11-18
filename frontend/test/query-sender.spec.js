@@ -1,4 +1,4 @@
-describe("sendQuery test suite", function() {
+describe("sendQuery test suite", function () {
 
     let queryFixtures = TTT.getQueryFixtures();
     let queryDescriptions = TTT.getQueryDescriptions();

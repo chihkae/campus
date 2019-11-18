@@ -1,3 +1,20 @@
 {
-    "query1": "simple query IS comparison for department with two columns and old order syntax"
+    "query1": "dfddddddddddd",
+    "coursesNothingSelected": "ddddddddddddddd",
+    "roomsNothingSelected": "ddddddddd",
+    "coursesOR": "dfdfd",
+    "roomsOR": "dfdfdfd",
+    "coursesAND": "courses_avg",
+    "roomsAND": "fdfdfdfd",
+    "coursesConditionsNotChecked": {"WHERE":{"NOT":{"LT":{"courses_avg": 90}}},"OPTIONS":{"COLUMNS":["courses_avg"],"ORDER":"courses_avg"}},
+    "roomsConditionsNotChecked": {"WHERE":{"NOT":{"LT":{"rooms_seats": 90}}},"OPTIONS":{"COLUMNS":["rooms_seats"],"ORDER":"rooms_seats"}},
+    "coursesManyNotConditionsOR": {"WHERE":{"OR":[{"NOT":{"LT":{"courses_avg": 50}}},{"NOT":{"GT":{"courses_avg": 50}}}]},"OPTIONS":{"COLUMNS":["courses_avg"],"ORDER":"courses_avg"}},
+    "roomsManyNotConditionsOR": {"WHERE":{"OR":[{"NOT":{"LT":{"rooms_seats": 50}}},{"NOT":{"GT":{"rooms_seats": 50}}}]},"OPTIONS":{"COLUMNS":["rooms_seats"],"ORDER":"rooms_seats"}},
+    "coursesAllColumnsChecked": {"WHERE":{"NOT":{"GT":{"courses_avg": 50}}},"OPTIONS":{"COLUMNS":["courses_audit","courses_avg","courses_dept","courses_fail","courses_id","courses_instructor","courses_pass","courses_title","courses_uuid","courses_year"],"ORDER":"courses_avg"}},
+    "roomsAllColumnsChecked": {"WHERE":{"NOT":{"GT":{"rooms_seats":50}}},"OPTIONS":{"COLUMNS":["rooms_address","rooms_fullname","rooms_furniture","rooms_href","rooms_lat","rooms_lon","rooms_name","rooms_number","rooms_seats","rooms_shortname","rooms_type"],"ORDER":"rooms_seats"}},
+    "coursesMultipleOrders": {"WHERE":{"AND":[{"GT":{"courses_year": 2000}},{"GT":{"courses_avg": 88}}]},"OPTIONS":{"COLUMNS":["courses_avg","courses_id","courses_title"],"ORDER":{"dir":"DOWN","keys":["courses_avg","courses_id"]}}},
+    "roomsMultipleOrders": {"WHERE":{"AND":[{"NOT":{"GT":{"rooms_lat":2000}}},{"LT":{"rooms_lon":2000}}]},"OPTIONS":{"COLUMNS":["rooms_lat","rooms_lon","rooms_name"],"ORDER":{"dir":"DOWN","keys":["rooms_lat","rooms_lon"]}}},
+    "coursesGroupsAndTransformations": {"WHERE":{},"OPTIONS":{"COLUMNS":["courses_avg","courses_id","courses_title"],"ORDER":"courses_avg"},"TRANSFORMATIONS":{"GROUP":["courses_avg","courses_id","courses_title"],"APPLY":[{"OverallAvg":{"AVG":"courses_avg"}},{"Minimum":{"MIN":"courses_pass"}}]}},
+    "roomsGroupsAndTransformations": "dfdfdfd"
+
 }

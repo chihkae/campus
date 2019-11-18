@@ -6,17 +6,22 @@
  */
 CampusExplorer.sendQuery = function (query) {
     return new Promise(function (fulfill, reject) {
-        let xhttp = new XMLHttpRequest();
-        xhttp.open("POST", "http://localhost:4321/query", true);
-        xhttp.setRequestHeader("Content-type", "application/json");
-        xhttp.send(JSON.stringify(query));
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:4321/query", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
 
-        xhttp.onreadystatechange = function () {
-            if(this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                fulfill(CampusExplorer.renderResult(JSON.parse(xhttp.responseText)));
-            }else if(this.readyState === XMLHttpRequest.DONE && this.status >= 400){
-                reject(CampusExplorer.renderResult(xhttp.statusText));
+        xhr.onload = function () {
+            xhr.onreadystatechange = function () {
+                if (this.readyState == XMLHttpRequest.DONE && this.status == 200) {
+                    Log.info("success");
+                    return fulfill(this.responseText);
+                } else if (this.readyState == XMLHttpRequest.DONE && this.status >= 400) {
+                    Log.info("failure");
+                    return reject(this.statusText);
+                }
             }
         }
+        xhr.send(JSON.stringify(query));
+
     });
 };
