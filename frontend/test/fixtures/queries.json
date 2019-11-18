@@ -1,7 +1,7 @@
 {
     "query1":{"WHERE": {"IS": {"courses_dept": "cpsc"} }, "OPTIONS": {"COLUMNS": ["courses_dept", "courses_id"], "ORDER": "courses_id"} },
-    "coursesNothingSelected": {"WHERE": {}, "OPTIONS":  {"COLUMNS": [], "ORDER": null} },
-    "roomsNothingSelected": {"WHERE": {}, "OPTIONS":  {"COLUMNS": [], "ORDER": null} },
+    "coursesNothingSelected": {"WHERE":{},"OPTIONS":{"COLUMNS":[]}},
+    "roomsNothingSelected": {"WHERE":{},"OPTIONS":{"COLUMNS":[]}},
     "coursesOR": {"WHERE":{"OR":[{"GT":{"courses_avg": 90}},{"LT":{"courses_avg": 50}}]},"OPTIONS":{"COLUMNS":["courses_avg"],"ORDER":"courses_avg"}},
     "roomsOR": {"WHERE":{"OR":[{"GT":{"rooms_seats":250}},{"LT":{"rooms_seats":50}}]},"OPTIONS":{"COLUMNS":["rooms_name","rooms_seats"],"ORDER":"rooms_seats"}},
     "coursesAND": {"WHERE":{"AND":[{"GT":{"courses_avg":50}},{"LT":{"courses_avg": 60}}]},"OPTIONS":{"COLUMNS":["courses_avg"],"ORDER":"courses_avg"}},

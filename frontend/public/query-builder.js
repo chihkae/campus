@@ -35,15 +35,14 @@ CampusExplorer.buildQuery = function () {
 
 function formatQuery(conditions, columns, order, groups, transformations) {
     let query = `{"WHERE":${conditions},` +
-                `"OPTIONS":{"COLUMNS":[${validate(columns).toString()}],` +
-                `"ORDER":${order}}}`;
-    let transformationPart = "";
+                `"OPTIONS":{"COLUMNS":[${validate(columns).toString()}]`;
+    if (order !== null) {
+        query = query + `,"ORDER":${order}}}`;
+    } else {
+        query = query + "}}";
+    }
     if (groups != null || transformations != null) {
-        transformationPart = `"TRANSFORMATIONS":{"GROUP":[${groups}],"APPLY":[${transformations}]}`;
-        let queryPart1 = query.substring(0, query.length-1);
-        let queryPart2 = query.substring(query.length - 1);
-        let wholeQuery = queryPart1 + "," + transformationPart + queryPart2;
-        query = wholeQuery;
+        query = query.substring(0, query.length-1) + "," + `"TRANSFORMATIONS":{"GROUP":[${groups}],"APPLY":[${transformations}]}` + query.substring(query.length - 1);
     }
 
     function validate(input) {
