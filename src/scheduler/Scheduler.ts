@@ -4,33 +4,33 @@ export default class Scheduler implements IScheduler {
     private totalStudents: number = 0;
 
     public schedule(sections: SchedSection[], rooms: SchedRoom[]): Array<[SchedRoom, SchedSection, TimeSlot]> {
-        return [];
-        // let sectionSorted: SchedSection[] = sections.sort(function (a, b) {
-        //     let numStudentsA = a.courses_audit + a.courses_pass + a.courses_fail;
-        //     let numStudentsB = b.courses_audit + b.courses_pass + b.courses_fail;
-        //
-        //     if (numStudentsA > numStudentsB) {
-        //         return -1;
-        //     } else if (numStudentsA < numStudentsB) {
-        //         return 1;
-        //     } else {
-        //         return 0;
-        //     }
-        // });
-        // this.setTotalStudents(sectionSorted);
-        // let roomsSorted: SchedRoom[] = rooms.sort( function (a, b) {
-        //     let numSeatsA = a.rooms_seats;
-        //     let numSeatsB = b.rooms_seats;
-        //
-        //     if (numSeatsA > numSeatsB) {
-        //         return -1;
-        //     } else if (numSeatsA < numSeatsB) {
-        //         return 1;
-        //     } else {
-        //         return 0;
-        //     }
-        // });
-        // let result = this.makeSchedule(sectionSorted, roomsSorted);
+        let sectionSorted: SchedSection[] = sections.sort(function (a, b) {
+            let numStudentsA = a.courses_audit + a.courses_pass + a.courses_fail;
+            let numStudentsB = b.courses_audit + b.courses_pass + b.courses_fail;
+
+            if (numStudentsA > numStudentsB) {
+                return -1;
+            } else if (numStudentsA < numStudentsB) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        this.setTotalStudents(sectionSorted);
+        let roomsSorted: SchedRoom[] = rooms.sort( function (a, b) {
+            let numSeatsA = a.rooms_seats;
+            let numSeatsB = b.rooms_seats;
+
+            if (numSeatsA > numSeatsB) {
+                return -1;
+            } else if (numSeatsA < numSeatsB) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        let result = this.makeSchedule(sectionSorted, roomsSorted);
+        return result;
     }
 
     private groupByBuilding(rooms: SchedRoom[]): SchedRoom[] {
@@ -96,7 +96,7 @@ export default class Scheduler implements IScheduler {
             let bestIndex;
             let tries = 0;
             while (roomsAndTimeSlot.length !== 0 && count !== roomsAndTimeSlot.length &&
-            (tries < (roomsAndTimeSlot.length / 20))) {
+            (tries < (roomsAndTimeSlot.length / 19))) {
                 if (roomsAndTimeSlot[count][0].rooms_seats >= originalStudens) {
                     let toAdd: [SchedRoom, SchedSection, TimeSlot] = [undefined, undefined, undefined];
                     toAdd[0] = roomsAndTimeSlot[count][0];
